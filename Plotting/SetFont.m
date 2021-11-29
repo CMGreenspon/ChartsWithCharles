@@ -4,7 +4,17 @@ function SetFont(typeface, fontsize)
 % This function can be run as a standalone or called at the beginning of a figure
 % generation script to ensure that all font elements are consistent. Especially useful
 % when changing elements for a poster or paper.
+    
+    % Default values
+    if exist('typeface', 'var') == 0
+        typeface = 'Arial';
+    end
 
+    if exist('fontsize', 'var') == 0
+        fontsize = 12;
+    end
+    
+    % Override defaults
     set(0,'DefaultFigureWindowStyle','normal',...
           'DefaultAxesFontName',typeface,...
           'DefaultAxesFontSize', fontsize, ...
