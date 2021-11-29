@@ -1,5 +1,5 @@
-function gc = GetGreekChar(letter)
-% Get the unicode char value for a Greek letter
+function gc = GetUnicodeChar(character)
+% Get the unicode char value for a unicode character
 % gc = GetGreekChar('letter' [string])
 % The 'letter' requested is case sensitive. 'Gamma' ~= 'gamma'
 % If 'all' is passed then a structure containing all letters will be generated.
@@ -13,16 +13,16 @@ function gc = GetGreekChar(letter)
              'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'};
     unicode_values = [913:929, 931:937, 945:961, 963:969];
     
-    if strcmpi(letter, 'all') % Generate struct with all letters
+    if strcmpi(character, 'all') % Generate struct with all letters
         gc = struct();
         for i = 1:length(names)
             eval(['gc.', names{i}, ' = char(', num2str(unicode_values(i)), ');'])
         end
         
     else % Find the specific letter and only give that one
-        letter_idx = find(strcmp(names, letter));
+        letter_idx = find(strcmp(names, character));
         if length(letter_idx) ~= 1
-            error(sprintf('Could not find letter: "%s"', letter))
+            error(sprintf('Could not find letter: "%s"', character))
             return
         else
             gc = char(unicode_values(letter_idx));
