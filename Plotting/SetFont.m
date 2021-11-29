@@ -8,10 +8,25 @@ function SetFont(typeface, fontsize)
     % Default values
     if exist('typeface', 'var') == 0
         typeface = 'Arial';
+    elseif ischar(typeface) == 0
+        error('Given "typeface" is not a string')
+    else
+        font_list = listfonts;
+        if any(strcmp(font_list, typeface)) == 0
+           warning(['Desired typeface is not found in system list.',...
+                    ' Check if installed correctly (for all users) but note that it may load anyway.', ...
+                    ' Use "fl = listfonts" to view typefaces available to Matlab'])
+        end
     end
 
     if exist('fontsize', 'var') == 0
         fontsize = 12;
+    elseif isnumeric(fontsize)
+        if round(fontsize) ~= fontsize
+            error('Fontsize must be an integer')
+        end
+    else
+        error('Given "fontsize" is not numerical')
     end
     
     % Override defaults
