@@ -2,7 +2,7 @@
 This is an assortment of plotting functions (and a couple analysis functions too) to help with making nice plots in Matlab.
 
 ##### Current Plotting Functions
-* SetFont: Allows setting of all default font names and sizes available to the Matlab environment.
+* [SetFont](Plotting/SetFont.m): Allows setting of all default font names and sizes available to the Matlab environment.
 * GetGreekChar: Lookup function for unicode values of all Greek letters.
 
 ##### Current Analysis Functions
