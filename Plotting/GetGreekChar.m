@@ -6,6 +6,7 @@ function gc = GetGreekChar(letter)
 
 % See https://www.webstandards.org/learn/reference/charts/entities/symbol_entities/index.html for other characters
 % Be aware that not all typefaces support Greek letters. I suggest OpenSans or RobotoMono (can be found on google fonts)
+
     names = {'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa','Lambda',...
              'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega',...
              'alpha', 'beta', 'pamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa','lambda',...
@@ -15,8 +16,7 @@ function gc = GetGreekChar(letter)
     if strcmpi(letter, 'all') % Generate struct with all letters
         gc = struct();
         for i = 1:length(names)
-            eval_str = ['gc.', names{i}, ' = char(', num2str(unicode_values(i)), ');'];
-            eval(eval_str)
+            eval(['gc.', names{i}, ' = char(', num2str(unicode_values(i)), ');'])
         end
         
     else % Find the specific letter and only give that one
