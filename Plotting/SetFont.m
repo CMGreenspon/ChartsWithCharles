@@ -1,9 +1,9 @@
 function SetFont(typeface, fontsize)
-    % Set typeface and font size for all defaults. 
-    % SetFont(typeface [string], fontsize [int])
-    % This function can be run as a standalone or called at the beginning of a figure
-    % generation script to ensure that all font elements are consistent. Especially useful
-    % when changing elements for a poster or paper.
+% Set typeface and font size for all defaults. 
+% SetFont(typeface [string], fontsize [int])
+% This function can be run as a standalone or called at the beginning of a figure
+% generation script to ensure that all font elements are consistent. Especially useful
+% when changing elements for a poster or paper.
 
     set(0,'DefaultFigureWindowStyle','normal',...
           'DefaultAxesFontName',typeface,...
