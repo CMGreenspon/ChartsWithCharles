@@ -3,7 +3,7 @@ This is an assortment of plotting functions (and a couple analysis functions too
 
 ##### Current Plotting Functions
 * [SetFont](Plotting/SetFont.m): Allows setting of all default font names and sizes available to the Matlab environment.
-* [GetUnicodeChar](Plotting/GetUnicodeChar.m): Lookup function for unicode values of many unicode letters.
+* [GetUnicodeChar](Plotting/GetUnicodeChar.m): Lookup function for unicode values.
 
 ##### Current Analysis Functions
 * None: Sorry
