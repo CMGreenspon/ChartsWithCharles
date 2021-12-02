@@ -30,19 +30,20 @@ fprintf('The string "mu" produces %s, while "Mu" produces %s\n', GetUnicodeChar(
 %% 3. AlphaLine
 % Quite simply the standard stalks for error bars are ugly, don't use them.
 SetFont('Arial', 12)
+clf; 
 
 x = [1:10];
 y = repmat([1:10], [5,1]) + randn([5,10]);
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
-clf; 
-subplot(1,2,1); hold on
+subplot(1,3,1); hold on
 errorbar(x,y_mean,err)
 title('Absolutely Not')
-subplot(1,2,2); hold on
+
+subplot(1,3,2); hold on
 AlphaLine(x,y,lines(1))
 title('So Much Better')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .3 .2], 'Name', 'SetFont Example')
+set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
 

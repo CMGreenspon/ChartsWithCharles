@@ -42,33 +42,29 @@ function AlphaLine(x, y, color, varargin)
     EdgeAlpha = 0.1;
     ErrorType = 'SEM';
     Percentiles = [25, 75];
-    
-    valid_inputs = {'LineWidth', 'FaceAlpha', 'EdgeAlpha', 'ErrorType', 'Percentiles'};
-    
-    % Check varargin
+        
+    % Check varargin v2
     if length(varargin) > 0
         nargin = ceil(length(varargin)/2);
         varargin = reshape(varargin, [2, nargin]);
         for n = 1:nargin
-            % Check if valid input
-            if any(strcmp(varargin{1,n}, valid_inputs)) == 0
+            if strcmpi(varargin{1,n},'LineWidth')
+                LineWidth = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'FaceAlpha')
+                FaceAlpha = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'EdgeAlpha')
+                EdgeAlpha = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'ErrorType')
+                ErrorType = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'Percentiles')
+                Percentiles = varargin{2,n};
+            else
                 error_str = sprintf('%s is an unrecognized input.', varargin{1,n});
                 error(error_str)
             end
-            % Evaluate input
-            if ischar(varargin{2,n})
-               eval_str = sprintf('%s = ''%s'';', varargin{1,n}, varargin{2,n});
-               eval(eval_str)
-            elseif isnumeric(varargin{2,n})
-               if all(size(varargin{2,n}) == 1)
-                  eval_str = sprintf('%s = %d;', varargin{1,n}, varargin{2,n});
-               else
-                  eval_str = [varargin{1,n}, ' = [', num2str(varargin{2,n}), '];'];
-               end
-               eval(eval_str)
-            end
         end
     end
+    
     
     % Compute mean
     if strcmp(ErrorType, 'Percentile')
