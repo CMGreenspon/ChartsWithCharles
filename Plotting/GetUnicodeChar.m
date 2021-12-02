@@ -1,11 +1,12 @@
 function uc = GetUnicodeChar(character)
-% Get the unicode char value for a unicode character
-% gc = GetUnicodeChar('character' [string])
-% The 'character' requested is case sensitive. 'Gamma' ~= 'gamma'
-% If 'all' is passed then a structure containing all character will be generated.
+    % Get the unicode char value for a unicode character
+    % gc = GetUnicodeChar('character' [string])
+    % gc = GetUnicodeChar('Mu')
+    % The 'character' requested is case sensitive. 'Gamma' ~= 'gamma'
+    % If 'all' is passed then a structure containing all character will be generated.
 
-% See https://www.webstandards.org/learn/reference/charts/entities/symbol_entities/index.html for other characters
-% Be aware that not all typefaces support unicode characters. I suggest OpenSans or RobotoMono (can be found on google fonts)
+    % See https://www.webstandards.org/learn/reference/charts/entities/symbol_entities/index.html for other characters
+    % Be aware that not all typefaces support unicode characters. I suggest OpenSans or RobotoMono (can be found on google fonts)
 
     names = {'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa','Lambda',...
              'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega',...

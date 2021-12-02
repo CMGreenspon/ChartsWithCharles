@@ -4,12 +4,12 @@ This is an assortment of plotting functions (and a couple analysis functions too
 ##### Current Plotting Functions
 * [SetFont](Plotting/SetFont.m): Allows setting of all default font names and sizes available to the Matlab environment.
 * [GetUnicodeChar](Plotting/GetUnicodeChar.m): Lookup function for unicode values.
+* [AlphaLine](Plotting/AlphaLine.m): A line graph with error denoted by a transparent box around the line
 
 ##### Current Analysis Functions
 * None: Sorry
 
 ##### Upcoming/Requested Plotting Functions
-* ShadedLine: A line graph with error denoted by a transparent box around the line
 * SymphonicBeeswarm: A function that allows for combinations of bee-swarm, violin, box and whisker
 * OSScreenSize: Uses pixel density info of screen to produce graphs of exact size in real units
 * GetAxisPadding: Grabs data and will set limits to the nearest desired value or percent
