@@ -13,7 +13,7 @@ function SetFont(typeface, fontsize)
         error('Given "typeface" is not a string')
     else
         font_list = listfonts;
-        if any(strcmp(font_list, typeface)) == 0
+        if ~any(strcmp(font_list, typeface))
            warning(['Desired typeface is not found in system list. ',...
                     'Check if installed correctly (for all users) but note that it may load anyway. ', ...
                     'Use "listfonts" to view typefaces available to Matlab'])

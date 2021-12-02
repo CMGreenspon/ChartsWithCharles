@@ -43,8 +43,8 @@ function AlphaLine(x, y, color, varargin)
     ErrorType = 'SEM';
     Percentiles = [25, 75];
         
-    % Check varargin v2
-    if length(varargin) > 0
+    % Check varargin
+    if isempty(varargin) == 0
         nargin = ceil(length(varargin)/2);
         varargin = reshape(varargin, [2, nargin]);
         for n = 1:nargin
@@ -59,8 +59,7 @@ function AlphaLine(x, y, color, varargin)
             elseif strcmpi(varargin{1,n},'Percentiles')
                 Percentiles = varargin{2,n};
             else
-                error_str = sprintf('%s is an unrecognized input.', varargin{1,n});
-                error(error_str)
+                error('%s is an unrecognized input.', varargin{1,n})
             end
         end
     end
@@ -68,16 +67,16 @@ function AlphaLine(x, y, color, varargin)
     
     % Compute mean
     if strcmp(ErrorType, 'Percentile')
-        y_central = nanmedian(y,2);
+        y_central = median(y,2,'omitnan');
     else
-        y_central = nanmean(y,2);
+        y_central = mean(y,2,'omitnan');
     end
     
     % Compute error
     if strcmp(ErrorType, 'STD')
-        y_error = nanstd(y,2);
+        y_error = std(y,1,2,'omitnan');
     elseif strcmp(ErrorType, 'SEM')
-        y_error = nanstd(y,1,2) ./ sqrt(size(y,2));
+        y_error = std(y,1,2, 'omitnan') ./ sqrt(size(y,2));
     elseif strcmp(ErrorType, 'Percentile')
         y_p1 = prctile(y, Percentiles(1),2);
         y_p2 = prctile(y, Percentiles(2),2);

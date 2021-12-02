@@ -23,8 +23,7 @@ function uc = GetUnicodeChar(character)
     else % Find the specific letter and only give that one
         letter_idx = find(strcmp(names, character));
         if length(letter_idx) ~= 1
-            error(sprintf('Could not find character: "%s"', character))
-            return
+            error('Could not find character: "%s"', character)
         else
             uc = char(unicode_values(letter_idx));
         end
