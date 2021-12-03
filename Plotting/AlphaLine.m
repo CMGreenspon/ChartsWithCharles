@@ -3,12 +3,13 @@ function AlphaLine(x, y, color, varargin)
     % AlphaLine(x [double], y[double], color[double], varargin)
     % AlphaLine(x, y, color, 'EdgeAlpha', 0.2, 'FaceAlpha', 0.2, 'ErrorType', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
-    % X must be a vector while Y must be an array [x, repeat] where at least one dimension is the same
-    % as the length of x. If both are the size of x and the ration is ambiguous then
-    % ensure format.
+    % X (independent variable) must be a vector while Y (dependent variable) must be an array [x, repeated observations]
+    % If both are the size of x and the ration is ambiguous then ensure format.
     % Color must be an RGB triplet (0-1 and 0-255 are both supported)
     % Optional inputs include: 'EdgeAlpha' [default = 0.2], 'FaceAlpha' [default = 0.2],
-    % 'ErrorType' [default = 'SEM', 'STD', and 'Percentile' is also available], 
+    % 'ErrorType' [default = 'SEM', 'STD', and 'Percentile' is also available]. If
+    % 'Percentile' is passed then the argument 'Percentiles', [p1, p2] becomes available
+    % and the median will be plotted instead of the mean.
     
     % Check size inputs
     if all(size(x) > 1)
@@ -27,7 +28,9 @@ function AlphaLine(x, y, color, varargin)
     end
     
     % Check color input
-    if all(size(color) ~= [1,3], 2)
+    if exist('color', 'var') == 0
+        color = [.6 .6 .6];
+    elseif all(size(color) ~= [1,3], 2)
         if all(size(color) == [1,3],2)
             color = color';
         elseif any(size(color) > 3)
@@ -42,6 +45,9 @@ function AlphaLine(x, y, color, varargin)
     EdgeAlpha = 0.1;
     ErrorType = 'SEM';
     Percentiles = [25, 75];
+    IgnoreNaN = 0;
+    PlotBetweenNaN = 1;
+    hold on
         
     % Check varargin
     if isempty(varargin) == 0
@@ -58,6 +64,10 @@ function AlphaLine(x, y, color, varargin)
                 ErrorType = varargin{2,n};
             elseif strcmpi(varargin{1,n},'Percentiles')
                 Percentiles = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'IgnoreNaN')
+                IgnoreNaN = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'PlotBetweenNaN')
+                PlotBetweenNaN = varargin{2,n};
             else
                 error('%s is an unrecognized input.', varargin{1,n})
             end
@@ -66,32 +76,71 @@ function AlphaLine(x, y, color, varargin)
     
     
     % Compute mean
-    if strcmp(ErrorType, 'Percentile')
+    if strcmpi(ErrorType, 'Percentile')
         y_central = median(y,2,'omitnan');
     else
         y_central = mean(y,2,'omitnan');
     end
     
     % Compute error
-    if strcmp(ErrorType, 'STD')
+    if strcmpi(ErrorType, 'STD')
         y_error = std(y,1,2,'omitnan');
-    elseif strcmp(ErrorType, 'SEM')
+        y2 = [y_central+y_error; flipud(y_central-y_error)];
+    elseif strcmpi(ErrorType, 'SEM')
         y_error = std(y,1,2, 'omitnan') ./ sqrt(size(y,2));
-    elseif strcmp(ErrorType, 'Percentile')
+        y2 = [y_central+y_error; flipud(y_central-y_error)];
+    elseif strcmpi(ErrorType, 'Percentile')
         y_p1 = prctile(y, Percentiles(1),2);
         y_p2 = prctile(y, Percentiles(2),2);
+        y2 = [y_p1; flipud(y_p2)];
     end
     
-    hold on
-    % Plot error
-    if strcmp(ErrorType, 'Percentile')
-        fill([x; flipud(x)], [y_p1; flipud(y_p2)], ...
-             color, 'EdgeColor', color, 'FaceAlpha', FaceAlpha, 'EdgeAlpha', EdgeAlpha)
+    % Check for NaN breaks
+    if any(isnan(y_central))
+       if IgnoreNaN == 0
+           warning('NaNs in Y-array break the fill function. Explore the "IgnoreNan" option.') 
+           PlotAlphaLine(x, y_central, y2)
+       elseif IgnoreNaN == 1 % Ignore completely
+           x2 = x(~isnan(y_central));
+           y2_central = y_central(~isnan(y_central));
+           y2_error = y2(~isnan(y2));
+           PlotAlphaLine(x2, y2_central, y2_error)
+       elseif IgnoreNaN == 2 % Make a separate line for each section
+           nan_idx = find(isnan(y_central));
+           num_plot_sections = length(nan_idx) + 1;
+           y_temp = [y2(1:length(y2)/2), flipud(y2(length(y2)/2+1:end))];
+           for n = 1:num_plot_sections
+               if n == 1
+                   x2 = x(1:nan_idx(n)-1);
+                   y2_central = y_central(1:nan_idx(n)-1);
+                   y2_error = y_temp(1:nan_idx(n)-1, :);
+                   y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
+               elseif n == num_plot_sections
+                   x2 = x(nan_idx(n-1)+1:end);
+                   y2_central = y_central(nan_idx(n-1)+1:end);
+                   y2_error = y_temp(nan_idx(n-1)+1:end, :);
+                   y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
+               else
+                   x2 = x(nan_idx(n):nan_idx(n+1));
+                   y2_central = y_central(nan_idx(n):nan_idx(n+1));
+                   y2_error = y_temp(nan_idx(n):nan_idx(n+1), :);
+                   y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
+               end
+               PlotAlphaLine(x2, y2_central, y2_error)
+               if PlotBetweenNaN && n < num_plot_sections
+                  plot([x(nan_idx(n)-1), x(nan_idx(n)+1)], [y_central(nan_idx(n)-1), y_central(nan_idx(n)+1)],...
+                      'color', color, 'LineStyle', '--')
+               end
+           end
+       end
     else
-        fill([x; flipud(x)], [y_central+y_error; flipud(y_central-y_error)], ...
-             color, 'EdgeColor', color, 'FaceAlpha', FaceAlpha, 'EdgeAlpha', EdgeAlpha)
+        PlotAlphaLine(x, y_central, y2)
     end
-    % Mean
-    plot(x, y_central, 'color', color, 'LineWidth', LineWidth)
     
+    function PlotAlphaLine(x2, y2_central, y2_error)
+        % Error
+        fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha', FaceAlpha, 'EdgeAlpha', EdgeAlpha)
+        % Mean
+        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth)
+    end
 end
