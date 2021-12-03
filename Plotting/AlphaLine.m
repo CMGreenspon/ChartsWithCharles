@@ -10,6 +10,9 @@ function AlphaLine(x, y, color, varargin)
     % 'ErrorType' [default = 'SEM', 'STD', and 'Percentile' is also available]. If
     % 'Percentile' is passed then the argument 'Percentiles', [p1, p2] becomes available
     % and the median will be plotted instead of the mean.
+    % 'IgnoreNan' [0: will break, 1: pretend NaNs aren't there, 2: plot on either side of
+    % NaN as individual plots] will produce a different plot each time (see plotting example)
+    % 'PlotBetweenNaN' [true] will place a dashed line between sections if IgnoreNan == 2
     
     % Check size inputs
     if all(size(x) > 1)
