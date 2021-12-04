@@ -19,7 +19,8 @@ subplot(1,3,3); hold on
 plot([1:10], [1:10], 'LineWidth', 2)
 title('Serifs are bad')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
+%set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
+set(gcf, 'Units', 'pixels', 'Position', OSScreenSize([30, 10], 'cm', 1));
 
 %% 2. GetUnicodeChar
 % Many figures require Greek letters to be used as notation (eg. mu, sigma)
