@@ -47,3 +47,29 @@ title('So Much Better')
 
 set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
 
+%% 4. SymphonicBeeSwarm
+% A nicer method of showing value distribution of categories when not using a histogram or CDF
+SetFont('Arial', 12)
+clf; 
+colors = lines(5);
+
+% The default look. Takes the x value, a vector of y values, the color, and the point size
+x = 1;
+y = randn([100,1]) + randi([5,10]);
+SymphonicBeeSwarm(x, y, colors(1,:), 50)
+
+% The function also allows for a variety of background plots
+y = randn([100,1]) + randi([5,10]);
+SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
+y = randn([100,1]) + randi([5,10]);
+SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
+y = randn([100,1]) + randi([5,10]);
+SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterColor', 'none', 'CenterWidth', .1)
+% and many many other options
+y = randn([100,1]) + randi([5,10]);
+SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', colors(1,:), 'CenterWidth', .1,...
+    'DistributionMethod', 'histogram', 'BackgroundType', 'box', 'BackroundFaceAlpha', 0, 'BackroundEdgeAlpha', 1,...
+    'MarkerFaceAlpha', 0, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 10)
+
+xticks([1:5]);
+xticklabels({'Default', 'Bar', 'Violin', 'Box', 'Custom (Ugly)'})
