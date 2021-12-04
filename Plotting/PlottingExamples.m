@@ -67,9 +67,9 @@ y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterColor', 'none', 'CenterWidth', .1)
 % and many many other options
 y = randn([100,1]) + randi([5,10]);
-SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', colors(1,:), 'CenterWidth', .1,...
-    'DistributionMethod', 'histogram', 'BackgroundType', 'box', 'BackroundFaceAlpha', 0, 'BackroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 0, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 10)
+SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
+    'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackroundFaceAlpha', 0, 'BackroundEdgeAlpha', 1,...
+    'MarkerFaceAlpha', 0, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
 
 xticks([1:5]);
-xticklabels({'Default', 'Bar', 'Violin', 'Box', 'Custom (Ugly)'})
+xticklabels({'Default', 'Bar', 'Violin', 'Box', 'No Points'})
