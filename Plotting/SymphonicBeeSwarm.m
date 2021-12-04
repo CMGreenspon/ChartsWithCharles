@@ -9,13 +9,17 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % - 'CenterMethod' ['mean', 'median', 'none']: plots a line at the vlaue (will test for normality if mean is chosen)
     % - 'CenterColor' [same as color]: allows manaul selection the center line color
     % - 'CenterWidth' [.3] The x spread of the center line x-CenterWidth:x+CenterWidth
+    % - 'CenterThickness' [2] Linewidth of the center line
     % - 'BackgroundType' ['none', 'violin', 'bar', 'box']: background style
     % - 'DistributionMethod' ['Histogram', 'KernelDensity']: method of computing scatter distribution
     % - 'DistributionWidth' [.3] similar to center width
     % - 'BoxPercentiles' [5,25,75,95]: the 4 percentiles of the B&W plot
     % - 'BackroundFaceAlpha' [.1], 'BackroundEdgeAlpha' [.4]
     % - 'MarkerFaceAlpha' [.2], 'MarkerEdgeAlpha' [.4]
-    % - 'MaxPoints' [100]: prevents over dense scattering
+    % - 'MaxPoints' [100]: prevents over dense scattering. If MaxPoints == 0 then many
+    % plots revert to simple plots. In this case error bars (from Percentiles) are added to the
+    % Bar version. If Percentiles are an array then those percentiles will be used,
+    % otherwise both 'STD' and 'SEM' are available.
 
     % Check x,y inputs
     if all(size(x) ~= [1,1])
@@ -42,6 +46,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     CenterMethod = 'mean';
     CenterColor = color;
     CenterWidth = .3;
+    CenterThickness = 2;
     DistributionMethod = 'KernelDensity';
     DistributionWidth = .3;
     BackgroundType = 'none';
@@ -49,6 +54,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     MarkerEdgeAlpha = .4;
     BackgroundFaceAlpha = .1;
     BackgroundEdgeAlpha = .4;
+    BackgroundEdgeThickness = 1;
     BoxPercentiles = [5,25,75,95];
     MaxPoints = 100;
     
@@ -63,12 +69,16 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                 CenterColor = varargin{2,n};
             elseif strcmpi(varargin{1,n},'CenterWidth')
                 CenterWidth = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'CenterThickness')
+                CenterThickness = varargin{2,n};
             elseif strcmpi(varargin{1,n},'BackgroundType')
                 BackgroundType = varargin{2,n};
             elseif strcmpi(varargin{1,n},'BackgroundFaceAlpha')
                 BackgroundFaceAlpha = varargin{2,n};
             elseif strcmpi(varargin{1,n},'BackgroundEdgeAlpha')
                 BackgroundEdgeAlpha = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'BackgroundEdgeThickness')
+                BackgroundEdgeThickness = varargin{2,n};
             elseif strcmpi(varargin{1,n},'MarkerFaceAlpha')
                 MarkerFaceAlpha = varargin{2,n};
             elseif strcmpi(varargin{1,n},'MarkerEdgeAlpha')
@@ -126,23 +136,58 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(BackgroundType, 'Bar')
         % Simple bar to the central value
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
-              [0, y_central, y_central, 0], color, 'FaceAlpha', BackgroundFaceAlpha,...
-              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color)
+              [0, y_central, y_central, 0], color, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeColor', 'none')
+        % Have to manually place lines because Matlab is silly
+        plot([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
+             [0, y_central, y_central, 0], 'LineWidth', BackgroundEdgeThickness, 'Color', color)
+        if MaxPoints == 0 % Add error bars
+            if isnumeric(BoxPercentiles)
+               if length(BoxPercentiles) == 4
+                   ub = prctile(y, BoxPercentiles(2));
+                   lb = prctile(y, BoxPercentiles(3));
+               elseif length(BoxPercentiles) == 2
+                   ub = prctile(y, BoxPercentiles(1));
+                   lb = prctile(y, BoxPercentiles(2));
+               else
+                   error('Only 2 or 4 percentiles may be assigned to "Bar" when "MaxPoints" = 0')
+               end
+            elseif ischar(BoxPercentiles)
+               if strcmpi(BoxPercentiles, 'STD')
+                   ub = y_central + std(y,1,'all', 'omitnan');
+                   lb = y_central - std(y,1,'all', 'omitnan');
+               elseif strcmpi(BoxPercentiles, 'SEM')
+                   ub = y_central + std(y,1,'all', 'omitnan') / sqrt(length(y));
+                   lb = y_central - std(y,1,'all', 'omitnan') / sqrt(length(y));
+               end
+            end
+            % Whiskers
+            plot([x,x], [y_central, ub], 'Color' , color, 'LineWidth', 1)
+            plot([x-CenterWidth/3, x+CenterWidth/3], [ub, ub], 'Color' , color, 'LineWidth', 1)
+            plot([x,x], [y_central, lb], 'Color' , color, 'LineWidth', 1)
+            plot([x-CenterWidth/3, x+CenterWidth/3], [lb, lb], 'Color' , color, 'LineWidth', 1)
+            CenterColor = 'none';
+        end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get a nicer KS distribution with more points
         [violin_x, violin_y] = ksdensity(y);
         violin_x = (violin_x ./ max(violin_x)) * DistributionWidth * 1.25; 
         fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
-             color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeAlpha', BackgroundEdgeAlpha)
+             color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
+             'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth', BackgroundEdgeThickness)
     elseif strcmpi(BackgroundType, 'Box')
         y_50 = median(y,'omitnan');
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
               [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], color, 'FaceAlpha', BackgroundFaceAlpha,...
-              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color)
-        % Center line
-        plot([x-DistributionWidth*1.1, x+DistributionWidth*1.1], [y_central, y_central], 'Color' , color, 'LineWidth', 1)
+              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color, 'LineWidth', BackgroundEdgeThickness)
+        % Thinner center line if points only
+        if MaxPoints == 0
+            plot([x-DistributionWidth*1.1, x+DistributionWidth*1.1], [y_central, y_central], 'Color' , color, 'LineWidth', 1)
+            CenterColor = 'none';
+        else
+            CenterWidth = DistributionWidth*1.1;
+        end
         % Whiskers
         plot([x,x], [bw_y(3), bw_y(4)], 'Color' , color, 'LineWidth', 1)
         plot([x-CenterWidth, x+CenterWidth], [bw_y(4), bw_y(4)], 'Color' , color, 'LineWidth', 1)
@@ -174,6 +219,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     
     % Center line on top if desired
     if isnumeric(CenterColor)
-        plot([x-CenterWidth, x+CenterWidth], [y_central, y_central], 'Color' , CenterColor, 'LineWidth', 2)
+        plot([x-CenterWidth, x+CenterWidth], [y_central, y_central], 'Color' , CenterColor, 'LineWidth', CenterThickness)
     end
+
 end

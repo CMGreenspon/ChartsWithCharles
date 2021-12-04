@@ -50,25 +50,25 @@ title('So Much Better')
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
 SetFont('Arial', 12)
 clf; 
-colors = lines(5);
+colors = lines(7);
+x = 1;
+y = randn([100,1]) + 5;
 
 % The default look. Takes the x value, a vector of y values, the color, and the point size
-x = 1;
-y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(x, y, colors(1,:), 50)
-
 % The function also allows for a variety of background plots
-y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
-y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
-y = randn([100,1]) + randi([5,10]);
-SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterColor', 'none', 'CenterWidth', .1)
+SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box')
 % and many many other options
-y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
     'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
     'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
-
-xticks([1:5]);
-xticklabels({'Default', 'Bar', 'Violin', 'Box', 'No Points'})
+% Bar adds whiskers if maxpoints = 0
+SymphonicBeeSwarm(6, y, colors(6,:), 50, 'BackgroundType', 'bar', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
+    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
+% Box only for completions sake
+SymphonicBeeSwarm(7, y, colors(7,:), 50, 'BackgroundType', 'box', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
+    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [5,25,75,95], 'MaxPoints', 0)
+xticks([1:7]);
+xticklabels({'Default', '+Bar', '+Violin', '+Box', 'ViolinOnly', 'BarOnly', 'BoxOnly'})
