@@ -83,7 +83,7 @@ subplot(1,3,3); hold <span class="string">on</span>
 plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
 title(<span class="string">'Serifs are bad'</span>)
 
-set(gcf, <span class="string">'Units'</span>, <span class="string">'Normalized'</span>, <span class="string">'Position'</span>, [.3 .4 .4 .2], <span class="string">'Name'</span>, <span class="string">'SetFont Example'</span>)
+set(gcf, <span class="string">'Units'</span>, <span class="string">'Normalized'</span>, <span class="string">'Position'</span>, [.3 .4 .4 .2], <span class="string">'Name'</span>, <span class="string">'Plotting Example'</span>)
 </pre><img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2><p>Many figures require Greek letters to be used as notation (eg. mu, sigma) This function allows for them to be easily made and in some cases will be supported by the typeface used</p><pre class="codeinput">fprintf(<span class="string">'The string "mu" produces %s, while "Mu" produces %s\n'</span>, GetUnicodeChar(<span class="string">'mu'</span>), GetUnicodeChar(<span class="string">'Mu'</span>))
 </pre><pre class="codeoutput">The string "mu" produces &#956;, while "Mu" produces &#924;
 </pre><h2 id="4">3. AlphaLine</h2><p>Quite simply the standard stalks for error bars are ugly, don't use them.</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
@@ -101,8 +101,6 @@ title(<span class="string">'Absolutely Not'</span>)
 subplot(1,3,2); hold <span class="string">on</span>
 AlphaLine(x,y,lines(1))
 title(<span class="string">'So Much Better'</span>)
-
-set(gcf, <span class="string">'Units'</span>, <span class="string">'Normalized'</span>, <span class="string">'Position'</span>, [.3 .4 .4 .2], <span class="string">'Name'</span>, <span class="string">'SetFont Example'</span>)
 </pre><img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. SymphonicBeeSwarm</h2><p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 clf;
 colors = lines(5);
@@ -117,7 +115,7 @@ y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(2, y, colors(2,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Bar'</span>, <span class="string">'CenterColor'</span>, <span class="string">'none'</span>)
 y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(3, y, colors(3,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Violin'</span>, <span class="string">'CenterColor'</span>, [.6 .6 .6])
-y = randn([100,1]) + randi([5,10]);
+y = rand([100,1])*3 + randi([5,10]);
 SymphonicBeeSwarm(4, y, colors(4,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Box'</span>, <span class="string">'CenterColor'</span>, <span class="string">'none'</span>, <span class="string">'CenterWidth'</span>, .1)
 <span class="comment">% and many many other options</span>
 y = randn([100,1]) + randi([5,10]);
@@ -150,7 +148,7 @@ subplot(1,3,3); hold on
 plot([1:10], [1:10], 'LineWidth', 2)
 title('Serifs are bad')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
+set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
 
 %% 2. GetUnicodeChar
 % Many figures require Greek letters to be used as notation (eg. mu, sigma)
@@ -176,8 +174,6 @@ subplot(1,3,2); hold on
 AlphaLine(x,y,lines(1))
 title('So Much Better')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
-
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
 SetFont('Arial', 12)
@@ -194,7 +190,7 @@ y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
 y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
-y = randn([100,1]) + randi([5,10]);
+y = rand([100,1])*3 + randi([5,10]);
 SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterColor', 'none', 'CenterWidth', .1)
 % and many many other options
 y = randn([100,1]) + randi([5,10]);

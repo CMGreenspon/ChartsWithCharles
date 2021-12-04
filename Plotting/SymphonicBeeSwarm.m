@@ -47,8 +47,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     BackgroundType = 'none';
     MarkerFaceAlpha = .2;
     MarkerEdgeAlpha = .4;
-    BackroundFaceAlpha = .1;
-    BackroundEdgeAlpha = .4;
+    BackgroundFaceAlpha = .1;
+    BackgroundEdgeAlpha = .4;
     BoxPercentiles = [5,25,75,95];
     MaxPoints = 100;
     
@@ -65,10 +65,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                 CenterWidth = varargin{2,n};
             elseif strcmpi(varargin{1,n},'BackgroundType')
                 BackgroundType = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackroundFaceAlpha')
-                BackroundFaceAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackroundEdgeAlpha')
-                BackroundEdgeAlpha = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'BackgroundFaceAlpha')
+                BackgroundFaceAlpha = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'BackgroundEdgeAlpha')
+                BackgroundEdgeAlpha = varargin{2,n};
             elseif strcmpi(varargin{1,n},'MarkerFaceAlpha')
                 MarkerFaceAlpha = varargin{2,n};
             elseif strcmpi(varargin{1,n},'MarkerEdgeAlpha')
@@ -87,6 +87,12 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     end
     
+    % In the case of box and whisker check if the center was actually declared
+    if strcmpi(BackgroundType, 'Box')
+       if any(strcmpi(varargin(1,:), 'CenterMethod')) == 0
+           CenterMethod = 'median'; % If not then change default
+       end
+    end
     % Compute the mean
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
@@ -120,21 +126,21 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(BackgroundType, 'Bar')
         % Simple bar to the central value
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
-              [0, y_central, y_central, 0], color, 'FaceAlpha', BackroundFaceAlpha,...
-              'EdgeAlpha', BackroundEdgeAlpha, 'EdgeColor', color)
+              [0, y_central, y_central, 0], color, 'FaceAlpha', BackgroundFaceAlpha,...
+              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color)
     elseif strcmpi(BackgroundType, 'Violin')
         % Get a nicer KS distribution with more points
         [violin_x, violin_y] = ksdensity(y);
         violin_x = (violin_x ./ max(violin_x)) * DistributionWidth * 1.25; 
         fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
-             color, 'EdgeColor', color, 'FaceAlpha', BackroundFaceAlpha, 'EdgeAlpha', BackroundEdgeAlpha)
+             color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeAlpha', BackgroundEdgeAlpha)
     elseif strcmpi(BackgroundType, 'Box')
         y_50 = median(y,'omitnan');
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
-              [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], color, 'FaceAlpha', BackroundFaceAlpha,...
-              'EdgeAlpha', BackroundEdgeAlpha, 'EdgeColor', color)
+              [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], color, 'FaceAlpha', BackgroundFaceAlpha,...
+              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color)
         % Center line
         plot([x-DistributionWidth*1.1, x+DistributionWidth*1.1], [y_central, y_central], 'Color' , color, 'LineWidth', 1)
         % Whiskers

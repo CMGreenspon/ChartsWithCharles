@@ -19,7 +19,7 @@ subplot(1,3,3); hold on
 plot([1:10], [1:10], 'LineWidth', 2)
 title('Serifs are bad')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
+set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
 
 %% 2. GetUnicodeChar
 % Many figures require Greek letters to be used as notation (eg. mu, sigma)
@@ -45,8 +45,6 @@ subplot(1,3,2); hold on
 AlphaLine(x,y,lines(1))
 title('So Much Better')
 
-set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'SetFont Example')
-
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
 SetFont('Arial', 12)
@@ -68,8 +66,8 @@ SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterColor',
 % and many many other options
 y = randn([100,1]) + randi([5,10]);
 SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
-    'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackroundFaceAlpha', 0, 'BackroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 0, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
+    'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
+    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
 
 xticks([1:5]);
 xticklabels({'Default', 'Bar', 'Violin', 'Box', 'No Points'})
