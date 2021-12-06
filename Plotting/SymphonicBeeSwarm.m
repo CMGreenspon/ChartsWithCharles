@@ -97,10 +97,15 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     end
     
-    % In the case of box and whisker check if the center was actually declared
+    % In the case of box and whisker 
     if strcmpi(BackgroundType, 'Box')
+       % Check if the center was actually declared
        if any(strcmpi(varargin(1,:), 'CenterMethod')) == 0
            CenterMethod = 'median'; % If not then change default
+       end
+       % Also check if center width was declared
+       if any(strcmpi(varargin(1,:), 'CenterWidth')) == 0
+           CenterWidth = DistributionWidth / 3;
        end
     end
     % Compute the mean
@@ -169,8 +174,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get a nicer KS distribution with more points
-        [violin_x, violin_y] = ksdensity(y);
+        [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
         violin_x = (violin_x ./ max(violin_x)) * DistributionWidth * 1.25; 
+        % Get rid of top and bottom 5%
+        violin_x = violin_x(6:95);
+        violin_y = violin_y(6:95);
         fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
              color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth', BackgroundEdgeThickness)
@@ -181,6 +189,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
               [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], color, 'FaceAlpha', BackgroundFaceAlpha,...
               'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', color, 'LineWidth', BackgroundEdgeThickness)
+        % Whiskers
+        plot([x,x], [bw_y(3), bw_y(4)], 'Color' , color, 'LineWidth', 1)
+        plot([x-CenterWidth, x+CenterWidth], [bw_y(4), bw_y(4)], 'Color' , color, 'LineWidth', 1)
+        plot([x,x], [bw_y(1), bw_y(2)], 'Color' , color, 'LineWidth', 1)
+        plot([x-CenterWidth, x+CenterWidth], [bw_y(1), bw_y(1)], 'Color' , color, 'LineWidth', 1)
         % Thinner center line if points only
         if MaxPoints == 0
             plot([x-DistributionWidth*1.1, x+DistributionWidth*1.1], [y_central, y_central], 'Color' , color, 'LineWidth', 1)
@@ -188,11 +201,6 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         else
             CenterWidth = DistributionWidth*1.1;
         end
-        % Whiskers
-        plot([x,x], [bw_y(3), bw_y(4)], 'Color' , color, 'LineWidth', 1)
-        plot([x-CenterWidth, x+CenterWidth], [bw_y(4), bw_y(4)], 'Color' , color, 'LineWidth', 1)
-        plot([x,x], [bw_y(1), bw_y(2)], 'Color' , color, 'LineWidth', 1)
-        plot([x-CenterWidth, x+CenterWidth], [bw_y(1), bw_y(1)], 'Color' , color, 'LineWidth', 1)
     elseif strcmpi(BackgroundType, 'none') == 0
         error('%s is an unrecognized BackgroundType.', BackgroundType)
     end    
