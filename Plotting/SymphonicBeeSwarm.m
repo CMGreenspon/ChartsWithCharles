@@ -33,7 +33,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
     
     % Check color input
-    if all(size(color) == [1,3], 2) == 0
+    if ~all(size(color) == [1,3], 2)
         if all(size(color) == [1,3],2)
             color = color';
         elseif any(size(color) > 3)
@@ -61,7 +61,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     MaxPoints = 100;
     
     % Check varargin
-    if isempty(varargin) == 0
+    if ~isempty(varargin)
         nargin = ceil(length(varargin)/2);
         varargin = reshape(varargin, [2, nargin]);
         for n = 1:nargin
@@ -102,11 +102,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % In the case of box and whisker 
     if strcmpi(BackgroundType, 'Box')
        % Check if the center was actually declared
-       if any(strcmpi(varargin(1,:), 'CenterMethod')) == 0
+       if ~any(strcmpi(varargin(1,:), 'CenterMethod'))
            CenterMethod = 'median'; % If not then change default
        end
        % Also check if center width was declared
-       if any(strcmpi(varargin(1,:), 'CenterWidth')) == 0
+       if ~any(strcmpi(varargin(1,:), 'CenterWidth'))
            CenterWidth = DistributionWidth / 3;
        end
     end
@@ -185,7 +185,6 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
              color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth', BackgroundEdgeThickness)
     elseif strcmpi(BackgroundType, 'Box')
-        y_50 = median(y,'omitnan');
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
         patch([x-DistributionWidth*1.1, x-DistributionWidth*1.1, x+DistributionWidth*1.1, x+DistributionWidth*1.1],...
@@ -208,7 +207,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end    
     
     % The point swarm
-    if max_points > 0
+    if MaxPoints > 0
         % Allocate x values to each bin
         [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
         for b = 1:length(bin_prop)
