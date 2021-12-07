@@ -96,6 +96,8 @@ function AlphaLine(x, y, color, varargin)
         y_p1 = prctile(y, Percentiles(1),2);
         y_p2 = prctile(y, Percentiles(2),2);
         y2 = [y_p1; flipud(y_p2)];
+    else
+        error('%s is an unrecognized ErrorType.', ErrorType)
     end
     
     % Check for NaN breaks

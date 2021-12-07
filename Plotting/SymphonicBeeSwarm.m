@@ -28,6 +28,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     
     if all(size(y) > 2)
         error('Y must be a vector')
+    elseif size(y,2) > 1 && size(y,1) == 1
+        y = y';
     end
     
     % Check color input
