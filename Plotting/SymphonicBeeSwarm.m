@@ -208,24 +208,27 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end    
     
     % The point swarm
-    % Allocate x values to each bin
-    [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
-    for b = 1:length(bin_prop)
-        bin_y{b} = y(y > bin_edges(b) & y < bin_edges(b+1));
-        temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
-        bin_x{b} = temp_x(randperm(length(temp_x)));
+    if max_points > 0
+        % Allocate x values to each bin
+        [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
+        for b = 1:length(bin_prop)
+            bin_y{b} = y(y > bin_edges(b) & y < bin_edges(b+1));
+            temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
+            bin_x{b} = temp_x(randperm(length(temp_x)));
+        end
+        
+        scatter_x = vertcat(bin_x{:});
+        scatter_y = vertcat(bin_y{:});
+        % Subsample
+        if MaxPoints < length(scatter_x)
+            rand_idx = randperm(length(scatter_x));
+            scatter_x = scatter_x(rand_idx(1:MaxPoints));
+            scatter_y = scatter_y(rand_idx(1:MaxPoints));
+        end
+
+        scatter(scatter_x+x, scatter_y, point_size, 'MarkerFaceColor', color, 'MarkerEdgeColor', color,...
+            'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha);
     end
-    scatter_x = vertcat(bin_x{:});
-    scatter_y = vertcat(bin_y{:});
-    % Subsample
-    if MaxPoints < length(scatter_x)
-        rand_idx = randperm(length(scatter_x));
-        scatter_x = scatter_x(rand_idx(1:MaxPoints));
-        scatter_y = scatter_y(rand_idx(1:MaxPoints));
-    end
-    
-    scatter(scatter_x+x, scatter_y, point_size, 'MarkerFaceColor', color, 'MarkerEdgeColor', color,...
-        'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha);
     
     % Center line on top if desired
     if isnumeric(CenterColor)
