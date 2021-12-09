@@ -7,7 +7,7 @@ function position = OSScreenSize(FigureSize, Units, MonitorOffset)
     
     if nargin == 1
         MonitorOffset = 0;
-        Units = 'inches';
+        Units = 'cm';
     elseif nargin == 2
         MonitorOffset = 0;
     end
