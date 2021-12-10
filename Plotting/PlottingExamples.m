@@ -34,17 +34,36 @@ SetFont('Arial', 12)
 clf; 
 
 x = [1:10];
-y = repmat([1:10], [5,1]) + randn([5,10]);
+y = repmat([1:10], [100,1]) + randn([100,10])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
-subplot(1,3,1); hold on
+subplot(2,3,1);
 errorbar(x,y_mean,err)
 title('Absolutely Not')
 
-subplot(1,3,2); hold on
+subplot(2,3,2);
 AlphaLine(x,y,lines(1))
 title('So Much Better')
+
+subplot(2,3,3);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+title('Easily control error bounds')
+%%
+% Handles NaNs too
+y(:,[5,10]) = NaN;
+
+subplot(2,3,4);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+title('Will warn if NaNs are present')
+
+subplot(2,3,5);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
+title('Can split lines with NaNs')
+
+subplot(2,3,6);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
+title('Can split lines with NaNs')
 
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF

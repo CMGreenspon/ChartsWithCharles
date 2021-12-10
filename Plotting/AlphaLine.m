@@ -30,6 +30,17 @@ function AlphaLine(x, y, color, varargin)
         end
     end
     
+    % Check for trailing NaNs
+    nan_idx = all(isnan(y),2);
+    if nan_idx(end)
+        warning('Removing trailing NaNs') 
+        while nan_idx(end)
+            x = x(1:end-1);
+            y = y(1:end-1,:);
+            nan_idx = all(isnan(y),2);
+        end
+    end
+    
     % Check color input
     if exist('color', 'var') == 0
         color = [.6 .6 .6];
