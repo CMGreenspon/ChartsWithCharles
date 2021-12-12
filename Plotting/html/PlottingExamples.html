@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PlottingExamples</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-06"><meta name="DC.source" content="PlottingExamples.m"><style type="text/css">
+      --><title>PlottingExamples</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-12"><meta name="DC.source" content="PlottingExamples.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -91,17 +91,39 @@ set(gcf, <span class="string">'Units'</span>, <span class="string">'pixels'</spa
 clf;
 
 x = [1:10];
-y = repmat([1:10], [5,1]) + randn([5,10]);
+y = repmat([1:10], [100,1]) + randn([100,10])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
-subplot(1,3,1); hold <span class="string">on</span>
+subplot(2,3,1);
 errorbar(x,y_mean,err)
 title(<span class="string">'Absolutely Not'</span>)
 
-subplot(1,3,2); hold <span class="string">on</span>
+subplot(2,3,2);
 AlphaLine(x,y,lines(1))
 title(<span class="string">'So Much Better'</span>)
+
+subplot(2,3,3);
+AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
+title(<span class="string">'Easily control error bounds'</span>)
+y(:,[5,10]) = NaN;
+
+subplot(2,3,4);
+AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
+title(<span class="string">'Will warn if NaNs are present'</span>)
+
+subplot(2,3,5);
+AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 1)
+title(<span class="string">'You can ignore them'</span>)
+
+subplot(2,3,6);
+AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 2)
+title(<span class="string">'Or acknowledge them'</span>)
+</pre><pre class="codeoutput">Warning: Removing trailing NaNs 
+Warning: NaNs in Y-array break the fill function. Explore the "IgnoreNan"
+option. 
+Warning: Removing trailing NaNs 
+Warning: Removing trailing NaNs 
 </pre><img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. SymphonicBeeSwarm</h2><p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 clf;
 colors = lines(7);
@@ -113,7 +135,7 @@ SymphonicBeeSwarm(x, y, colors(1,:), 50)
 <span class="comment">% The function also allows for a variety of background plots</span>
 SymphonicBeeSwarm(2, y, colors(2,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Bar'</span>, <span class="string">'CenterColor'</span>, <span class="string">'none'</span>)
 SymphonicBeeSwarm(3, y, colors(3,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Violin'</span>, <span class="string">'CenterColor'</span>, [.6 .6 .6])
-SymphonicBeeSwarm(4, y, colors(4,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Box'</span>)
+SymphonicBeeSwarm(4, y, colors(4,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Box'</span>, <span class="string">'CenterWidth'</span>, .1)
 <span class="comment">% and many many other options</span>
 SymphonicBeeSwarm(5, y, colors(5,:), 50, <span class="string">'CenterMethod'</span>, <span class="string">'median'</span>, <span class="string">'CenterColor'</span>, [.6 .6 .6], <span class="string">'CenterWidth'</span>, .1,<span class="keyword">...</span>
     <span class="string">'DistributionMethod'</span>, <span class="string">'histogram'</span>, <span class="string">'BackgroundType'</span>, <span class="string">'violin'</span>, <span class="string">'BackgroundFaceAlpha'</span>, 0.1, <span class="string">'BackgroundEdgeAlpha'</span>, 1,<span class="keyword">...</span>
@@ -164,17 +186,34 @@ SetFont('Arial', 12)
 clf; 
 
 x = [1:10];
-y = repmat([1:10], [5,1]) + randn([5,10]);
+y = repmat([1:10], [100,1]) + randn([100,10])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
-subplot(1,3,1); hold on
+subplot(2,3,1);
 errorbar(x,y_mean,err)
 title('Absolutely Not')
 
-subplot(1,3,2); hold on
+subplot(2,3,2);
 AlphaLine(x,y,lines(1))
 title('So Much Better')
+
+subplot(2,3,3);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+title('Easily control error bounds')
+y(:,[5,10]) = NaN;
+
+subplot(2,3,4);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+title('Will warn if NaNs are present')
+
+subplot(2,3,5);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
+title('You can ignore them')
+
+subplot(2,3,6);
+AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
+title('Or acknowledge them')
 
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
@@ -189,7 +228,7 @@ SymphonicBeeSwarm(x, y, colors(1,:), 50)
 % The function also allows for a variety of background plots
 SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
 SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
-SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box')
+SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterWidth', .1)
 % and many many other options
 SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
     'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...

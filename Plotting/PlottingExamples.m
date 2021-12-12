@@ -49,8 +49,6 @@ title('So Much Better')
 subplot(2,3,3);
 AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
 title('Easily control error bounds')
-%%
-% Handles NaNs too
 y(:,[5,10]) = NaN;
 
 subplot(2,3,4);
@@ -59,11 +57,11 @@ title('Will warn if NaNs are present')
 
 subplot(2,3,5);
 AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
-title('Can split lines with NaNs')
+title('You can ignore them')
 
 subplot(2,3,6);
 AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
-title('Can split lines with NaNs')
+title('Or acknowledge them')
 
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
