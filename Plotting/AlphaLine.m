@@ -57,7 +57,7 @@ function AlphaLine(x, y, color, varargin)
     LineWidth = 1;
     FaceAlpha = 0.1;
     EdgeAlpha = 0.1;
-    ErrorType = 'SEM';
+    ErrorType = 'STD';
     Percentiles = [25, 75];
     IgnoreNaN = 0;
     PlotBetweenNaN = 1;
