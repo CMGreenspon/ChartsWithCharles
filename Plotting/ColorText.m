@@ -2,6 +2,7 @@ function FormattedText = ColorText(input_text, colors)
     % FormattedText = ColorText(input_text, colors)
     % input text = cell(n,1) with chars in each cell
     % colors = double(n,3) in RGB format with range 0-1
+    % Output: cell array with formatted text. Can then use text(x,y,FormattedText)
         
     if size(input_text,2) > size(input_text,1)
         input_text = input_text';
