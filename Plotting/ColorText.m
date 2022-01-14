@@ -1,4 +1,5 @@
 function FormattedText = ColorText(input_text, colors)
+    % FormattedText = ColorText(input_text, colors)
     % input text = cell(n,1) with chars in each cell
     % colors = double(n,3) in RGB format with range 0-1
         
