@@ -1,6 +1,6 @@
 function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Produces a distribution of points akin to a beeswarm, violin, or box and whisker
-    % SymphonicBeeswarm(x, y, color, point_size, varargin)
+    % SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Only supports a single group at a time as this reduces ambiguity in matrix dimensions.
     % X must be a single value while Y must be a vector
     % Color must be an RGB triplet (0-1 and 0-255 are both supported)
@@ -32,6 +32,15 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         y = y';
     end
     
+    % Remove NaN and Inf
+    if any(isnan(y))
+        y = y(~isnan(y));
+    end
+    
+    if any(y==Inf)
+        y = y(y~=Inf);
+    end
+    
     % Check color input
     if ~all(size(color) == [1,3], 2)
         if all(size(color) == [1,3],2)
@@ -46,6 +55,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
 
     % Set default values
     CenterMethod = 'mean';
+    CenterMethodDefined = 0;
     CenterColor = color;
     CenterWidth = .3;
     CenterThickness = 2;
@@ -68,6 +78,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         for n = 1:nargin
             if strcmpi(varargin{1,n},'CenterMethod')
                 CenterMethod = varargin{2,n};
+                CenterMethodDefined = 1;
             elseif strcmpi(varargin{1,n},'CenterColor')
                 CenterColor = varargin{2,n};
             elseif strcmpi(varargin{1,n},'CenterWidth')
@@ -117,8 +128,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
         h = lillietest(y, 'alpha', .01);
-        if h
+        if h && CenterMethodDefined
             warning('Mean CenterMethod is used but data is not normal')
+        elseif h && ~CenterMethodDefined
+            CenterMethod = 'median';
+            y_central = median(y,'omitnan');
         end
     elseif strcmpi(CenterMethod, 'median')
         y_central = median(y,'omitnan');
