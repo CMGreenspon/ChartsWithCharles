@@ -33,8 +33,8 @@ fprintf('The string "mu" produces %s, while "Mu" produces %s\n', GetUnicodeChar(
 SetFont('Arial', 12)
 clf; 
 
-x = [1:10];
-y = repmat([1:10], [100,1]) + randn([100,10])*2;
+x = [1:20];
+y = repmat([1:20], [100,1]) + randn([100,20])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
@@ -49,7 +49,7 @@ title('So Much Better')
 subplot(2,3,3);
 AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
 title('Easily control error bounds')
-y(:,[5,10]) = NaN;
+y(:,[5,10,11]) = NaN;
 
 subplot(2,3,4);
 AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])

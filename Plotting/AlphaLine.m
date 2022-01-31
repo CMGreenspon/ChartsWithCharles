@@ -32,14 +32,33 @@ function AlphaLine(x, y, color, varargin)
     
     % Check for trailing NaNs
     nan_idx = all(isnan(y),2);
-    if nan_idx(end)
+    if nan_idx(end) || nan_idx(1)
         warning('Removing trailing NaNs') 
+    end
+    if nan_idx(end)
         while nan_idx(end)
             x = x(1:end-1);
             y = y(1:end-1,:);
             nan_idx = all(isnan(y),2);
         end
     end
+    if nan_idx(1)
+        while nan_idx(1)
+            x = x(2:end);
+            y = y(2:end,:);
+            nan_idx = all(isnan(y),2);
+        end
+    end
+    
+    % Check for sequential NaNs
+    filt_idx = ones([length(x),1]);
+    for i = 1:length(x)
+        if nan_idx(i) && nan_idx(i+1)
+            filt_idx(i+1) = 0;
+        end
+    end
+    x = x(logical(filt_idx));
+    y = y(logical(filt_idx),:);
     
     % Check color input
     if exist('color', 'var') == 0
@@ -124,6 +143,7 @@ function AlphaLine(x, y, color, varargin)
        elseif IgnoreNaN == 2 % Make a separate line for each section
            nan_idx = find(isnan(y_central));
            num_plot_sections = length(nan_idx) + 1;
+           % Error bounds
            y_temp = [y2(1:length(y2)/2), flipud(y2(length(y2)/2+1:end))];
            for n = 1:num_plot_sections
                if n == 1
@@ -137,9 +157,9 @@ function AlphaLine(x, y, color, varargin)
                    y2_error = y_temp(nan_idx(n-1)+1:end, :);
                    y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
                else
-                   x2 = x(nan_idx(n):nan_idx(n+1));
-                   y2_central = y_central(nan_idx(n):nan_idx(n+1));
-                   y2_error = y_temp(nan_idx(n):nan_idx(n+1), :);
+                   x2 = x(nan_idx(n-1)+1:nan_idx(n)-1);
+                   y2_central = y_central(nan_idx(n-1)+1:nan_idx(n)-1);
+                   y2_error = y_temp(nan_idx(n-1)+1:nan_idx(n)-1, :);
                    y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
                end
                PlotAlphaLine(x2, y2_central, y2_error)
