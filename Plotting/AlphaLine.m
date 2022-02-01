@@ -30,9 +30,10 @@ function AlphaLine(x, y, color, varargin)
         end
     end
     
-    % Check for trailing NaNs
+    % Nan checking
     nan_idx = all(isnan(y),2);
     if ~isempty(nan_idx)
+        % Check for trailing NaNs
         if nan_idx(end) || nan_idx(1)
             warning('Removing trailing NaNs') 
         end
