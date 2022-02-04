@@ -83,6 +83,7 @@ function AlphaLine(x, y, color, varargin)
     Percentiles = [25, 75];
     IgnoreNaN = 0;
     PlotBetweenNaN = 1;
+    LineStyle = '-';
     hold on
         
     % Check varargin
@@ -104,6 +105,8 @@ function AlphaLine(x, y, color, varargin)
                 IgnoreNaN = varargin{2,n};
             elseif strcmpi(varargin{1,n},'PlotBetweenNaN')
                 PlotBetweenNaN = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'LineStyle')
+                LineStyle = varargin{2,n};
             else
                 error('%s is an unrecognized input.', varargin{1,n})
             end
@@ -167,8 +170,13 @@ function AlphaLine(x, y, color, varargin)
                end
                PlotAlphaLine(x2, y2_central, y2_error)
                if PlotBetweenNaN && n < num_plot_sections
+                   if strcmp(LineStyle, '--')
+                       LineStyle2 = ':';
+                   else
+                       LineStyle2 = '--';
+                   end
                   plot([x(nan_idx(n)-1), x(nan_idx(n)+1)], [y_central(nan_idx(n)-1), y_central(nan_idx(n)+1)],...
-                      'color', color, 'LineStyle', '--')
+                      'color', color, 'LineStyle', LineStyle2)
                end
            end
        end
@@ -180,6 +188,6 @@ function AlphaLine(x, y, color, varargin)
         % Error
         fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha', FaceAlpha, 'EdgeAlpha', EdgeAlpha)
         % Mean
-        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth)
+        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle', LineStyle)
     end
 end
