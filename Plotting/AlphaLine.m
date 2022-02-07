@@ -99,6 +99,10 @@ function AlphaLine(x, y, color, varargin)
                 EdgeAlpha = varargin{2,n};
             elseif strcmpi(varargin{1,n},'ErrorType')
                 ErrorType = varargin{2,n};
+                % Make this call a little more flexible
+                if strcmpi(ErrorType, 'Percentiles')
+                   ErrorType = 'Percentile';
+                end
             elseif strcmpi(varargin{1,n},'Percentiles')
                 Percentiles = varargin{2,n};
             elseif strcmpi(varargin{1,n},'IgnoreNaN')
