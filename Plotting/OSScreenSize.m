@@ -1,9 +1,13 @@
 function position = OSScreenSize(FigureSize, Units, MonitorOffset)
     % Uses the screens pixel density to make figures of an exact size
-    % position = OSScreenSize(FigureSize, MonitorOffset, Units)
+    % position = OSScreenSize(FigureSize, Units, MonitorOffset)
+    % The returned value [x,y,h,w] is in pixels adjusted for the screen
+    % size. Therefor, to pass this to Matlab via the below function
     % set(gcf, 'Units', 'pixels', 'Position', OSScreenSize(fig_size));
     % Accepts FigureSize in either ('Inches'/'in'), or ('Centimeters'/'cm')
-    % 
+    % For multi-monitor support an integer may be passed to offset to a
+    % desired monitor. 1 = 1 monitor rightward, -1 = 1 monitor leftward.
+    % set(gcf, 'Units', 'pixels', 'Position', OSScreenSize(fig_size, 'cm', 1));
     
     if nargin == 1
         MonitorOffset = 0;
