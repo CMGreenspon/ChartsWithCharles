@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PlottingExamples</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-12"><meta name="DC.source" content="PlottingExamples.m"><style type="text/css">
+      --><title>PlottingExamples</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-02-10"><meta name="DC.source" content="PlottingExamples.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -67,31 +67,30 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Example scripts for plotting functions</a></li><li><a href="#2">1. SetFont</a></li><li><a href="#3">2. GetUnicodeChar</a></li><li><a href="#4">3. AlphaLine</a></li><li><a href="#5">4. SymphonicBeeSwarm</a></li></ul></div><h2 id="1">Example scripts for plotting functions</h2><h2 id="2">1. SetFont</h2><p>This function allows for globally setting all typefaces and fontsizes in one call. Note that the SetFont must be run at the beginning of the script (or in this case before the axes are created)</p><pre class="codeinput">figure;
+  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Example scripts for plotting functions</a></li><li><a href="#2">1. SetFont</a></li><li><a href="#3">2. GetUnicodeChar</a></li><li><a href="#4">3. AlphaLine</a></li><li><a href="#5">4. SymphonicBeeSwarm</a></li><li><a href="#6">5. ColorText</a></li></ul></div><h2 id="1">Example scripts for plotting functions</h2><h2 id="2">1. SetFont</h2><p>This function allows for globally setting all typefaces and fontsizes in one call. Note that the SetFont must be run at the beginning of the script (or in this case before the axes are created)</p><pre class="codeinput">figure;
 SetFont(<span class="string">'Arial'</span>, 9)
 subplot(1,3,1); hold <span class="string">on</span>
-plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
-title(<span class="string">'Arial is fine'</span>)
+    plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
+    title(<span class="string">'Arial is fine'</span>)
 
 SetFont(<span class="string">'Papyrus'</span>, 15)
 subplot(1,3,2); hold <span class="string">on</span>
-plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
-title(<span class="string">'Papyrus is not'</span>)
+    plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
+    title(<span class="string">'Papyrus is not'</span>)
 
 SetFont(<span class="string">'Monospaced'</span>, 9)
 subplot(1,3,3); hold <span class="string">on</span>
-plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
-title(<span class="string">'Serifs are bad'</span>)
+    plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
+    title(<span class="string">'Serifs are bad'</span>)
 
-<span class="comment">%set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')</span>
 set(gcf, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="string">'Position'</span>, OSScreenSize([30, 10], <span class="string">'cm'</span>, 1));
 </pre><img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2><p>Many figures require Greek letters to be used as notation (eg. mu, sigma) This function allows for them to be easily made and in some cases will be supported by the typeface used</p><pre class="codeinput">fprintf(<span class="string">'The string "mu" produces %s, while "Mu" produces %s\n'</span>, GetUnicodeChar(<span class="string">'mu'</span>), GetUnicodeChar(<span class="string">'Mu'</span>))
 </pre><pre class="codeoutput">The string "mu" produces &#956;, while "Mu" produces &#924;
 </pre><h2 id="4">3. AlphaLine</h2><p>Quite simply the standard stalks for error bars are ugly, don't use them.</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 clf;
 
-x = [1:10];
-y = repmat([1:10], [100,1]) + randn([100,10])*2;
+x = [1:20];
+y = repmat([1:20], [100,1]) + randn([100,20])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
@@ -100,30 +99,27 @@ errorbar(x,y_mean,err)
 title(<span class="string">'Absolutely Not'</span>)
 
 subplot(2,3,2);
-AlphaLine(x,y,lines(1))
-title(<span class="string">'So Much Better'</span>)
+    AlphaLine(x,y,lines(1))
+    title(<span class="string">'So Much Better'</span>)
 
 subplot(2,3,3);
-AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
-title(<span class="string">'Easily control error bounds'</span>)
-y(:,[5,10]) = NaN;
+    AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
+    title(<span class="string">'Easily control error bounds'</span>)
+    y(:,[5,10,11]) = NaN;
 
 subplot(2,3,4);
-AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
-title(<span class="string">'Will warn if NaNs are present'</span>)
+    AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95])
+    title(<span class="string">'Will warn if NaNs are present'</span>)
 
 subplot(2,3,5);
-AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 1)
-title(<span class="string">'You can ignore them'</span>)
+    AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 1)
+    title(<span class="string">'You can ignore them'</span>)
 
 subplot(2,3,6);
-AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 2)
-title(<span class="string">'Or acknowledge them'</span>)
-</pre><pre class="codeoutput">Warning: Removing trailing NaNs 
-Warning: NaNs in Y-array break the fill function. Explore the "IgnoreNan"
+    AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 2)
+    title(<span class="string">'Or acknowledge them'</span>)
+</pre><pre class="codeoutput">Warning: NaNs in Y-array break the fill function. Explore the "IgnoreNan"
 option. 
-Warning: Removing trailing NaNs 
-Warning: Removing trailing NaNs 
 </pre><img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. SymphonicBeeSwarm</h2><p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 clf;
 colors = lines(7);
@@ -148,7 +144,37 @@ SymphonicBeeSwarm(7, y, colors(7,:), 50, <span class="string">'BackgroundType'</
     <span class="string">'MarkerFaceAlpha'</span>, 1, <span class="string">'MarkerEdgeAlpha'</span>, 1, <span class="string">'BoxPercentiles'</span>, [5,25,75,95], <span class="string">'MaxPoints'</span>, 0)
 xticks([1:7]);
 xticklabels({<span class="string">'Default'</span>, <span class="string">'+Bar'</span>, <span class="string">'+Violin'</span>, <span class="string">'+Box'</span>, <span class="string">'ViolinOnly'</span>, <span class="string">'BarOnly'</span>, <span class="string">'BoxOnly'</span>})
-</pre><img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <h2 id="6">5. ColorText</h2><p>A convenient way of color coding text to replace legends</p><pre class="codeinput">clf;
+subplot(1,3,1); hold <span class="string">on</span>
+    title(<span class="string">'The Matlab default'</span>)
+    <span class="keyword">for</span> i = 1:3
+        plot([1,5], [1,i])
+    <span class="keyword">end</span>
+    xlim([0 6]); ylim([0 4])
+    legend <span class="string">1</span> <span class="string">2</span> <span class="string">3</span>
+    yticks([0:4])
+
+colors = lines(3);
+subplot(1,3,2); hold <span class="string">on</span>
+    title(<span class="string">'doesn''t work with AlphaLine'</span>)
+    <span class="keyword">for</span> i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    <span class="keyword">end</span>
+    xlim([0 6]); ylim([0 4])
+    legend <span class="string">1</span> <span class="string">2</span> <span class="string">3</span>
+    yticks([0:4])
+
+subplot(1,3,3); hold <span class="string">on</span>
+    title(<span class="string">'but it''s ugly so who cares'</span>)
+    <span class="keyword">for</span> i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    <span class="keyword">end</span>
+    xlim([0 6]); ylim([0 4])
+    leg_text = ColorText({<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>}, colors);
+    text(5,4, leg_text, <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>,<span class="keyword">...</span>
+        <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>)
+    yticks([0:4])
+</pre><img vspace="5" hspace="5" src="PlottingExamples_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %%% Example scripts for plotting functions
 %% 1. SetFont
@@ -158,20 +184,19 @@ xticklabels({<span class="string">'Default'</span>, <span class="string">'+Bar'<
 figure; 
 SetFont('Arial', 9)
 subplot(1,3,1); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Arial is fine')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Arial is fine')
 
 SetFont('Papyrus', 15)
 subplot(1,3,2); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Papyrus is not')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Papyrus is not')
 
 SetFont('Monospaced', 9)
 subplot(1,3,3); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Serifs are bad')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Serifs are bad')
 
-%set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
 set(gcf, 'Units', 'pixels', 'Position', OSScreenSize([30, 10], 'cm', 1));
 
 %% 2. GetUnicodeChar
@@ -185,8 +210,8 @@ fprintf('The string "mu" produces %s, while "Mu" produces %s\n', GetUnicodeChar(
 SetFont('Arial', 12)
 clf; 
 
-x = [1:10];
-y = repmat([1:10], [100,1]) + randn([100,10])*2;
+x = [1:20];
+y = repmat([1:20], [100,1]) + randn([100,20])*2;
 y_mean = mean(y,1);
 err = std(y,1,1) / sqrt(5);
 
@@ -195,25 +220,25 @@ errorbar(x,y_mean,err)
 title('Absolutely Not')
 
 subplot(2,3,2);
-AlphaLine(x,y,lines(1))
-title('So Much Better')
+    AlphaLine(x,y,lines(1))
+    title('So Much Better')
 
 subplot(2,3,3);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
-title('Easily control error bounds')
-y(:,[5,10]) = NaN;
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+    title('Easily control error bounds')
+    y(:,[5,10,11]) = NaN;
 
 subplot(2,3,4);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
-title('Will warn if NaNs are present')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+    title('Will warn if NaNs are present')
 
 subplot(2,3,5);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
-title('You can ignore them')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
+    title('You can ignore them')
 
 subplot(2,3,6);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
-title('Or acknowledge them')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
+    title('Or acknowledge them')
 
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
@@ -241,5 +266,66 @@ SymphonicBeeSwarm(7, y, colors(7,:), 50, 'BackgroundType', 'box', 'BackgroundFac
     'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [5,25,75,95], 'MaxPoints', 0)
 xticks([1:7]);
 xticklabels({'Default', '+Bar', '+Violin', '+Box', 'ViolinOnly', 'BarOnly', 'BoxOnly'})
+
+%% 5. ColorText
+% A convenient way of color coding text to replace legends
+clf;
+subplot(1,3,1); hold on
+    title('The Matlab default')
+    for i = 1:3
+        plot([1,5], [1,i])
+    end
+    xlim([0 6]); ylim([0 4])
+    legend 1 2 3
+    yticks([0:4])
+
+colors = lines(3);    
+subplot(1,3,2); hold on
+    title('doesn''t work with AlphaLine')
+    for i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    end
+    xlim([0 6]); ylim([0 4])
+    legend 1 2 3
+    yticks([0:4])
+
+subplot(1,3,3); hold on
+    title('but it''s ugly so who cares')
+    for i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    end
+    xlim([0 6]); ylim([0 4])
+    leg_text = ColorText({'1', '2', '3'}, colors);
+    text(5,4, leg_text, 'VerticalAlignment', 'top',...
+        'HorizontalAlignment','right')
+    yticks([0:4])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##### SOURCE END #####
 --></body></html>

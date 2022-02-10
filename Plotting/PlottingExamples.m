@@ -6,20 +6,19 @@
 figure; 
 SetFont('Arial', 9)
 subplot(1,3,1); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Arial is fine')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Arial is fine')
 
 SetFont('Papyrus', 15)
 subplot(1,3,2); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Papyrus is not')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Papyrus is not')
 
 SetFont('Monospaced', 9)
 subplot(1,3,3); hold on
-plot([1:10], [1:10], 'LineWidth', 2)
-title('Serifs are bad')
+    plot([1:10], [1:10], 'LineWidth', 2)
+    title('Serifs are bad')
 
-%set(gcf, 'Units', 'Normalized', 'Position', [.3 .4 .4 .2], 'Name', 'Plotting Example')
 set(gcf, 'Units', 'pixels', 'Position', OSScreenSize([30, 10], 'cm', 1));
 
 %% 2. GetUnicodeChar
@@ -43,25 +42,25 @@ errorbar(x,y_mean,err)
 title('Absolutely Not')
 
 subplot(2,3,2);
-AlphaLine(x,y,lines(1))
-title('So Much Better')
+    AlphaLine(x,y,lines(1))
+    title('So Much Better')
 
 subplot(2,3,3);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
-title('Easily control error bounds')
-y(:,[5,10,11]) = NaN;
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+    title('Easily control error bounds')
+    y(:,[5,10,11]) = NaN;
 
 subplot(2,3,4);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
-title('Will warn if NaNs are present')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95])
+    title('Will warn if NaNs are present')
 
 subplot(2,3,5);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
-title('You can ignore them')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 1)
+    title('You can ignore them')
 
 subplot(2,3,6);
-AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
-title('Or acknowledge them')
+    AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
+    title('Or acknowledge them')
 
 %% 4. SymphonicBeeSwarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
@@ -89,3 +88,63 @@ SymphonicBeeSwarm(7, y, colors(7,:), 50, 'BackgroundType', 'box', 'BackgroundFac
     'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [5,25,75,95], 'MaxPoints', 0)
 xticks([1:7]);
 xticklabels({'Default', '+Bar', '+Violin', '+Box', 'ViolinOnly', 'BarOnly', 'BoxOnly'})
+
+%% 5. ColorText
+% A convenient way of color coding text to replace legends
+clf;
+subplot(1,3,1); hold on
+    title('The Matlab default')
+    for i = 1:3
+        plot([1,5], [1,i])
+    end
+    xlim([0 6]); ylim([0 4])
+    legend 1 2 3
+    yticks([0:4])
+
+colors = lines(3);    
+subplot(1,3,2); hold on
+    title('doesn''t work with AlphaLine')
+    for i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    end
+    xlim([0 6]); ylim([0 4])
+    legend 1 2 3
+    yticks([0:4])
+
+subplot(1,3,3); hold on
+    title('but it''s ugly so who cares')
+    for i = 1:3
+        AlphaLine([1,5], [1,i], colors(i,:))
+    end
+    xlim([0 6]); ylim([0 4])
+    leg_text = ColorText({'1', '2', '3'}, colors);
+    text(5,4, leg_text, 'VerticalAlignment', 'top',...
+        'HorizontalAlignment','right')
+    yticks([0:4])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
