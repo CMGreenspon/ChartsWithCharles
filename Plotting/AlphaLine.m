@@ -84,6 +84,7 @@ function AlphaLine(x, y, color, varargin)
     IgnoreNaN = 0;
     PlotBetweenNaN = 1;
     LineStyle = '-';
+    EdgeStyle = '-';
     Parent = gca;
     hold on
         
@@ -112,6 +113,8 @@ function AlphaLine(x, y, color, varargin)
                 PlotBetweenNaN = varargin{2,n};
             elseif strcmpi(varargin{1,n},'LineStyle')
                 LineStyle = varargin{2,n};
+            elseif strcmpi(varargin{1,n},'EdgeStyle')
+                EdgeStyle = varargin{2,n};
             elseif strcmpi(varargin{1,n},'Parent')
                 Parent = varargin{2,n};
             else
@@ -193,8 +196,10 @@ function AlphaLine(x, y, color, varargin)
     
     function PlotAlphaLine(x2, y2_central, y2_error)
         % Error
-        fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha', FaceAlpha, 'EdgeAlpha', EdgeAlpha, 'Parent', Parent)
+        fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha',...
+            FaceAlpha, 'EdgeAlpha', EdgeAlpha, 'LineStyle', EdgeStyle, 'Parent', Parent)
         % Mean
-        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle', LineStyle, 'Parent', Parent)
+        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle',...
+            LineStyle, 'Parent', Parent)
     end
 end
