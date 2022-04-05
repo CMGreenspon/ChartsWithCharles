@@ -19,10 +19,12 @@ function position = OSScreenSize(FigureSize, Units, MonitorOffset)
     % Get pixels per unit
     monitor_info = get(0);
     screen_pixels = monitor_info.ScreenSize(3:4);
+    %PixelsPerInch = monitor_info.ScreenPixelsPerInch;
+    PixelsPerInch = 123.7; % Matlab doesn't always pull the correct value so can manually overwrite if necessary
     if any(strcmpi(Units, {'Inches', 'in'}))
-        ppu = monitor_info.ScreenPixelsPerInch;
+        ppu = PixelsPerInch;
     elseif any(strcmpi(Units, {'Centimeters', 'cm'}))
-        ppu = monitor_info.ScreenPixelsPerInch / 2.54;
+        ppu = PixelsPerInch / 2.54;
     end
     % Determine figure size in pixels
     FigureSize_pixels = FigureSize .* ppu;

@@ -32,7 +32,10 @@ function AlphaLine(x, y, color, varargin)
     
     % Nan checking
     nan_idx = all(isnan(y),2);
-    if ~isempty(nan_idx)
+    if all(nan_idx)
+        warning('Y only contains NaNs.')
+        return
+    elseif ~isempty(nan_idx)
         % Check for trailing NaNs
         if nan_idx(end) || nan_idx(1)
             warning('Removing trailing NaNs') 
@@ -86,43 +89,10 @@ function AlphaLine(x, y, color, varargin)
     LineStyle = '-';
     EdgeStyle = '-';
     Parent = gca;
-    hold on
         
     % Check varargin
-    if isempty(varargin) == 0
-        nargin = ceil(length(varargin)/2);
-        varargin = reshape(varargin, [2, nargin]);
-        for n = 1:nargin
-            if strcmpi(varargin{1,n},'LineWidth')
-                LineWidth = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'FaceAlpha')
-                FaceAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'EdgeAlpha')
-                EdgeAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'ErrorType')
-                ErrorType = varargin{2,n};
-                % Make this call a little more flexible
-                if strcmpi(ErrorType, 'Percentiles')
-                   ErrorType = 'Percentile';
-                end
-            elseif strcmpi(varargin{1,n},'Percentiles')
-                Percentiles = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'IgnoreNaN')
-                IgnoreNaN = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'PlotBetweenNaN')
-                PlotBetweenNaN = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'LineStyle')
-                LineStyle = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'EdgeStyle')
-                EdgeStyle = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'Parent')
-                Parent = varargin{2,n};
-            else
-                error('%s is an unrecognized input.', varargin{1,n})
-            end
-        end
-    end
-    
+    ParseVarargin() 
+    hold(Parent, 'on')
     
     % Compute mean
     if strcmpi(ErrorType, 'Percentile')
@@ -201,5 +171,42 @@ function AlphaLine(x, y, color, varargin)
         % Mean
         plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle',...
             LineStyle, 'Parent', Parent)
+    end
+
+    % Function for parsing varagin (just at end for tidyness)
+    function ParseVarargin()
+        if isempty(varargin) == 0
+            nargin = ceil(length(varargin)/2);
+            varargin = reshape(varargin, [2, nargin]);
+            for n = 1:nargin
+                if strcmpi(varargin{1,n},'LineWidth')
+                    LineWidth = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'FaceAlpha')
+                    FaceAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'EdgeAlpha')
+                    EdgeAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'ErrorType')
+                    ErrorType = varargin{2,n};
+                    % Make this call a little more flexible
+                    if strcmpi(ErrorType, 'Percentiles')
+                       ErrorType = 'Percentile';
+                    end
+                elseif strcmpi(varargin{1,n},'Percentiles')
+                    Percentiles = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'IgnoreNaN')
+                    IgnoreNaN = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'PlotBetweenNaN')
+                    PlotBetweenNaN = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'LineStyle')
+                    LineStyle = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'EdgeStyle')
+                    EdgeStyle = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'Parent')
+                    Parent = varargin{2,n};
+                else
+                    error('%s is an unrecognized input.', varargin{1,n})
+                end
+            end
+        end
     end
 end

@@ -73,48 +73,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     MaxPoints = 100;
     
     % Check varargin
-    if ~isempty(varargin)
-        nargin = ceil(length(varargin)/2);
-        varargin = reshape(varargin, [2, nargin]);
-        for n = 1:nargin
-            if strcmpi(varargin{1,n},'CenterMethod')
-                CenterMethod = varargin{2,n};
-                CenterMethodDefined = 1;
-            elseif strcmpi(varargin{1,n},'CenterColor')
-                CenterColor = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'CenterWidth')
-                CenterWidth = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'CenterThickness')
-                CenterThickness = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackgroundType')
-                BackgroundType = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackgroundWidth')
-                BackgroundWidth = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackgroundFaceAlpha')
-                BackgroundFaceAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackgroundEdgeAlpha')
-                BackgroundEdgeAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BackgroundEdgeThickness')
-                BackgroundEdgeThickness = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'MarkerFaceAlpha')
-                MarkerFaceAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'MarkerEdgeAlpha')
-                MarkerEdgeAlpha = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'BoxPercentiles')
-                BoxPercentiles = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'DistributionMethod')
-                DistributionMethod = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'DistributionWidth')
-                DistributionWidth = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'MaxPoints')
-                MaxPoints = varargin{2,n};
-            elseif strcmpi(varargin{1,n},'Parent')
-                Parent = varargin{2,n};
-            else
-                error('%s is an unrecognized input.', varargin{1,n})
-            end
-        end
-    end
+    ParseVarargin()
+    hold(Parent, 'on')
     
     % In the case of box and whisker 
     if strcmpi(BackgroundType, 'Box')
@@ -153,13 +113,16 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         bin_edges = bin_points - (range(bin_points(1:2))/2);
         bin_edges = [bin_edges, bin_points(end) + (range(bin_points(1:2))/2)];
         proportional_bins = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+    
+    elseif strcmpi(DistributionMethod, 'none')
+        scatter_x = zeros([length(y),1]);
+        scatter_y = y;
         
     else
         error('%s is an unrecognized distribution method.', DistributionMethod)
     end
     
     % Background
-    hold on
     if strcmpi(BackgroundType, 'Bar')
         % Simple bar to the central value
         patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
@@ -231,16 +194,22 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     
     % The point swarm
     if MaxPoints > 0
-        % Allocate x values to each bin
-        [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
-        for b = 1:length(bin_prop)
-            bin_y{b} = y(y > bin_edges(b) & y < bin_edges(b+1));
-            temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
-            bin_x{b} = temp_x(randperm(length(temp_x)));
+        if strcmpi(DistributionMethod, 'Histogram') || strcmpi(DistributionMethod, 'KernelDensity')
+            % Allocate x values to each bin
+            [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
+            for b = 1:length(bin_prop)
+                bin_y{b} = y(y > bin_edges(b) & y <= bin_edges(b+1));
+                if b == 1 && any(y == bin_edges(b)) % Make sure the first edge doesn't get skipped
+                    bin_y{b} = [bin_y{b}, y(y==b)];
+                end
+                temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
+                bin_x{b} = temp_x(randperm(length(temp_x)));
+            end
+
+            scatter_x = vertcat(bin_x{:});
+            scatter_y = vertcat(bin_y{:});
         end
         
-        scatter_x = vertcat(bin_x{:});
-        scatter_y = vertcat(bin_y{:});
         % Subsample
         if MaxPoints < length(scatter_x)
             rand_idx = randperm(length(scatter_x));
@@ -257,5 +226,50 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         plot([x-CenterWidth, x+CenterWidth], [y_central, y_central],...
             'Color' , CenterColor, 'LineWidth', CenterThickness, 'Parent', Parent)
     end
-
+    
+    % Function for parsing varagin (just at end for tidyness)
+    function ParseVarargin()
+        if ~isempty(varargin)
+            nargin = ceil(length(varargin)/2);
+            varargin = reshape(varargin, [2, nargin]);
+            for n = 1:nargin
+                if strcmpi(varargin{1,n},'CenterMethod')
+                    CenterMethod = varargin{2,n};
+                    CenterMethodDefined = 1;
+                elseif strcmpi(varargin{1,n},'CenterColor')
+                    CenterColor = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'CenterWidth')
+                    CenterWidth = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'CenterThickness')
+                    CenterThickness = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundType')
+                    BackgroundType = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundWidth')
+                    BackgroundWidth = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundFaceAlpha')
+                    BackgroundFaceAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundEdgeAlpha')
+                    BackgroundEdgeAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundEdgeThickness')
+                    BackgroundEdgeThickness = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'MarkerFaceAlpha')
+                    MarkerFaceAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'MarkerEdgeAlpha')
+                    MarkerEdgeAlpha = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BoxPercentiles')
+                    BoxPercentiles = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'DistributionMethod')
+                    DistributionMethod = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'DistributionWidth')
+                    DistributionWidth = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'MaxPoints')
+                    MaxPoints = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'Parent')
+                    Parent = varargin{2,n};
+                else
+                    error('%s is an unrecognized input.', varargin{1,n})
+                end
+            end
+        end
+    end
 end
