@@ -1,0 +1,23 @@
+{
+  "_schemaVersion": "1.0.0",
+  "SetFont":
+  {
+     "inputs":
+     [
+        {"name":"typeface", "kind":"required", "type":["char"]},
+        {"name":"fontsize", "kind":"required", "type":["numeric"]}
+     ]
+  },
+
+  "SymphonicBeeSwarm":
+  {
+     "inputs":
+     [
+        {"name":"x", "kind":"required", "type":["numeric"]},
+        {"name":"y", "kind":"required", "type":["numeric"]},
+        {"name":"color", "kind":"required", "type":["numeric"],"purpose":"[1x3] color matrix"},
+        {"name":"point_size", "kind":"required", "type":["numeric"]},
+        {"name":"varargin", "kind":"required", "type":["char", "choices={'CenterMethod','CenterColor','CenterWidth','CenterThickness','DistributionMethod','DistributionWidth','BackgroundType','BackgroundWidth','MarkerFaceAlpha','MarkerEdgeAlpha','BackgroundFaceAlpha', 'BackgroundEdgeAlpha','BackgroundEdgeThickness', 'BoxPercentiles', 'MaxPoints'}"]}
+     ]
+  }
+}
