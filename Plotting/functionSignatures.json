@@ -4,8 +4,8 @@
   {
      "inputs":
      [
-        {"name":"typeface", "kind":"required", "type":["char"]},
-        {"name":"fontsize", "kind":"required", "type":["numeric"]}
+        {"name":"typeface", "kind":"required", "type":["char", "choices= {'Arial', 'Calibri', 'RobotoMono'}"], "purpose":"Name of typeface"},
+        {"name":"fontsize", "kind":"required", "type":["numeric"], "purpose":"Size of typeface"}
      ]
   },
 
@@ -17,7 +17,12 @@
         {"name":"y", "kind":"required", "type":["numeric"]},
         {"name":"color", "kind":"required", "type":["numeric"],"purpose":"[1x3] color matrix"},
         {"name":"point_size", "kind":"required", "type":["numeric"]},
-        {"name":"varargin", "kind":"required", "type":["char", "choices={'CenterMethod','CenterColor','CenterWidth','CenterThickness','DistributionMethod','DistributionWidth','BackgroundType','BackgroundWidth','MarkerFaceAlpha','MarkerEdgeAlpha','BackgroundFaceAlpha', 'BackgroundEdgeAlpha','BackgroundEdgeThickness', 'BoxPercentiles', 'MaxPoints'}"]}
+        {"name":"BackgroundType", "kind":"namevalue", "type":["char", "choices={'none', 'violin', 'bar', 'box'}"]},
+        {"name":"BoxPercentiles", "kind":"namevalue", "type":["numeric", "choices={'[5 25 75 95]'}"]},
+        {"name":"CenterColor", "kind":"namevalue", "type":["numeric", "choices={'[.6 .6 .6]', '[1 .6 .6]', '[.6 1 .6]', '[.6 .6 1]'}"]},
+        {"name":"CenterMethod", "kind":"namevalue", "type":["char", "choices={'mean', 'median', 'none'}"]},
+        {"name":"DistributionMethod", "kind":"namevalue", "type":["char", "choices={'Histogram', 'KernelDensity'}"]},
+        {"name":"MaxPoints", "kind":"namevalue", "type":["numeric"]}
      ]
   }
 }
