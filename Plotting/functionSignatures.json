@@ -13,16 +13,32 @@
   {
      "inputs":
      [
-        {"name":"x", "kind":"required", "type":["numeric"]},
-        {"name":"y", "kind":"required", "type":["numeric"]},
-        {"name":"color", "kind":"required", "type":["numeric"],"purpose":"[1x3] color matrix"},
-        {"name":"point_size", "kind":"required", "type":["numeric"]},
-        {"name":"BackgroundType", "kind":"namevalue", "type":["char", "choices={'none', 'violin', 'bar', 'box'}"]},
-        {"name":"BoxPercentiles", "kind":"namevalue", "type":["numeric", "choices={'[5 25 75 95]'}"]},
-        {"name":"CenterColor", "kind":"namevalue", "type":["numeric", "choices={'[.6 .6 .6]', '[1 .6 .6]', '[.6 1 .6]', '[.6 .6 1]'}"]},
+        {"name":"x", "kind":"required", "type":["numel=1"],"purpose":"x-value"},
+        {"name":"y", "kind":"required", "type":["vector"], "purpose":"y-values"},
+        {"name":"color", "kind":"required", "type":["vector"],"purpose":"[1x3] color vector"},
+        {"name":"point_size", "kind":"required", "type":["integer", "numel=1"], "purpose":"size of scatter objects"},
+        {"name":"BackgroundType", "kind":"namevalue", "type":["char", "choices={'none', 'violin', 'bar', 'box'}"], "purpose":"Background type"},
+        {"name":"BoxPercentiles", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', '4-element vector'}"], "purpose":"Error type"},
+        {"name":"CenterColor", "kind":"namevalue", "type":["numeric"]},
         {"name":"CenterMethod", "kind":"namevalue", "type":["char", "choices={'mean', 'median', 'none'}"]},
         {"name":"DistributionMethod", "kind":"namevalue", "type":["char", "choices={'Histogram', 'KernelDensity'}"]},
         {"name":"MaxPoints", "kind":"namevalue", "type":["numeric"]}
+     ]
+  },
+
+  "AlphaLine":
+  {
+     "inputs":
+     [
+        {"name":"x", "kind":"required", "type":["vector"],"purpose":"x-values"},
+        {"name":"y", "kind":"required", "type":["vector"], "purpose":"y-values"},
+        {"name":"color", "kind":"required", "type":["vector"],"purpose":"[1x3] color vector"},
+        {"name":"LineWidth", "kind":"namevalue", "type":["scalar"], "purpose":"Line width"},
+        {"name":"LineStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle"},
+        {"name":"FaceAlpha", "kind":"namevalue", "type":["numeric"]},
+        {"name":"ErrorType", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', 'Percentile'}"]},
+        {"name":"IgnoreNaN", "kind":"namevalue", "type":["numeric"]},
+        {"name":"ScatterOverlay", "kind":"namevalue", "type":["logical"]}
      ]
   }
 }

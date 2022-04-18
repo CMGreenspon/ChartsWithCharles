@@ -178,31 +178,31 @@ function AlphaLine(x, y, color, varargin)
         if isempty(varargin) == 0
             nargin = ceil(length(varargin)/2);
             varargin = reshape(varargin, [2, nargin]);
-            for n = 1:nargin
-                if strcmpi(varargin{1,n},'LineWidth')
-                    LineWidth = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'FaceAlpha')
-                    FaceAlpha = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'EdgeAlpha')
-                    EdgeAlpha = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'ErrorType')
-                    ErrorType = varargin{2,n};
+            for na = 1:nargin
+                if strcmpi(varargin{1,na},'LineWidth')
+                    LineWidth = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'FaceAlpha')
+                    FaceAlpha = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'EdgeAlpha')
+                    EdgeAlpha = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'ErrorType')
+                    ErrorType = varargin{2,na};
                     % Make this call a little more flexible
                     if strcmpi(ErrorType, 'Percentiles')
                        ErrorType = 'Percentile';
                     end
-                elseif strcmpi(varargin{1,n},'Percentiles')
-                    Percentiles = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'IgnoreNaN')
-                    IgnoreNaN = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'PlotBetweenNaN')
-                    PlotBetweenNaN = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'LineStyle')
-                    LineStyle = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'EdgeStyle')
-                    EdgeStyle = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'Parent')
-                    Parent = varargin{2,n};
+                elseif strcmpi(varargin{1,na},'Percentiles')
+                    Percentiles = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'IgnoreNaN')
+                    IgnoreNaN = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'PlotBetweenNaN')
+                    PlotBetweenNaN = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'LineStyle')
+                    LineStyle = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'EdgeStyle')
+                    EdgeStyle = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'Parent')
+                    Parent = varargin{2,na};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end

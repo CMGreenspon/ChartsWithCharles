@@ -255,7 +255,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                 elseif strcmpi(varargin{1,n},'MarkerFaceAlpha')
                     MarkerFaceAlpha = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'MarkerEdgeAlpha')
-                    MarkerEdgeAlpha = varargin{2,n};
+                    MarkerEdgeAlpha = varargin{2,n};    
                 elseif strcmpi(varargin{1,n},'BoxPercentiles')
                     BoxPercentiles = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'DistributionMethod')
