@@ -37,8 +37,7 @@
         {"name":"LineStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle"},
         {"name":"FaceAlpha", "kind":"namevalue", "type":["numeric"]},
         {"name":"ErrorType", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', 'Percentile'}"]},
-        {"name":"IgnoreNaN", "kind":"namevalue", "type":["numeric"]},
-        {"name":"ScatterOverlay", "kind":"namevalue", "type":["logical"]}
+        {"name":"IgnoreNaN", "kind":"namevalue", "type":["numeric"]}
      ]
   }
 }
