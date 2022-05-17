@@ -59,7 +59,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     CenterColor = color;
     CenterWidth = .3;
     CenterThickness = 2;
-    DistributionMethod = 'KernelDensity';
+    DistributionMethod = 'Histogram';
     DistributionWidth = .3;
     BackgroundType = 'none';
     BackgroundWidth = .3;
@@ -71,6 +71,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     BoxPercentiles = [5,25,75,95];
     Parent = gca;
     MaxPoints = 100;
+    NormalityWarning = true;
     
     % Check varargin
     ParseVarargin()
@@ -91,7 +92,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
         h = lillietest(y, 'alpha', .01);
-        if h && CenterMethodDefined
+        if h && CenterMethodDefined && NormalityWarning
             warning('Mean CenterMethod is used but data is not normal')
         elseif h && ~CenterMethodDefined
             CenterMethod = 'median';
@@ -122,7 +123,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         error('%s is an unrecognized distribution method.', DistributionMethod)
     end
     
-    % Background
+    % Background - could case/switch but strcmpi is slightly more flexible
     if strcmpi(BackgroundType, 'Bar')
         % Simple bar to the central value
         patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
@@ -200,7 +201,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             for b = 1:length(bin_prop)
                 bin_y{b} = y(y > bin_edges(b) & y <= bin_edges(b+1));
                 if b == 1 && any(y == bin_edges(b)) % Make sure the first edge doesn't get skipped
-                    bin_y{b} = [bin_y{b}, y(y==b)];
+                    bin_y{b} = [bin_y{b}; y(y==b)];
                 end
                 temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
                 bin_x{b} = temp_x(randperm(length(temp_x)));
@@ -227,7 +228,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             'Color' , CenterColor, 'LineWidth', CenterThickness, 'Parent', Parent)
     end
     
-    % Function for parsing varagin (just at end for tidyness)
+    % Function for parsing varagin (just at end for tidiness)
     function ParseVarargin()
         if ~isempty(varargin)
             nargin = ceil(length(varargin)/2);
@@ -266,6 +267,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                     MaxPoints = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'Parent')
                     Parent = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'NormalityWarning')
+                    NormalityWarning = varargin{2,n};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end

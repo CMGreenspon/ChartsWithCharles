@@ -1,4 +1,7 @@
 function raster_ticks = Rasterfy(spike_times, y_margin)
+    if nargin < 2
+        y_margin = 0.4;
+    end
     num_trials = length(spike_times);
         
     for t = 1:num_trials
