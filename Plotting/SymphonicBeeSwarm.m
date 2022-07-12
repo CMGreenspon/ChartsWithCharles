@@ -116,8 +116,15 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
         violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.25; 
         % Get rid of top and bottom 5%
-        proportional_bins = violin_x(6:95);
-        bin_centers = violin_y(6:95);
+        if length(BoxPercentiles) == 4
+            lb = BoxPercentiles(1); ub = BoxPercentiles(4);
+        elseif length(BoxPercentiles) == 2
+            lb = BoxPercentiles(1); ub = BoxPercentiles(2);
+        else 
+            error('Only 2 or 4 percentiles may be assigned to "KernelDensity" when "MaxPoints" = 0')
+        end
+        proportional_bins = violin_x(lb:ub);
+        bin_centers = violin_y(lb:ub);
     
     elseif strcmpi(DistributionMethod, 'none')
         scatter_x = zeros([length(y),1]);
