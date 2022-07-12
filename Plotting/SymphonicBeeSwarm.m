@@ -107,13 +107,17 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Get distribution
     if strcmpi(DistributionMethod, 'Histogram')
         [bin_prop, bin_edges, ~] = histcounts(y, 'BinMethod', 'sturges');
+        bin_edges = bin_edges(1:end-1) + (range(bin_edges(1:2))/2);
         proportional_bins = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        proportional_bins = smoothdata(proportional_bins, 'Gaussian', 3);
         
     elseif strcmpi(DistributionMethod, 'KernelDensity')
-        [bin_prop, bin_points] = ksdensity(y, 'NumPoints', round(sqrt(length(y))));
-        bin_edges = bin_points - (range(bin_points(1:2))/2);
-        bin_edges = [bin_edges, bin_points(end) + (range(bin_points(1:2))/2)];
-        proportional_bins = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        [bin_prop, ~] = ksdensity(y, 'NumPoints', round(sqrt(length(y))));
+        [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
+        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.25; 
+        % Get rid of top and bottom 5%
+        proportional_bins = violin_x(6:95);
+        bin_edges = violin_y(6:95);
     
     elseif strcmpi(DistributionMethod, 'none')
         scatter_x = zeros([length(y),1]);
@@ -160,12 +164,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get a nicer KS distribution with more points
-        [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
-        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.25; 
-        % Get rid of top and bottom 5%
-        violin_x = violin_x(6:95);
-        violin_y = violin_y(6:95);
-        fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
+        fill([proportional_bins, fliplr(-proportional_bins)] + x, [bin_edges, fliplr(bin_edges)],...
              color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth',...
              BackgroundEdgeThickness, 'Parent', Parent)
