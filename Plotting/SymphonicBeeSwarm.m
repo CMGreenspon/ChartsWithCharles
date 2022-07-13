@@ -59,11 +59,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     CenterColor = color;
     CenterWidth = .3;
     CenterThickness = 2;
-    DistributionMethod = 'Histogram';
+    DistributionMethod = 'KernelDensity';
     DistributionWidth = .3;
     BackgroundType = 'none';
-    BackgroundWidth = .3;
-    MarkerFaceAlpha = .2;
+    BackgroundWidth = .325;
+    MarkerFaceAlpha = .4;
     MarkerEdgeAlpha = .4;
     BackgroundFaceAlpha = .1;
     BackgroundEdgeAlpha = .4;
@@ -88,6 +88,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
            CenterWidth = DistributionWidth / 3;
        end
     end
+    if strcmpi(BackgroundType, 'Bar')
+        if ~any(strcmpi(varargin(1,:), 'CenterColor'))
+            CenterColor = 'None';
+        end
+    end
     % Compute the mean
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
@@ -108,13 +113,18 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(DistributionMethod, 'Histogram')
         [bin_prop, bin_edges, ~] = histcounts(y, 'BinMethod', 'sturges');
         bin_centers = bin_edges(1:end-1) + (range(bin_edges(1:2))/2);
-        proportional_bins = (bin_prop ./ max(bin_prop)) * DistributionWidth;
-        proportional_bins = smoothdata(proportional_bins, 'Gaussian', 3);
+        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        bin_prop = smoothdata(bin_prop, 'Gaussian', 3);
         
     elseif strcmpi(DistributionMethod, 'KernelDensity')
-        [bin_prop, bin_edges] = ksdensity(y, 'NumPoints', round(sqrt(length(y))));
+        % Low res for swarm
+        [bin_prop, eval_points] = ksdensity(y, 'NumPoints', round(sqrt(length(y))));
+        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        % Convert eval points to bin edges
+        bin_edges = [eval_points - diff(eval_points(1:2))/2, eval_points(end) + diff(eval_points(1:2))/2];
+        % Get his res versions for plot
         [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
-        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.25; 
+        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.5; 
         % Get rid of top and bottom 5%
         if length(BoxPercentiles) == 4
             lb = BoxPercentiles(1); ub = BoxPercentiles(4);
@@ -175,6 +185,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
              color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth',...
              BackgroundEdgeThickness, 'Parent', Parent)
+        % Make the centerwidth the width of the violin at the correct location
+        if ~any(strcmpi(varargin(1,:), 'CenterWidth'))
+            [~,c_idx] = min(abs(bin_centers - y_central));
+            CenterWidth = proportional_bins(c_idx);
+        end
     elseif strcmpi(BackgroundType, 'Box')
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
@@ -209,7 +224,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                 if b == 1 && any(y == bin_edges(b)) % Make sure the first edge doesn't get skipped
                     bin_y{b} = [bin_y{b}; y(y==b)];
                 end
-                temp_x = linspace(-proportional_bins(b), proportional_bins(b), length(bin_y{b}))';
+                temp_x = linspace(-bin_prop(b), bin_prop(b), length(bin_y{b}))';
                 bin_x{b} = temp_x(randperm(length(temp_x)));
             end
 
