@@ -5,7 +5,7 @@ function pAdjusted = HolmBonferroni(p, alpha)
     
     % Sort and iterate
     [p_sorted,sort_idx] = sort(p);
-    current_multiplier = length(p);
+    current_multiplier = sum(~isnan(p));
     pAdjusted = ones([length(p), 1]);
     for i = 1:length(p)
         pAdjusted(i) = p_sorted(i) * current_multiplier;
@@ -19,4 +19,5 @@ function pAdjusted = HolmBonferroni(p, alpha)
     end
     
     pAdjusted = pAdjusted(sort_idx);
+    pAdjusted(isnan(p)) = NaN;
 end

@@ -60,9 +60,9 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     CenterWidth = .3;
     CenterThickness = 2;
     DistributionMethod = 'KernelDensity';
-    DistributionWidth = .3;
+    DistributionWidth = .275;
     BackgroundType = 'none';
-    BackgroundWidth = .325;
+    BackgroundWidth = .3;
     MarkerFaceAlpha = .4;
     MarkerEdgeAlpha = .4;
     BackgroundFaceAlpha = .1;
@@ -105,7 +105,9 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     elseif strcmpi(CenterMethod, 'median')
         y_central = median(y,'omitnan');
-    elseif strcmpi(CenterMethod, 'none') == 0
+    elseif strcmpi(CenterMethod, 'none')
+        CenterColor = 'none';
+    else
         error('%s is an unrecognized CenterMethod.', CenterMethod)
     end
  
@@ -122,19 +124,6 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
         % Convert eval points to bin edges
         bin_edges = [eval_points - diff(eval_points(1:2))/2, eval_points(end) + diff(eval_points(1:2))/2];
-        % Get his res versions for plot
-        [violin_x, violin_y] = ksdensity(y, 'NumPoints', 100);
-        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.5; 
-        % Get rid of top and bottom 5%
-        if length(BoxPercentiles) == 4
-            lb = BoxPercentiles(1); ub = BoxPercentiles(4);
-        elseif length(BoxPercentiles) == 2
-            lb = BoxPercentiles(1); ub = BoxPercentiles(2);
-        else 
-            error('Only 2 or 4 percentiles may be assigned to "KernelDensity" when "MaxPoints" = 0')
-        end
-        proportional_bins = violin_x(lb:ub);
-        bin_centers = violin_y(lb:ub);
     
     elseif strcmpi(DistributionMethod, 'none')
         scatter_x = zeros([length(y),1]);
@@ -180,13 +169,28 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             CenterColor = 'none';
         end
     elseif strcmpi(BackgroundType, 'Violin')
+        % Get rid of top and bottom 5%
+        if length(BoxPercentiles) == 4
+            lb = BoxPercentiles(1); ub = BoxPercentiles(4);
+        elseif length(BoxPercentiles) == 2
+            lb = BoxPercentiles(1); ub = BoxPercentiles(2);
+        else 
+            error('Only 2 or 4 percentiles may be assigned to "KernelDensity" when "MaxPoints" = 0')
+        end
+        
+        y_trunc = y(y > prctile(y, lb) & y < prctile(y, ub));
+        [violin_x, violin_y] = ksdensity(y_trunc, 'NumPoints', 100);
+        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.5; 
+        % Scales
+        proportional_bins = violin_x(lb:ub);
+        bin_centers = violin_y(lb:ub);
         % Get a nicer KS distribution with more points
         fill([proportional_bins, fliplr(-proportional_bins)] + x, [bin_centers, fliplr(bin_centers)],...
              color, 'EdgeColor', color, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth',...
              BackgroundEdgeThickness, 'Parent', Parent)
         % Make the centerwidth the width of the violin at the correct location
-        if ~any(strcmpi(varargin(1,:), 'CenterWidth'))
+        if ~any(strcmpi(varargin(1,:), 'CenterWidth')) && ~strcmpi(CenterMethod, 'none')
             [~,c_idx] = min(abs(bin_centers - y_central));
             CenterWidth = proportional_bins(c_idx);
         end
