@@ -1,4 +1,4 @@
-function [h,p,dstat]=KuiperTest2(s1,s2, plt)
+function [h,p,dstat] = KuiperTest2(s1,s2, plt)
     % Adapted and expanded from https://www.mathworks.com/matlabcentral/fileexchange/72908-kuipertest2
     % This function compares input samples one and two based on the 
     % Kuiper Test and Kuiper Statistic. It creates two empirical cdfs 
@@ -30,7 +30,6 @@ function [h,p,dstat]=KuiperTest2(s1,s2, plt)
     [dminus,dmind]=max([0 ; f2-f1]);
     dstat=dplus+dminus;
     if plt
-        figure;
         plot(x,[f1,f2],'.-'); hold on
         plot([x(dpind-1),x(dpind-1)],[f1(dpind-1),f2(dpind-1)],'k-') % plotting vertical lines
         plot([x(dmind-1),x(dmind-1)],[f1(dmind-1),f2(dmind-1)],'k-') % plotting vertical lines

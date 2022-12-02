@@ -40,7 +40,13 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if any(y==Inf)
         y = y(y~=Inf);
     end
-    
+
+    % Check if any values of y remain
+    if isempty(y)
+        warning('All values of y are inf or nan')
+        return
+    end
+        
     % Check color input
     if ~all(size(color) == [1,3], 2)
         if all(size(color) == [1,3],2)
@@ -96,12 +102,14 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Compute the mean
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
-        h = lillietest(y, 'alpha', .01);
-        if h && CenterMethodDefined && NormalityWarning
-            warning('Mean CenterMethod is used but data is not normal')
-        elseif h && ~CenterMethodDefined
-            CenterMethod = 'median';
-            y_central = median(y,'omitnan');
+        if length(y) >= 4
+            h = lillietest(y, 'alpha', .01);
+            if h && CenterMethodDefined && NormalityWarning
+                warning('Mean CenterMethod is used but data is not normal')
+            elseif h && ~CenterMethodDefined
+                CenterMethod = 'median';
+                y_central = median(y,'omitnan');
+            end
         end
     elseif strcmpi(CenterMethod, 'median')
         y_central = median(y,'omitnan');
@@ -112,6 +120,14 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
  
     % Get distribution
+    if length(y) < 5 && ~strcmpi(DistributionMethod, 'none')
+        warning('Too few y-values for a distribution')
+        DistributionMethod = 'None';
+        if strcmpi(BackgroundType, 'Violin')
+            BackgroundType = 'Box';
+        end
+    end
+
     if strcmpi(DistributionMethod, 'Histogram')
         [bin_prop, bin_edges, ~] = histcounts(y, 'BinMethod', 'sturges');
         bin_centers = bin_edges(1:end-1) + (range(bin_edges(1:2))/2);
@@ -180,7 +196,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         
         y_trunc = y(y > prctile(y, lb) & y < prctile(y, ub));
         [violin_x, violin_y] = ksdensity(y_trunc, 'NumPoints', 100);
-        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth * 1.5; 
+        violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth; 
         % Scales
         proportional_bins = violin_x(lb:ub);
         bin_centers = violin_y(lb:ub);
@@ -209,7 +225,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         % Thinner center line if points only
         if MaxPoints == 0
             plot([x-BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
-                [y_central, y_central], 'Color' , color, 'LineWidth', 1, 'Parent', Parent)
+                [y_central, y_central], 'Color' , color, 'LineWidth', CenterThickness-1, 'Parent', Parent)
             CenterColor = 'none';
         else
             CenterWidth = BackgroundWidth*1.1;
