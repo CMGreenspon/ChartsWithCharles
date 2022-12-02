@@ -194,7 +194,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             error('Only 2 or 4 percentiles may be assigned to "KernelDensity" when "MaxPoints" = 0')
         end
         
-        y_trunc = y(y > prctile(y, lb) & y < prctile(y, ub));
+        y_trunc = y(y >= prctile(y, lb) & y <= prctile(y, ub));
         [violin_x, violin_y] = ksdensity(y_trunc, 'NumPoints', 100);
         violin_x = (violin_x ./ max(violin_x)) * BackgroundWidth; 
         % Scales
