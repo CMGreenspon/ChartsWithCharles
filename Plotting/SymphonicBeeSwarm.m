@@ -25,6 +25,15 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if all(size(x) ~= [1,1])
         error('X must be a single value')
     end
+
+    % Check color input
+    if all(size(color) == [3,1])
+        color = color';
+        color = repmat(color, [length(y),1]);
+    elseif size(color,2) ~= 3 || size(color,1) ~= length(y)
+        error('Color must be a matrix of length(y) x 3')
+    end
+    if any(color > 1); color = color ./ 255; end
     
     if all(size(y) > 2)
         error('Y must be a vector')
@@ -33,12 +42,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
     
     % Remove NaN and Inf
-    if any(isnan(y))
-        y = y(~isnan(y));
-    end
-    
-    if any(y==Inf)
-        y = y(y~=Inf);
+    if any(isnan(y) | y==Inf)
+        yidx = isnan(y) | y==Inf;
+        color = color(~yidx, :);
+        y = y(~yidx);
     end
 
     % Check if any values of y remain
@@ -46,31 +53,23 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         warning('All values of y are inf or nan')
         return
     end
-        
-    % Check color input
-    if ~all(size(color) == [1,3], 2)
-        if all(size(color) == [1,3],2)
-            color = color';
-        elseif any(size(color) > 3)
-            error('Only 3 values [RGB] may be given for the color.')
-        elseif size(color,2) == 3 && size(color,2) ~= 1
-            error('Only one color may be given.')
-        end
-    end
-    if any(color > 1); color = color ./ 255; end
 
     % Set default values
     CenterMethod = 'mean';
     CenterMethodDefined = 0;
-    CenterColor = color;
     CenterWidth = .3;
+    if size(color,1) == 1
+        AccessoryColor = color(1,:);
+    else
+        AccessoryColor = [.6 .6 .6];
+    end
     CenterThickness = 2;
     DistributionMethod = 'KernelDensity';
     DistributionWidth = .275;
     BackgroundType = 'none';
     BackgroundWidth = .3;
-    MarkerFaceAlpha = .4;
-    MarkerEdgeAlpha = .4;
+    MarkerFaceAlpha = .3;
+    MarkerEdgeAlpha = 1;
     BackgroundFaceAlpha = .1;
     BackgroundEdgeAlpha = .4;
     BackgroundEdgeThickness = 1;
@@ -96,7 +95,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
     if strcmpi(BackgroundType, 'Bar')
         if ~any(strcmpi(varargin(1,:), 'CenterColor'))
-            CenterColor = 'None';
+            AccessoryColor = 'None';
         end
     end
     % Compute the mean
@@ -114,7 +113,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     elseif strcmpi(CenterMethod, 'median')
         y_central = median(y,'omitnan');
     elseif strcmpi(CenterMethod, 'none')
-        CenterColor = 'none';
+        AccessoryColor = 'none';
     else
         error('%s is an unrecognized CenterMethod.', CenterMethod)
     end
@@ -130,7 +129,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
 
     if strcmpi(DistributionMethod, 'Histogram')
         [bin_prop, bin_edges, ~] = histcounts(y, 'BinMethod', 'sturges');
-        bin_centers = bin_edges(1:end-1) + (range(bin_edges(1:2))/2);
+        bin_centers = bin_edges(1:end-1) + (range(bin_edges(1:2))/2); %#ok<NASGU> 
         bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
         bin_prop = smoothdata(bin_prop, 'Gaussian', 3);
         
@@ -182,7 +181,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             plot([x-CenterWidth/3, x+CenterWidth/3], [ub, ub], 'Color' , color, 'LineWidth', 1, 'Parent', Parent)
             plot([x,x], [y_central, lb], 'Color' , color, 'LineWidth', 1, 'Parent', Parent)
             plot([x-CenterWidth/3, x+CenterWidth/3], [lb, lb], 'Color' , color, 'LineWidth', 1, 'Parent', Parent)
-            CenterColor = 'none';
+            AccessoryColor = 'none';
         end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get rid of top and bottom 5%
@@ -226,7 +225,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         if MaxPoints == 0
             plot([x-BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
                 [y_central, y_central], 'Color' , color, 'LineWidth', CenterThickness-1, 'Parent', Parent)
-            CenterColor = 'none';
+            AccessoryColor = 'none';
         else
             CenterWidth = BackgroundWidth*1.1;
         end
@@ -259,14 +258,14 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             scatter_y = scatter_y(rand_idx(1:MaxPoints));
         end
 
-        scatter(scatter_x+x, scatter_y, point_size, 'MarkerFaceColor', color, 'MarkerEdgeColor', color,...
+        scatter(scatter_x+x, scatter_y, point_size, color,"filled",'MarkerEdgeColor','flat',...
             'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha, 'Parent', Parent);
     end
     
     % Center line on top if desired
-    if isnumeric(CenterColor)
+    if isnumeric(AccessoryColor)
         plot([x-CenterWidth, x+CenterWidth], [y_central, y_central],...
-            'Color' , CenterColor, 'LineWidth', CenterThickness, 'Parent', Parent)
+            'Color' , AccessoryColor, 'LineWidth', CenterThickness, 'Parent', Parent)
     end
     
     % Function for parsing varagin (just at end for tidiness)
@@ -279,7 +278,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                     CenterMethod = varargin{2,n};
                     CenterMethodDefined = 1;
                 elseif strcmpi(varargin{1,n},'CenterColor')
-                    CenterColor = varargin{2,n};
+                    AccessoryColor = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'CenterWidth')
                     CenterWidth = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'CenterThickness')
