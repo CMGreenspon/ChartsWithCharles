@@ -27,7 +27,9 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
 
     % Check color input
-    if all(size(color) == [3,1])
+    if all(size(color) == [1,3])
+        color = repmat(color, [length(y),1]);
+    elseif all(size(color) == [3,1])
         color = color';
         color = repmat(color, [length(y),1]);
     elseif size(color,2) ~= 3 || size(color,1) ~= length(y)
