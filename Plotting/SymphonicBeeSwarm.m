@@ -28,12 +28,15 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
 
     % Check color input
     if all(size(color) == [1,3])
+        AccessoryColor = color;
         color = repmat(color, [length(y),1]);
     elseif all(size(color) == [3,1])
         color = color';
         color = repmat(color, [length(y),1]);
     elseif size(color,2) ~= 3 || size(color,1) ~= length(y)
         error('Color must be a matrix of length(y) x 3')
+    else
+        AccessoryColor = [.6 .6 .6];
     end
     if any(color > 1); color = color ./ 255; end
     
@@ -60,9 +63,6 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     CenterMethod = 'mean';
     CenterMethodDefined = 0;
     CenterWidth = .3;
-    if size(color,1) ~= 1
-        AccessoryColor = [.6 .6 .6];
-    end
     CenterThickness = 2;
     DistributionMethod = 'KernelDensity';
     DistributionWidth = .25;
@@ -256,9 +256,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             rand_idx = randperm(length(scatter_x));
             scatter_x = scatter_x(rand_idx(1:MaxPoints));
             scatter_y = scatter_y(rand_idx(1:MaxPoints));
+            color = color(rand_idx(1:MaxPoints),:);
         end
 
-        scatter(scatter_x+x, scatter_y, point_size, color,"filled",'MarkerEdgeColor','flat',...
+        scatter(scatter_x+x, scatter_y, point_size, color ,"filled",'MarkerEdgeColor','flat',...
             'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha, 'Parent', Parent);
     end
     
