@@ -237,11 +237,13 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if MaxPoints > 0
         if strcmpi(DistributionMethod, 'Histogram') || strcmpi(DistributionMethod, 'KernelDensity')
             % Allocate x values to each bin
-            [bin_y, bin_x] = deal(cell([length(bin_prop),1]));
+            [bin_y, bin_x, bin_c] = deal(cell([length(bin_prop),1]));
             for b = 1:length(bin_prop)
                 bin_y{b} = y(y > bin_edges(b) & y <= bin_edges(b+1));
+                bin_c{b} = color(y > bin_edges(b) & y <= bin_edges(b+1),:);
                 if b == 1 && any(y == bin_edges(b)) % Make sure the first edge doesn't get skipped
                     bin_y{b} = [bin_y{b}; y(y==b)];
+                    bin_c{b} = [bin_c{b}; color(y==b,:)];
                 end
                 temp_x = linspace(-bin_prop(b), bin_prop(b), length(bin_y{b}))';
                 bin_x{b} = temp_x(randperm(length(temp_x)));
@@ -249,6 +251,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
 
             scatter_x = vertcat(bin_x{:});
             scatter_y = vertcat(bin_y{:});
+            scatter_c = vertcat(bin_c{:});
         end
         
         % Subsample
@@ -256,10 +259,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             rand_idx = randperm(length(scatter_x));
             scatter_x = scatter_x(rand_idx(1:MaxPoints));
             scatter_y = scatter_y(rand_idx(1:MaxPoints));
-            color = color(rand_idx(1:MaxPoints),:);
+            scatter_c = scatter_c(rand_idx(1:MaxPoints),:);
         end
 
-        scatter(scatter_x+x, scatter_y, point_size, color ,"filled",'MarkerEdgeColor','flat',...
+        scatter(scatter_x+x, scatter_y, point_size, scatter_c ,"filled",'MarkerEdgeColor','flat',...
             'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha, 'Parent', Parent);
     end
     
