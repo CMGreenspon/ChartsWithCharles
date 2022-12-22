@@ -5,14 +5,15 @@ function uc = GetUnicodeChar(character)
     % The 'character' requested is case sensitive. 'Gamma' ~= 'gamma'
     % If 'all' is passed then a structure containing all character will be generated.
 
-    % See https://www.webstandards.org/learn/reference/charts/entities/symbol_entities/index.html for other characters
-    % Be aware that not all typefaces support unicode characters. I suggest OpenSans or RobotoMono (can be found on google fonts)
+    % See https://unicode-table.com/en/ for other characters
+    % Be aware that not all typefaces support unicode characters. I suggest OpenSans or JuliaMono
 
     names = {'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa','Lambda',...
              'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega',...
              'alpha', 'beta', 'pamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa','lambda',...
-             'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'};
-    unicode_values = [913:929, 931:937, 945:961, 963:969];
+             'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',...
+             'degree', 'Degree'};
+    unicode_values = [913:929, 931:937, 945:961, 963:969, 176, 176];
     
     if strcmpi(character, 'all') % Generate struct with all characters
         uc = struct();
