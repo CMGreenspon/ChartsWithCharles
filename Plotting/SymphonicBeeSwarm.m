@@ -77,6 +77,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     Parent = gca;
     MaxPoints = 100;
     NormalityWarning = true;
+    YLimits = [];
     
     % Check varargin
     ParseVarargin()
@@ -116,6 +117,12 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         AccessoryColor = 'none';
     else
         error('%s is an unrecognized CenterMethod.', CenterMethod)
+    end
+
+    % Check if we are limiting the distribution - must happen after stats are computed
+    if ~isempty(YLimits)
+        y(y < min(YLimits)) = min(YLimits);
+        y(y > max(YLimits)) = max(YLimits);
     end
  
     % Get distribution
@@ -313,6 +320,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                     Parent = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'NormalityWarning')
                     NormalityWarning = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'YLimits')
+                    YLimits = varargin{2,n};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end
