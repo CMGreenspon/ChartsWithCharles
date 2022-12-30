@@ -94,11 +94,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
            CenterWidth = DistributionWidth / 3;
        end
     end
-    if strcmpi(BackgroundType, 'Bar')
-        if ~any(strcmpi(varargin(1,:), 'CenterColor'))
-            AccessoryColor = 'None';
-        end
-    end
+
     % Compute the mean
     if strcmpi(CenterMethod, 'mean')
         y_central = mean(y,'omitnan');
@@ -113,9 +109,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         end
     elseif strcmpi(CenterMethod, 'median')
         y_central = median(y,'omitnan');
-    elseif strcmpi(CenterMethod, 'none')
-        AccessoryColor = 'none';
-    else
+    elseif ~strcmpi(CenterMethod, 'none')
         error('%s is an unrecognized CenterMethod.', CenterMethod)
     end
 
@@ -157,6 +151,9 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     
     % Background - could case/switch but strcmpi is slightly more flexible
     if strcmpi(BackgroundType, 'Bar')
+        if strcmpi(CenterMethod, 'none')
+            error('Cannot use CenterMethod == "none" with bar')
+        end
         % Simple bar to the central value
         patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
               [0, y_central, y_central, 0], AccessoryColor, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeColor', 'none', 'Parent', Parent)
@@ -259,6 +256,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             scatter_x = vertcat(bin_x{:});
             scatter_y = vertcat(bin_y{:});
             scatter_c = vertcat(bin_c{:});
+        else
+            scatter_x = ones(size(y));
+            scatter_y = y;
+            scatter_c = color;
         end
         
         % Subsample
@@ -274,7 +275,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
     
     % Center line on top if desired
-    if isnumeric(AccessoryColor)
+    if isnumeric(AccessoryColor) && ~strcmpi(BackgroundType, 'Bar') && ~strcmpi(CenterMethod, 'none')
         plot([x-CenterWidth, x+CenterWidth], [y_central, y_central],...
             'Color' , AccessoryColor, 'LineWidth', CenterThickness, 'Parent', Parent)
     end
