@@ -238,7 +238,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end    
     
     % The point swarm
-    if MaxPoints > 0
+    if MaxPoints > 0 && point_size > 0
         if strcmpi(DistributionMethod, 'Histogram') || strcmpi(DistributionMethod, 'KernelDensity')
             % Allocate x values to each bin
             [bin_y, bin_x, bin_c] = deal(cell([length(bin_prop),1]));
@@ -257,7 +257,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             scatter_y = vertcat(bin_y{:});
             scatter_c = vertcat(bin_c{:});
         else
-            scatter_x = ones(size(y));
+            scatter_x = zeros(size(y));
             scatter_y = y;
             scatter_c = color;
         end
