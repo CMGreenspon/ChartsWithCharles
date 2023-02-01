@@ -68,10 +68,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     DistributionWidth = .25;
     BackgroundType = 'none';
     BackgroundWidth = .3;
-    MarkerFaceAlpha = .3;
+    MarkerFaceAlpha = .5;
     MarkerEdgeAlpha = 1;
-    BackgroundFaceAlpha = .1;
-    BackgroundEdgeAlpha = .4;
+    BackgroundFaceAlpha = .25;
+    BackgroundEdgeAlpha = .5;
     BackgroundEdgeThickness = 1;
     BoxPercentiles = [5,25,75,95];
     Parent = gca;
@@ -140,12 +140,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
         % Convert eval points to bin edges
         bin_edges = [eval_points - diff(eval_points(1:2))/2, eval_points(end) + diff(eval_points(1:2))/2];
-    
-    elseif strcmpi(DistributionMethod, 'none')
-        scatter_x = zeros([length(y),1]);
-        scatter_y = y;
-        
-    else
+    elseif ~strcmpi(DistributionMethod, 'None')
         error('%s is an unrecognized distribution method.', DistributionMethod)
     end
     
