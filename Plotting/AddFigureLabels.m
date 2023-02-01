@@ -11,16 +11,28 @@ function AddFigureLabels(h, label_offset, caps)
     else
         char_offset = 96;
     end
+
+    if isa(h, 'matlab.graphics.axis.Axes')
+        num_labels = length(h);
+    elseif isa(h, 'matlab.ui.Figure')
+        num_labels = length(h.Children);
+    end
     
-    if size(label_offset,1) == 1 && length(h.Children) > 1
-        label_offset = repmat(label_offset, length(h.Children),1);
+    if size(label_offset,1) == 1 && num_labels > 1
+        label_offset = repmat(label_offset, num_labels,1);
     end
 
-    for i = 1:length(h.Children)
+    for i = 1:num_labels
         if any(isnan(label_offset(i,:))) % Purposeful skip (e.g. insets)
             continue
         end
-        ax_pos = h.Children(length(h.Children)-i+1).Position;
+
+        if isa(h, 'matlab.graphics.axis.Axes')
+            ax_pos = h(i).Position;
+        elseif isa(h, 'matlab.ui.Figure')
+            ax_pos = h.Children(length(h.Children)-i+1).Position;
+        end
+        
         x1 = ax_pos(1) - label_offset(i,1);
         y1 = ax_pos(2) + ax_pos(4) - label_offset(i,2);
 
@@ -36,7 +48,7 @@ function AddFigureLabels(h, label_offset, caps)
         elseif y1 > 1
             y1 = 1;
         end 
-        annotation(h, "textbox", [x1 y1 .05 .05], 'String', char(char_offset+i), ...
+        annotation("textbox", [x1 y1 .05 .05], 'String', char(char_offset+i), ...
             'VerticalAlignment','bottom', 'HorizontalAlignment','left', 'EdgeColor', 'none', 'FontWeight','bold')
     end
 end
