@@ -1,6 +1,6 @@
 function AddFigureLabels(h, label_offset, caps)
     if nargin == 1
-        label_offset = [.05 0.05]; % annotation margin
+        label_offset = [.05 .05]; % annotation margin
         caps = true;
     elseif nargin == 2
         caps = true;
@@ -53,4 +53,5 @@ function AddFigureLabels(h, label_offset, caps)
         annotation("textbox", [x1 y1 .05 .05], 'String', char(char_offset+i), ...
             'VerticalAlignment','top', 'HorizontalAlignment','left', 'EdgeColor', 'none', 'FontWeight','bold')
     end
+    shg;
 end

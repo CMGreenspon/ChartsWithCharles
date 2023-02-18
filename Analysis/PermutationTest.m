@@ -23,18 +23,20 @@ function [h,p] = PermutationTest(x1,x2,num_perms,alpha)
     if nargin < 4
         alpha = 0.05;
     end
-    observed_delta = abs(mean(x1 - x2, 'omitnan'));
+    observed_delta = abs(mean(x1, 'omitnan') - mean(x2, 'omitnan'));
     
-    if mod(size(x1,1) + size(x2,1),2) ~= 0
-        x_cat = [x1;x2;NaN];
-    else
-        x_cat = [x1;x2];
-    end
-    nx = size(x_cat,1);
-    
+    % Permutations
     perm_delta = zeros(num_perms,1);
-    for p = 1:num_perms
-        perm_delta(p) = abs(diff(mean(reshape(x_cat(randperm(nx)), [],2),1, 'omitnan')));
+    if numel(x1) == numel(x2) % Can use whole vectors
+        x_cat = [x1;x2];
+        nx = numel(x_cat);
+        for p = 1:num_perms
+            perm_delta(p) = abs(diff(mean(reshape(x_cat(randperm(nx)), [], 2), 1, 'omitnan')));
+        end
+    else % Subsample minimum number
+        nx = min([numel(x1), numel(x2)]);
+        temp = [datasample(x1, nx, 'Replace', false); datasample(x2, nx, 'Replace', false)];
+        breakme
     end
 
     % Test alpha
