@@ -28,7 +28,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
 
     % Check color input
     if all(size(color) == [1,3])
-        AccessoryColor = color;
+        BackgroundColor = color;
         color = repmat(color, [length(y),1]);
     elseif all(size(color) == [3,1])
         color = color';
@@ -36,8 +36,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     elseif size(color,2) ~= 3 || size(color,1) ~= length(y)
         error('Color must be a matrix of length(y) x 3')
     else
-        AccessoryColor = [.6 .6 .6];
+        BackgroundColor = [.6 .6 .6];
     end
+    CenterColor = BackgroundColor;
+    
     if any(color > 1); color = color ./ 255; end
     
     if all(size(y) > 2)
@@ -86,7 +88,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % In the case of box and whisker 
     if strcmpi(BackgroundType, 'Box')
        % Check if the center was actually declared
-       if ~any(strcmpi(varargin(1,:), 'CenterMethod'))
+       if ~any(strcmpi([varargin{1,:}], 'CenterMethod'))
            CenterMethod = 'median'; % If not then change default
        end
        % Also check if center width was declared
@@ -131,13 +133,13 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     if strcmpi(DistributionMethod, 'Histogram')
         [bin_prop, bin_edges, ~] = histcounts(y, 'BinMethod', 'sturges');
         bin_centers = bin_edges(1:end-1) + (range(bin_edges(1:2))/2); %#ok<NASGU> 
-        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth * 0.75;
         bin_prop = smoothdata(bin_prop, 'Gaussian', 3);
         
     elseif strcmpi(DistributionMethod, 'KernelDensity')
         % Low res for swarm
         [bin_prop, eval_points] = ksdensity(y, 'NumPoints', round(sqrt(length(y))));
-        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth;
+        bin_prop = (bin_prop ./ max(bin_prop)) * DistributionWidth * 0.75;
         % Convert eval points to bin edges
         bin_edges = [eval_points - diff(eval_points(1:2))/2, eval_points(end) + diff(eval_points(1:2))/2];
     elseif ~strcmpi(DistributionMethod, 'None')
@@ -150,11 +152,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             error('Cannot use CenterMethod == "none" with bar')
         end
         % Simple bar to the central value
-        patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
-              [0, y_central, y_central, 0], AccessoryColor, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeColor', 'none', 'Parent', Parent)
+        patch([x-BackgroundWidth, x-BackgroundWidth, x+BackgroundWidth, x+BackgroundWidth],...
+              [0, y_central, y_central, 0], BackgroundColor, 'FaceAlpha', BackgroundFaceAlpha, 'EdgeColor', 'none', 'Parent', Parent)
         % Have to manually place lines because Matlab is silly
-        plot([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
-             [0, y_central, y_central, 0], 'LineWidth', BackgroundEdgeThickness, 'Color', AccessoryColor, 'Parent', Parent)
+        plot([x-BackgroundWidth, x-BackgroundWidth, x+BackgroundWidth, x+BackgroundWidth],...
+             [0, y_central, y_central, 0], 'LineWidth', BackgroundEdgeThickness, 'Color', BackgroundColor, 'Parent', Parent)
         if MaxPoints == 0 % Add error bars
             if isnumeric(BoxPercentiles)
                if length(BoxPercentiles) == 4
@@ -176,11 +178,11 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                end
             end
             % Whiskers
-            plot([x,x], [y_central, ub], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-            plot([x-CenterWidth/3, x+CenterWidth/3], [ub, ub], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-            plot([x,x], [y_central, lb], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-            plot([x-CenterWidth/3, x+CenterWidth/3], [lb, lb], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-            AccessoryColor = 'none';
+            plot([x,x], [y_central, ub], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+            plot([x-CenterWidth/3, x+CenterWidth/3], [ub, ub], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+            plot([x,x], [y_central, lb], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+            plot([x-CenterWidth/3, x+CenterWidth/3], [lb, lb], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+            BackgroundColor = 'none';
         end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get rid of top and bottom 5%
@@ -200,7 +202,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         bin_centers = violin_y(lb:ub);
         % Get a nicer KS distribution with more points
         fill([proportional_bins, fliplr(-proportional_bins)] + x, [bin_centers, fliplr(bin_centers)],...
-             AccessoryColor, 'EdgeColor', AccessoryColor, 'FaceAlpha', BackgroundFaceAlpha,...
+             BackgroundColor, 'EdgeColor', BackgroundColor, 'FaceAlpha', BackgroundFaceAlpha,...
              'EdgeAlpha', BackgroundEdgeAlpha, 'LineWidth',...
              BackgroundEdgeThickness, 'Parent', Parent)
         % Make the centerwidth the width of the violin at the correct location
@@ -212,19 +214,19 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
         patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
-              [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], AccessoryColor, 'FaceAlpha', BackgroundFaceAlpha,...
-              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', AccessoryColor, 'LineWidth',...
+              [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], BackgroundColor, 'FaceAlpha', BackgroundFaceAlpha,...
+              'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', BackgroundColor, 'LineWidth',...
               BackgroundEdgeThickness, 'Parent', Parent)
         % Whiskers
-        plot([x,x], [bw_y(3), bw_y(4)], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-        plot([x-CenterWidth, x+CenterWidth], [bw_y(4), bw_y(4)], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-        plot([x,x], [bw_y(1), bw_y(2)], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
-        plot([x-CenterWidth, x+CenterWidth], [bw_y(1), bw_y(1)], 'Color' , AccessoryColor, 'LineWidth', 1, 'Parent', Parent)
+        plot([x,x], [bw_y(3), bw_y(4)], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+        plot([x-CenterWidth, x+CenterWidth], [bw_y(4), bw_y(4)], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+        plot([x,x], [bw_y(1), bw_y(2)], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
+        plot([x-CenterWidth, x+CenterWidth], [bw_y(1), bw_y(1)], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
         % Thinner center line if points only
         if MaxPoints == 0
             plot([x-BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
-                [y_central, y_central], 'Color' , AccessoryColor, 'LineWidth', CenterThickness-1, 'Parent', Parent)
-            AccessoryColor = 'none';
+                [y_central, y_central], 'Color' , BackgroundColor, 'LineWidth', CenterThickness-1, 'Parent', Parent)
+            BackgroundColor = 'none';
         else
             CenterWidth = BackgroundWidth*1.1;
         end
@@ -270,9 +272,9 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end
     
     % Center line on top if desired
-    if isnumeric(AccessoryColor) && ~strcmpi(BackgroundType, 'Bar') && ~strcmpi(CenterMethod, 'none')
+    if isnumeric(CenterColor) && ~strcmpi(BackgroundType, 'Bar') && ~strcmpi(CenterMethod, 'none')
         plot([x-CenterWidth, x+CenterWidth], [y_central, y_central],...
-            'Color' , AccessoryColor, 'LineWidth', CenterThickness, 'Parent', Parent)
+            'Color', CenterColor, 'LineWidth', CenterThickness, 'Parent', Parent)
     end
     
     % Function for parsing varagin (just at end for tidiness)
@@ -284,8 +286,10 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                 if strcmpi(varargin{1,n},'CenterMethod')
                     CenterMethod = varargin{2,n};
                     CenterMethodDefined = 1;
-                elseif strcmpi(varargin{1,n},'AccessoryColor')
-                    AccessoryColor = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'BackgroundColor')
+                    BackgroundColor = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'CenterColor')
+                    CenterColor = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'CenterWidth')
                     CenterWidth = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'CenterThickness')
