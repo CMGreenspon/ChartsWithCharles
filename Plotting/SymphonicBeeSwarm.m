@@ -1,4 +1,4 @@
-function SymphonicBeeSwarm(x, y, color, point_size, varargin)
+function SymphonicBeeSwarm(x, y, varargin)
     % Produces a distribution of points akin to a beeswarm, violin, or box and whisker
     % SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Only supports a single group at a time as this reduces ambiguity in matrix dimensions.
@@ -26,41 +26,6 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         error('X must be a single value')
     end
 
-    % Check color input
-    if all(size(color) == [1,3])
-        BackgroundColor = color;
-        color = repmat(color, [length(y),1]);
-    elseif all(size(color) == [3,1])
-        color = color';
-        color = repmat(color, [length(y),1]);
-    elseif size(color,2) ~= 3 || size(color,1) ~= length(y)
-        error('Color must be a matrix of length(y) x 3')
-    else
-        BackgroundColor = [.6 .6 .6];
-    end
-    CenterColor = BackgroundColor;
-    
-    if any(color > 1); color = color ./ 255; end
-    
-    if all(size(y) > 2)
-        error('Y must be a vector')
-    elseif size(y,2) > 1 && size(y,1) == 1
-        y = y';
-    end
-    
-    % Remove NaN and Inf
-    if any(isnan(y) | y==Inf)
-        yidx = isnan(y) | y==Inf;
-        color = color(~yidx, :);
-        y = y(~yidx);
-    end
-
-    % Check if any values of y remain
-    if isempty(y)
-        warning('All values of y are inf or nan')
-        return
-    end
-
     % Set default values
     CenterMethod = 'mean';
     CenterMethodDefined = 0;
@@ -81,9 +46,45 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     NormalityWarning = true;
     YLimits = [];
     MarkerType = "o";
-    
+    PointSize = 30;
+    Color = [.6 .6 .6];
     % Check varargin
     ParseVarargin()
+
+    % Check color input
+    if all(size(Color) == [1,3])
+        BackgroundColor = Color;
+        Color = repmat(Color, [length(y),1]);
+    elseif all(size(Color) == [3,1])
+        Color = Color';
+        Color = repmat(Color, [length(y),1]);
+    elseif size(Color,2) ~= 3 || size(Color,1) ~= length(y)
+        error('Color must be a matrix of length(y) x 3')
+    else
+        BackgroundColor = [.6 .6 .6];
+    end
+    CenterColor = BackgroundColor;
+    
+    if any(Color > 1); Color = Color ./ 255; end
+    
+    if all(size(y) > 2)
+        error('Y must be a vector')
+    elseif size(y,2) > 1 && size(y,1) == 1
+        y = y';
+    end
+    
+    % Remove NaN and Inf
+    if any(isnan(y) | y==Inf)
+        yidx = isnan(y) | y==Inf;
+        Color = Color(~yidx, :);
+        y = y(~yidx);
+    end
+
+    % Check if any values of y remain
+    if isempty(y)
+        warning('All values of y are inf or nan')
+        return
+    end    
     hold(Parent, 'on')
     
     % In the case of box and whisker 
@@ -236,16 +237,16 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     end    
     
     % The point swarm
-    if MaxPoints > 0 && point_size > 0
+    if MaxPoints > 0 && PointSize > 0
         if strcmpi(DistributionMethod, 'Histogram') || strcmpi(DistributionMethod, 'KernelDensity')
             % Allocate x values to each bin
             [bin_y, bin_x, bin_c] = deal(cell([length(bin_prop),1]));
             for b = 1:length(bin_prop)
                 bin_y{b} = y(y > bin_edges(b) & y <= bin_edges(b+1));
-                bin_c{b} = color(y > bin_edges(b) & y <= bin_edges(b+1),:);
+                bin_c{b} = Color(y > bin_edges(b) & y <= bin_edges(b+1),:);
                 if b == 1 && any(y == bin_edges(b)) % Make sure the first edge doesn't get skipped
                     bin_y{b} = [bin_y{b}; y(y==b)];
-                    bin_c{b} = [bin_c{b}; color(y==b,:)];
+                    bin_c{b} = [bin_c{b}; Color(y==b,:)];
                 end
                 temp_x = linspace(-bin_prop(b), bin_prop(b), length(bin_y{b}))';
                 bin_x{b} = temp_x(randperm(length(temp_x)));
@@ -257,7 +258,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
         else
             scatter_x = zeros(size(y));
             scatter_y = y;
-            scatter_c = color;
+            scatter_c = Color;
         end
         
         % Subsample
@@ -268,7 +269,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             scatter_c = scatter_c(rand_idx(1:MaxPoints),:);
         end
 
-        scatter(scatter_x+x, scatter_y, point_size, scatter_c , MarkerType, "filled",'MarkerEdgeColor','flat',...
+        scatter(scatter_x+x, scatter_y, PointSize, scatter_c , MarkerType, "filled",'MarkerEdgeColor','flat',...
             'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha, 'Parent', Parent);
     end
     
@@ -323,8 +324,12 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                     NormalityWarning = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'YLimits')
                     YLimits = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'Color')
+                    Color = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'MarkerType')
                     MarkerType = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'PointSize')
+                    PointSize = varargin{2,n};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end

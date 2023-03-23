@@ -1,4 +1,4 @@
-function [msg] = InlineProgressBar(input_str, ordered_values, current_msg)
+function msg = InlineProgressBar(input_str, ordered_values, current_msg)
     p_complete_res = 25;
     % Function to streamline inline progress
     rs = repmat(sprintf('\b'), 1, length(current_msg));
@@ -28,7 +28,7 @@ end
 % Example 1
 % msg = '';
 % for i = 1:100
-% [msg] = InlineProgressBar('#', [i,100], msg);
+% msg = InlineProgressBar('#', [i,100], msg);
 % pause(.1)
 % end
 % Will produce:
@@ -37,7 +37,7 @@ end
 % Example 2
 % msg = '';
 % for i = 1:100
-%     [msg] = InlineProgressBar('Loading %d/%d', [i,100], msg);
+%     msg = InlineProgressBar('Loading %d/%d', [i,100], msg);
 %     pause(.1)
 % end
 % Will produce:
