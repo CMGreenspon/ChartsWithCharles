@@ -204,7 +204,7 @@ function AlphaLine(x, y, color, varargin)
                 elseif strcmpi(varargin{1,na},'Parent')
                     Parent = varargin{2,na};
                 else
-                    error('%s is an unrecognized input.', varargin{1,n})
+                    error('%s is an unrecognized input.', varargin{1,na})
                 end
             end
         end

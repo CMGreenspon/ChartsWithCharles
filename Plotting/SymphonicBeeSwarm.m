@@ -80,6 +80,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
     MaxPoints = 100;
     NormalityWarning = true;
     YLimits = [];
+    MarkerType = "o";
     
     % Check varargin
     ParseVarargin()
@@ -267,7 +268,7 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
             scatter_c = scatter_c(rand_idx(1:MaxPoints),:);
         end
 
-        scatter(scatter_x+x, scatter_y, point_size, scatter_c ,"filled",'MarkerEdgeColor','flat',...
+        scatter(scatter_x+x, scatter_y, point_size, scatter_c , MarkerType, "filled",'MarkerEdgeColor','flat',...
             'MarkerFaceAlpha', MarkerFaceAlpha, 'MarkerEdgeAlpha', MarkerEdgeAlpha, 'Parent', Parent);
     end
     
@@ -322,6 +323,8 @@ function SymphonicBeeSwarm(x, y, color, point_size, varargin)
                     NormalityWarning = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'YLimits')
                     YLimits = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'MarkerType')
+                    MarkerType = varargin{2,n};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end
