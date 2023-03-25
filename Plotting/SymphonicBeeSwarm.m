@@ -47,6 +47,9 @@ function SymphonicBeeSwarm(x, y, varargin)
     YLimits = [];
     MarkerType = "o";
     PointSize = 30;
+    Hash = false;
+    HashAngle = 45;
+    HashSpacing = 0.1;
     Color = [.6 .6 .6];
     % Check varargin
     ParseVarargin()
@@ -184,7 +187,6 @@ function SymphonicBeeSwarm(x, y, varargin)
             plot([x-CenterWidth/3, x+CenterWidth/3], [ub, ub], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
             plot([x,x], [y_central, lb], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
             plot([x-CenterWidth/3, x+CenterWidth/3], [lb, lb], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
-            BackgroundColor = 'none';
         end
     elseif strcmpi(BackgroundType, 'Violin')
         % Get rid of top and bottom 5%
@@ -215,7 +217,7 @@ function SymphonicBeeSwarm(x, y, varargin)
     elseif strcmpi(BackgroundType, 'Box')
         bw_y = prctile(y, BoxPercentiles);
         % Make the box
-        patch([x-BackgroundWidth*1.1, x-BackgroundWidth*1.1, x+BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
+        patch([x-BackgroundWidth, x-BackgroundWidth, x+BackgroundWidth, x+BackgroundWidth],...
               [bw_y(2), bw_y(3), bw_y(3), bw_y(2)], BackgroundColor, 'FaceAlpha', BackgroundFaceAlpha,...
               'EdgeAlpha', BackgroundEdgeAlpha, 'EdgeColor', BackgroundColor, 'LineWidth',...
               BackgroundEdgeThickness, 'Parent', Parent)
@@ -226,15 +228,44 @@ function SymphonicBeeSwarm(x, y, varargin)
         plot([x-CenterWidth, x+CenterWidth], [bw_y(1), bw_y(1)], 'Color' , BackgroundColor, 'LineWidth', 1, 'Parent', Parent)
         % Thinner center line if points only
         if MaxPoints == 0
-            plot([x-BackgroundWidth*1.1, x+BackgroundWidth*1.1],...
+            plot([x-BackgroundWidth, x+BackgroundWidth],...
                 [y_central, y_central], 'Color' , BackgroundColor, 'LineWidth', CenterThickness-1, 'Parent', Parent)
-            BackgroundColor = 'none';
         else
-            CenterWidth = BackgroundWidth*1.1;
+            CenterWidth = BackgroundWidth;
         end
     elseif strcmpi(BackgroundType, 'none') == 0
         error('%s is an unrecognized BackgroundType.', BackgroundType)
-    end    
+    end  
+
+    % Hashing
+    if Hash && (strcmpi(BackgroundType, 'Box') || strcmpi(BackgroundType, 'Bar'))
+        if strcmpi(BackgroundType, 'Box')
+            yrange = bw_y([2,3]);
+        elseif strcmpi(BackgroundType, 'Bar')
+            yrange = sort([0 y_central]);
+        end
+        hash_height = tan(deg2rad(HashAngle)) * BackgroundWidth;
+        y_init = yrange(1) - hash_height + range(yrange) * HashSpacing;
+        [hash_x, hash_y] = deal([]);
+        while y_init < yrange(2)
+            y_term = y_init + hash_height;
+            if y_init < yrange(1)
+                hash_x = [hash_x; 
+                    x+BackgroundWidth - ((y_term - yrange(1)) / tan(deg2rad(HashAngle)))*2; ...
+                    x+BackgroundWidth; NaN];
+                hash_y = [hash_y; yrange(1); y_term; NaN];
+            elseif y_term > yrange(2)
+                hash_x = [hash_x; x-BackgroundWidth;...
+                    x-BackgroundWidth + ((yrange(2) - y_init) / tan(deg2rad(HashAngle)))*2; NaN];
+                hash_y = [hash_y; y_init; yrange(2); NaN];
+            else
+                hash_x = [hash_x; x-BackgroundWidth; x+ BackgroundWidth; NaN];
+                hash_y = [hash_y; y_init; y_term; NaN];
+            end
+            y_init = y_init + range(yrange) * HashSpacing;
+        end
+        plot(hash_x, hash_y, 'Color', BackgroundColor, 'LineWidth', CenterThickness-1)
+    end
     
     % The point swarm
     if MaxPoints > 0 && PointSize > 0
@@ -330,6 +361,12 @@ function SymphonicBeeSwarm(x, y, varargin)
                     MarkerType = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'PointSize')
                     PointSize = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'Hash')
+                    Hash = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'HashAngle')
+                    HashAngle = varargin{2,n};
+                elseif strcmpi(varargin{1,n},'HashSpacing')
+                    HashSpacing = varargin{2,n};
                 else
                     error('%s is an unrecognized input.', varargin{1,n})
                 end
