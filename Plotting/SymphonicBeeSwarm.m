@@ -1,4 +1,5 @@
 function SymphonicBeeSwarm(x, y, varargin)
+warning('This function is now deprecated, use Swarm instead')
     % Produces a distribution of points akin to a beeswarm, violin, or box and whisker
     % SymphonicBeeSwarm(x, y, color, point_size, varargin)
     % Only supports a single group at a time as this reduces ambiguity in matrix dimensions.
