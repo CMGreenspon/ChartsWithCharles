@@ -1,12 +1,12 @@
 function AlphaLine(x, y, color, varargin)
     % Produces a line plot with the error boundary represented by a shaded area of the same color
     % AlphaLine(x [double], y[double], color[double], varargin)
-    % AlphaLine(x, y, color, 'EdgeAlpha', 0.2, 'FaceAlpha', 0.2, 'ErrorType', 'SEM')
+    % AlphaLine(x, y, color, 'EdgeAlpha', 0.2, 'ErrorAlpha', 0.2, 'ErrorType', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
     % X (independent variable) must be a vector while Y (dependent variable) must be an array [x, repeated observations]
     % If both are the size of x and the ration is ambiguous then ensure format.
     % Color must be an RGB triplet (0-1 and 0-255 are both supported)
-    % Optional inputs include: 'EdgeAlpha' [default = 0.2], 'FaceAlpha' [default = 0.2],
+    % Optional inputs include: 'EdgeAlpha' [default = 0.2], 'ErrorAlpha' [default = 0.2],
     % 'ErrorType' [default = 'SEM', 'STD', and 'Percentile' is also available]. If
     % 'Percentile' is passed then the argument 'Percentiles', [p1, p2] becomes available
     % and the median will be plotted instead of the mean.
@@ -80,7 +80,7 @@ function AlphaLine(x, y, color, varargin)
     
     % Set default values
     LineWidth = 1;
-    FaceAlpha = 0.1;
+    ErrorAlpha = 0.1;
     EdgeAlpha = 0.1;
     ErrorType = 'STD';
     Percentiles = [25, 75];
@@ -167,7 +167,7 @@ function AlphaLine(x, y, color, varargin)
     function PlotAlphaLine(x2, y2_central, y2_error)
         % Error
         fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha',...
-            FaceAlpha, 'EdgeAlpha', EdgeAlpha, 'LineStyle', EdgeStyle, 'Parent', Parent)
+            ErrorAlpha, 'EdgeAlpha', EdgeAlpha, 'LineStyle', EdgeStyle, 'Parent', Parent)
         % Mean
         plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle',...
             LineStyle, 'Parent', Parent)
@@ -181,8 +181,8 @@ function AlphaLine(x, y, color, varargin)
             for na = 1:nargin
                 if strcmpi(varargin{1,na},'LineWidth')
                     LineWidth = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'FaceAlpha')
-                    FaceAlpha = varargin{2,na};
+                elseif strcmpi(varargin{1,na},'ErrorAlpha')
+                    ErrorAlpha = varargin{2,na};
                 elseif strcmpi(varargin{1,na},'EdgeAlpha')
                     EdgeAlpha = varargin{2,na};
                 elseif strcmpi(varargin{1,na},'ErrorType')

@@ -44,7 +44,7 @@ ErrorPercentiles = [5,25,75,95]; % {EP} If ErrorMethod is Percentile
 ErrorWhiskers = true; % {EW}
 % How to display the distribution
 DistributionStyle = 'None'; % {DS} Valid: None, Box, Violin, Bar
-DistributionMethod = 'KernelDensity'; % {DM} Valid: KernelDensity (KD), Histogram (Hist)
+DistributionMethod = 'KernelDensity'; % {DM} Valid: None', KernelDensity (KD), Histogram (Hist)
 DistributionWidth = .25; % {DW} half width of bar/box/violin etc
 DistributionColor = []; % {DC}
 DistributionFaceAlpha = .3; % {DFA} Transparency value of distribution
@@ -62,10 +62,12 @@ SwarmColor = []; % {SC}
 SwarmWidthRatio = 0.75; % {SWR} Width relative to DistributionWidth
 % Hashing - Box & bar only
 HashStyle = 'None'; % {HS} Valid = '\' ('/') or '#'
-HashAngle = 45; % {HA} Angle of the hash lines 
+HashAngle = 25; % {HA} Angle of the hash lines 
 HashDensity = 0.1; % {HD} Scales to the central value
 HashOffset = []; % {HO} Override HashDensity
+% Other
 Parent = [];
+ShowStats = false;
 % Let 3rd argument be color instead of varargin
 if length(varargin) == 1 && all(size(varargin{1}) == [1,3]) && isnumeric(varargin{1})
     Color = varargin{1};
@@ -92,18 +94,22 @@ if strcmpi(ErrorMethod, 'Percentile')
         y_error = prctile(y, ErrorPercentiles([2,3]));
         p = ErrorPercentiles([2,3]);
     end
-    fprintf('Group "%s": Median (P(%d) - P(%d)) = %0.2f (%0.2f - %0.2f)\n',...
-        GroupName, p(1), p(2), y_central, y_error(1), y_error(2))
+    stat_str = sprintf('Group "%s": Median (P(%d) - P(%d)) = %0.2f (%0.2f - %0.2f)',...
+        GroupName, p(1), p(2), y_central, y_error(1), y_error(2));
 elseif strcmpi(ErrorMethod, 'STD')
     p = std(y);
     y_error = y_central + [p, -p];
-    fprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f\n',...
-        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p)
+    stat_str = sprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f',...
+        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p);
 elseif strcmpi(ErrorMethod, 'SEM')
     p = std(y)/sqrt(length(y));
     y_error = y_central + [p, -p];
-    fprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f\n',...
-        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p)
+    stat_str = sprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f',...
+        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p);
+end
+
+if ShowStats
+    disp(stat_str)
 end
 
 % Check color inputs
@@ -312,7 +318,7 @@ end
 % Overlay central tendency (in some cases)
 if strcmp(DistributionStyle, 'Box') && SwarmPointLimit == 0
     plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
-elseif any(strcmp(DistributionStyle, {'Bar', 'None'}))
+elseif any(strcmp(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
     plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
 elseif strcmp(DistributionStyle, 'Violin')
     [~,med_idx] = min(abs(violin_y - y_central));
@@ -344,6 +350,21 @@ function ParseVarargin()
                     error('"GroupName" must be a char.')
                 end
 
+            elseif strcmpi(varargin{1,n}, 'CenterMethod') || strcmpi(varargin{1,n}, 'CM')
+                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'Mean', 'Median'}))
+                    CenterMethod = varargin{2,n};
+                else
+                    error('"CenterMethod" must be "Mean"/"Median".')
+                end
+
+                if ~any(strcmp('ErrorMethod', varargin(1,:))) && ~any(strcmp('EM', varargin(1,:)))
+                    if strcmp(CenterMethod, 'Mean')
+                        ErrorMethod = 'STD';
+                    elseif strcmp(CenterMethod, 'Median')
+                        ErrorMethod = 'Percentile';
+                    end
+                end
+
             elseif strcmpi(varargin{1,n}, 'CenterLineWidth') || strcmpi(varargin{1,n}, 'CLW')
                 CenterLineWidth = varargin{2,n};
 
@@ -360,6 +381,7 @@ function ParseVarargin()
                 else
                     error('"ErrorPercentiles" must be a numeric vector of length 2 or 4.')
                 end
+                
 
             elseif strcmpi(varargin{1,n}, 'ErrorMethod') || strcmpi(varargin{1,n}, 'EM')
                 if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'STD', 'SEM', 'Percentile'}))
@@ -400,7 +422,7 @@ function ParseVarargin()
                 end
 
             elseif strcmpi(varargin{1,n}, 'DistributionMethod') || strcmpi(varargin{1,n}, 'DM')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'None', 'KernelDensity', 'Histogram'}))
+                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'None', 'KernelDensity', 'Histogram', 'Hist'}))
                     DistributionMethod = varargin{2,n};
                 else
                     error('"DistributionMethod" must be "None"/"KernelDensity"/"Histogram".')
@@ -464,7 +486,7 @@ function ParseVarargin()
                 end
 
             elseif strcmpi(varargin{1,n}, 'HashAngle') || strcmpi(varargin{1,n}, 'HA')
-                if abs(varargin{2,n}) < 85 || abs(varargin{2,n}) > 5
+                if abs(varargin{2,n}) < 85 && abs(varargin{2,n}) > 5
                     HashAngle = varargin{2,n};
                 else 
                     error('|HashAngle| must be in range 5 < HashAngle < 85')
@@ -482,6 +504,9 @@ function ParseVarargin()
                 else
                     error("Parent must be an axis handle")
                 end
+
+            elseif strcmpi(varargin{1,n}, 'ShowStats')
+                ShowStats = varargin{2,n};
 
             else
                 error('%s is an unrecognized input.', varargin{1,n})

@@ -5,7 +5,17 @@
      "inputs":
      [
         {"name":"typeface", "kind":"required", "type":["char", "choices= {'Arial', 'Calibri', 'RobotoMono'}"], "purpose":"Name of typeface"},
-        {"name":"fontsize", "kind":"required", "type":["numeric"], "purpose":"Size of typeface"}
+        {"name":"fontsize", "kind":"required", "type":["numeric", "integer"], "purpose":"Size of typeface"}
+     ]
+  },
+
+ "rgb":
+  {
+     "inputs":
+     [
+        {"name":"r", "kind":"required", "type":["numel=1", "scalar"], "purpose":"Intensity of Red-channel"},
+        {"name":"g", "kind":"required", "type":["numel=1", "scalar"], "purpose":"Intensity of Green-channel"},
+        {"name":"b", "kind":"required", "type":["numel=1", "scalar"], "purpose":"Intensity of Blue-channel"}
      ]
   },
 
@@ -14,15 +24,54 @@
      "inputs":
      [
         {"name":"x", "kind":"required", "type":["numel=1"],"purpose":"x-value"},
-        {"name":"y", "kind":"required", "type":["vector"], "purpose":"y-values"},
-        {"name":"color", "kind":"required", "type":["vector"],"purpose":"[1x3] color vector"},
+        {"name":"y", "kind":"required", "type":["vector", "numeric"], "purpose":"y-values"},
+        {"name":"color", "kind":"required", "type":["ncols=1", "numel=3", "numeric"],"purpose":"[1x3] color vector"},
         {"name":"point_size", "kind":"required", "type":["integer", "numel=1"], "purpose":"size of scatter objects"},
         {"name":"BackgroundType", "kind":"namevalue", "type":["char", "choices={'none', 'violin', 'bar', 'box'}"], "purpose":"Background type"},
         {"name":"BoxPercentiles", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', '4-element vector'}"], "purpose":"Error type"},
-        {"name":"CenterColor", "kind":"namevalue", "type":["numeric"]},
-        {"name":"CenterMethod", "kind":"namevalue", "type":["char", "choices={'mean', 'median', 'none'}"]},
+        {"name":"CenterColor", "kind":"namevalue", "type":["numeric", "ncols=1", "numel=3"], "purpose":"Override line color"},
+        {"name":"CenterMethod", "kind":"namevalue", "type":["char", "choices={'Mean', 'Median'}"]},
         {"name":"DistributionMethod", "kind":"namevalue", "type":["char", "choices={'Histogram', 'KernelDensity'}"]},
-        {"name":"MaxPoints", "kind":"namevalue", "type":["numeric"]}
+        {"name":"MaxPoints", "kind":"namevalue", "type":["numeric", "integer", "numel=1"]}
+     ]
+  },
+
+  "Swarm":
+  {
+     "inputs":
+     [
+        {"name":"x", "kind":"required", "type":["numel=1"],"purpose":"x-value"},
+        {"name":"y", "kind":"required", "type":["vector", "numeric"], "purpose":"y-values"},
+        {"name":"Color", "kind":"namevalue", "type":["vector", "numeric", "ncols=3"],"purpose":"[nx3] color vector"},
+        {"name":"GroupName", "kind":"namevalue", "type":["char"], "purpose":"Name given to the output summary"},
+        {"name":"CenterLineWidth", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Width of center line"},
+        {"name":"CenterColor", "kind":"namevalue", "type":["numeric", "ncols=3", "nrows=1"],"purpose":"[1x3] color vector, color of center line"},
+        {"name":"CenterMethod", "kind":"namevalue", "type":["char", "choices={'Mean', 'Median'}"], "purpose":"Control how the central tendency is computed"},
+        {"name":"ErrorMethod", "kind":"namevalue", "type":["char", "choices={'STD', 'Percentile', 'SEM'}"], "purpose":"Control how the error is computed"},
+        {"name":"ErrorPercentiles", "kind":"namevalue", "type":["vector", "numeric"],"purpose":"Percentiles to show for error (length = 2 or 4)"},
+        {"name":"ErrorWhiskers", "kind":"namevalue", "type":["logical"],"purpose":"Whether or not to show whiskers as error."},
+        {"name":"DistributionStyle", "kind":"namevalue", "type":["char", "choices={'None', 'Box', 'Bar', 'Violin'}"]},
+        {"name":"DistributionMethod", "kind":"namevalue", "type":["char", "choices={'None', 'KernelDensity', 'Histogram'}"], "purpose":"Method used to jitter swarm points"},
+        {"name":"DistributionWidth", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Width of distribution"},
+        {"name":"DistributionColor", "kind":"namevalue", "type":["numeric", "ncols=3", "nrows=1"],"purpose":"[1x3] color vector, color of distribution"},
+        {"name":"DistributionFaceAlpha", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Alpha value of distribution"},
+        {"name":"DistributionLineWidth", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Thickness of distribution boundary"},
+        {"name":"DistributionLineAlpha", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Alpha of distribution boundary"},
+        {"name":"DistributionWhiskerRatio", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Width of whiskers relative to DistributionWidth"},
+        {"name":"SwarmMarkerSize", "kind":"namevalue", "type":["numel=1", "integer"], "purpose":"Marker size of swarm points"},
+        {"name":"SwarmYLimits", "kind":"namevalue", "type":["vector", "numeric", "numel=2"], "purpose":"Upper and lower boundary of swarm points"},
+        {"name":"SwarmPointLimit", "kind":"namevalue", "type":["integer", "numel=1"], "purpose":"Maximum number of swarm points to plot"},
+        {"name":"SwarmFaceAlpha", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Face alpha of swarm markers"},
+        {"name":"SwarmEdgeAlpha", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Edge alpha of swarm markers"},
+        {"name":"SwarmMarkerType", "kind":"namevalue", "type":["char", "choice={'o', 'sqare', 'diamond', '^', '>', '<', 'v', 'pentagram', 'hexagram'}"], "purpose":"Swarm marker shape."},
+        {"name":"SwarmColor", "kind":"namevalue", "type":["numeric", "ncols=3"], "purpose":"[nx3] color vector or martrix, color of all or each marker"},
+        {"name":"SwarmWidthRatio", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Width of swarm relative to DistributionWidth"},
+        {"name":"HashStyle", "kind":"namevalue", "type":["char", "choice={'/', '/\\', '#'}"], "purpose":"Hash style"},
+        {"name":"HashAngle", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Angle of the hash"},
+        {"name":"HashDensity", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Number of hashes in distribution"},
+        {"name":"HashOffset", "kind":"namevalue", "type":["numel=1", "scalar"], "purpose":"Absolute value to increment the hash spacing"},
+        {"name":"Parent", "kind":"namevalue", "type":["matlab.graphics.axis.Axes"], "purpose":"Parent upon which to plot"},
+        {"name":"ShowStats", "kind":"namevalue", "type":["logical", "numel=1"], "purpose":"Show summary statistic"}
      ]
   },
 
@@ -30,14 +79,18 @@
   {
      "inputs":
      [
-        {"name":"x", "kind":"required", "type":["vector"],"purpose":"x-values"},
-        {"name":"y", "kind":"required", "type":["vector"], "purpose":"y-values"},
-        {"name":"color", "kind":"required", "type":["vector"],"purpose":"[1x3] color vector"},
-        {"name":"LineWidth", "kind":"namevalue", "type":["scalar"], "purpose":"Line width"},
-        {"name":"LineStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle"},
-        {"name":"FaceAlpha", "kind":"namevalue", "type":["numeric"]},
+        {"name":"x", "kind":"required", "type":["vector", "numeric"],"purpose":"x-values"},
+        {"name":"y", "kind":"required", "type":["vector", "numeric"], "purpose":"y-values"},
+        {"name":"color", "kind":"required", "type":["numeric", "ncols=3", "nrows=3"],"purpose":"[1x3] color vector"},
+        {"name":"LineWidth", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Width of central line"},
+        {"name":"LineStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle of central line"},
         {"name":"ErrorType", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', 'Percentile'}"]},
-        {"name":"IgnoreNaN", "kind":"namevalue", "type":["numeric"]}
+        {"name":"ErrorAlpha", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Alpha of the error region"},
+        {"name":"EdgeStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle of error boundary"},
+        {"name":"EdgeAlpha", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Alpha of the error boundary"},
+        {"name":"PlotBetweenNaN", "kind":"namevalue", "type":["numeric", "numel=1", "choices={0, 1, 2}"], "purpose":"Method for interpolating between NaNs"},
+        {"name":"Parent", "kind":"namevalue", "type":["matlab.graphics.axis.Axes"], "purpose":"Parent upon which to plot"},
+        {"name":"Percentiles", "kind":"namevalue", "type":["numeric", "numel=2"],"purpose":"[1x2] Percentiles for lower and upper error boundary"}
      ]
   }
 }
