@@ -5,11 +5,11 @@ function Swarm(x, y, varargin)
 % Only supports a single group at a time as this reduces ambiguity in matrix dimensions.
 
 % First check x & y for validity
-if all(size(x) ~= [1,1])
-    error('X must be a single value')
+if isnumeric(x) && all(size(x) ~= [1,1])
+    error('X must be a scalar of size [1,1].')
 end
-if all(size(y) > 2)
-    error('Y must be a vector')
+if all(size(y) > 2) || ~isnumeric(y)
+    error('Y must be a numeric vector.')
 elseif size(y,2) > 1 && size(y,1) == 1
     y = y'; % Transpose
 end
@@ -21,7 +21,7 @@ if any(isnan(y) | y==Inf)
 end
 % Check if any values of y remain
 if isempty(y)
-    warning('All values of y are inf or nan')
+    warning('All values of y are inf or nan.')
     return
 end
 % Set default center and error methods - varargin can override
@@ -344,7 +344,7 @@ function ParseVarargin()
                 end
 
             elseif strcmpi(varargin{1,n}, 'GroupName') || strcmpi(varargin{1,n}, 'GN')
-                if ischar(varargin{2,n})
+                if ischar(varargin{2,n}) || isstring(varargin{2,n})
                     GroupName = varargin{2,n};
                 else
                     error('"GroupName" must be a char.')
@@ -384,7 +384,8 @@ function ParseVarargin()
                 
 
             elseif strcmpi(varargin{1,n}, 'ErrorMethod') || strcmpi(varargin{1,n}, 'EM')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'STD', 'SEM', 'Percentile'}))
+                if (ischar(varargin{2,n}) || isstring(varargin{2,n})) &&...
+                        any(strcmpi(varargin{2,n}, {'STD', 'SEM', 'Percentile'}))
                     ErrorMethod = varargin{2,n};
                 else
                     error('"DistribtutionStyle" must be "STD"/"SEM"/"Percentile".')
@@ -400,7 +401,8 @@ function ParseVarargin()
                 ErrorWhiskers = varargin{2,n};
 
             elseif strcmpi(varargin{1,n}, 'DistributionStyle') || strcmpi(varargin{1,n}, 'DS')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'None', 'Box', 'Bar', 'Violin'}))
+                if (ischar(varargin{2,n}) || isstring(varargin{2,n})) &&...
+                        any(strcmpi(varargin{2,n}, {'None', 'Box', 'Bar', 'Violin'}))
                     DistributionStyle = varargin{2,n};
                 else
                     error('"DistribtutionStyle" must be "None"/"Box"/"Bar"/"Violin".')
@@ -422,7 +424,8 @@ function ParseVarargin()
                 end
 
             elseif strcmpi(varargin{1,n}, 'DistributionMethod') || strcmpi(varargin{1,n}, 'DM')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'None', 'KernelDensity', 'Histogram', 'Hist'}))
+                if (ischar(varargin{2,n}) || isstring(varargin{2,n})) &&...
+                        any(strcmpi(varargin{2,n}, {'None', 'KernelDensity', 'Histogram', 'Hist'}))
                     DistributionMethod = varargin{2,n};
                 else
                     error('"DistributionMethod" must be "None"/"KernelDensity"/"Histogram".')
@@ -479,7 +482,8 @@ function ParseVarargin()
                 SwarmWidthRatio = varargin{2,n};
 
             elseif strcmpi(varargin{1,n}, 'HashStyle') || strcmpi(varargin{1,n}, 'HS')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'None', '/', '\', '/\', '\/', '#'}))
+                if (ischar(varargin{2,n}) || isstring(varargin{2,n})) &&...
+                        any(strcmpi(varargin{2,n}, {'None', '/', '\', '/\', '\/', '#'}))
                     HashStyle = varargin{2,n};
                 else
                     error('"HashStyle" must be "/" or "\" or "\/" or "#".')
