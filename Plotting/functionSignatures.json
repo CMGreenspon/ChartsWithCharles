@@ -9,6 +9,15 @@
      ]
   },
 
+  "ColorText":
+  {
+     "inputs":
+     [
+        {"name":"input_text", "kind":"required", "type":[["char", "vector"], ["string", "vector"]], "purpose":"List of strings"},
+        {"name":"colors", "kind":"required", "type":["numeric", "ncols=3"], "purpose":"[nx3] array with colors for each string"}
+     ]
+  },
+
  "rgb":
   {
      "inputs":

@@ -25,7 +25,13 @@ if isempty(y)
     return
 end
 % Set default center and error methods - varargin can override
-h = lillietest(y, 'alpha', .01);
+if length(y) > 4
+    h = lillietest(y, 'alpha', .01);
+    DistributionMethod = 'KernelDensity'; % {DM} Valid: None', KernelDensity (KD), Histogram (Hist)
+else
+    h = true;
+    DistributionMethod = 'None';
+end
 if h 
     CenterMethod = 'Median'; % {CM}
     ErrorMethod = 'Percentile'; % {EM} 
@@ -34,7 +40,7 @@ else
     ErrorMethod = 'STD'; % {EM} 
 end
 
-% Check optional arguments - shorthand keys shown in {}
+% Default arguments - shorthand keys shown in {}
 Color = [.6 .6 .6]; % Master color - unset values will use this
 GroupName = num2str(x); % For outpur of center +/- error
 % How to display the central tendency
@@ -44,7 +50,6 @@ ErrorPercentiles = [5,25,75,95]; % {EP} If ErrorMethod is Percentile
 ErrorWhiskers = true; % {EW}
 % How to display the distribution
 DistributionStyle = 'None'; % {DS} Valid: None, Box, Violin, Bar
-DistributionMethod = 'KernelDensity'; % {DM} Valid: None', KernelDensity (KD), Histogram (Hist)
 DistributionWidth = .25; % {DW} half width of bar/box/violin etc
 DistributionColor = []; % {DC}
 DistributionFaceAlpha = .3; % {DFA} Transparency value of distribution
