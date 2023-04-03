@@ -1,4 +1,4 @@
-function SymphonicBeeSwarm(x, y, varargin)
+function SymphonicBeeSwarm(x, y, Color, PointSize, varargin)
 warning('This function is now deprecated, use Swarm instead')
     % Produces a distribution of points akin to a beeswarm, violin, or box and whisker
     % SymphonicBeeSwarm(x, y, color, point_size, varargin)
@@ -47,11 +47,9 @@ warning('This function is now deprecated, use Swarm instead')
     NormalityWarning = true;
     YLimits = [];
     MarkerType = "o";
-    PointSize = 30;
     Hash = false;
     HashAngle = 45;
     HashSpacing = 0.1;
-    Color = [.6 .6 .6];
     % Check varargin
     ParseVarargin()
 
@@ -356,12 +354,8 @@ warning('This function is now deprecated, use Swarm instead')
                     NormalityWarning = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'YLimits')
                     YLimits = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'Color')
-                    Color = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'MarkerType')
                     MarkerType = varargin{2,n};
-                elseif strcmpi(varargin{1,n},'PointSize')
-                    PointSize = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'Hash')
                     Hash = varargin{2,n};
                 elseif strcmpi(varargin{1,n},'HashAngle')

@@ -15,6 +15,8 @@ function FormattedText = ColorText(input_text, colors)
             temp{i,1} = num2str(input_text(i,1));
         end
         input_text = temp;
+    elseif ischar(input_text)
+        input_text = convertCharsToStrings(input_text);
     end
     
     % Check color input
@@ -31,7 +33,7 @@ function FormattedText = ColorText(input_text, colors)
         colors = colors ./ 255;
     end
 
-    FormattedText = cell([length(input_text),1]);
+    FormattedText = cell([size(input_text,1),1]);
     for i = 1:size(input_text,1)
         FormattedText(i) = {['\color[rgb]{', num2str(colors(i,:)), '}',  input_text{i,1}]};
     end
