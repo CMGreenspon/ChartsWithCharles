@@ -15,8 +15,8 @@ elseif size(y,2) > 1 && size(y,1) == 1
 end
 
 % Remove NaN and Inf
-if any(isnan(y) | y==Inf)
-    yidx = isnan(y) | y == Inf;
+yidx = isnan(y) | y == Inf;
+if any(yidx)
     y = y(~yidx);
 end
 % Check if any values of y remain
@@ -127,7 +127,7 @@ end
 if isempty(SwarmColor)
     SwarmColor = repmat(Color, [length(y),1]);
 elseif size(SwarmColor,1) == length(yidx)
-    SwarmColor = SwarmColor(yidx, :);
+    SwarmColor = SwarmColor(~yidx, :);
 end
 
 % Truncate y-values
@@ -309,9 +309,9 @@ if SwarmPointLimit > 0
     % Subsample
     if SwarmPointLimit < length(SwarmY)
         rand_idx = randperm(length(SwarmY));
-        SwarmX = SwarmX(rand_idx(1:MaxPoints));
-        SwarmY = SwarmY(rand_idx(1:MaxPoints));
-        SwarmColor = SwarmColor(rand_idx(1:MaxPoints),:);
+        SwarmX = SwarmX(rand_idx(1:SwarmPointLimit));
+        SwarmY = SwarmY(rand_idx(1:SwarmPointLimit));
+        SwarmColor = SwarmColor(rand_idx(1:SwarmPointLimit),:);
     end
     
     % Plot swarm
@@ -321,8 +321,12 @@ if SwarmPointLimit > 0
 end
 
 % Overlay central tendency (in some cases)
-if strcmp(DistributionStyle, 'Box') && SwarmPointLimit == 0
-    plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+if strcmp(DistributionStyle, 'Box')
+    if SwarmPointLimit == 0
+        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+    else
+        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+    end
 elseif any(strcmp(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
     plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
 elseif strcmp(DistributionStyle, 'Violin')
