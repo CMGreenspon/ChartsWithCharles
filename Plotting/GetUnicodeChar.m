@@ -12,14 +12,14 @@ function uc = GetUnicodeChar(character)
              'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega',...
              'alpha', 'beta', 'pamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa','lambda',...
              'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',...
-             'degree', 'Degree', 'LeftArrow', 'UpArrow', 'RightArrow', 'DownArrow', 'HBar', '3MDash', 'Plus-Minus',...
+             'degree', 'Degree', 'LeftArrow', 'UpArrow', 'RightArrow', 'DownArrow', 'HBar', 'EMDash3', 'PlusMinus',...
              'EmptyCircle', 'UpTriangle'};
     unicode_values = [913:929, 931:937, 945:961, 963:969, 176, 176, 8592:8595, 8213, 11835, 177, 11096, 9651];
     
     if strcmpi(character, 'all') % Generate struct with all characters
         uc = struct();
         for i = 1:length(names)
-            eval(['gc.', names{i}, ' = char(', num2str(unicode_values(i)), ');'])
+           uc.(names{i}) = char(unicode_values(i));
         end
         
     else % Find the specific letter and only give that one
