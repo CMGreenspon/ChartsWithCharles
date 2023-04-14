@@ -27,16 +27,18 @@ function [h,p] = PermutationTest(x1,x2,num_perms,alpha)
     
     % Permutations
     perm_delta = zeros(num_perms,1);
+    x_cat = [x1;x2];
     if numel(x1) == numel(x2) % Can use whole vectors
-        x_cat = [x1;x2];
         nx = numel(x_cat);
         for p = 1:num_perms
             perm_delta(p) = abs(diff(mean(reshape(x_cat(randperm(nx)), [], 2), 1, 'omitnan')));
         end
-    else % Subsample minimum number
-        nx = min([numel(x1), numel(x2)]);
-        temp = [datasample(x1, nx, 'Replace', false); datasample(x2, nx, 'Replace', false)];
-        breakme
+    else % Subsample appropriate number
+        n1 = numel(x1);
+        for p = 1:num_perms
+            perm_sample = datasample(x_cat, numel(x_cat),'Replace', false);
+            perm_delta(p) = abs(diff([mean(perm_sample(1:n1), 'omitnan'), mean(perm_sample(n1:1:end), 'omitnan')]));
+        end
     end
 
     % Test alpha

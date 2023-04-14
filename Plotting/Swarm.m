@@ -27,7 +27,7 @@ end
 % Set default center and error methods - varargin can override
 if length(y) > 4
     h = lillietest(y, 'alpha', .01);
-    DistributionMethod = 'KernelDensity'; % {DM} Valid: None', KernelDensity (KD), Histogram (Hist)
+    DistributionMethod = 'Histogram'; % {DM} Valid: None', KernelDensity (KD), Histogram (Hist)
 else
     h = true;
     DistributionMethod = 'None';
@@ -73,12 +73,20 @@ HashOffset = []; % {HO} Override HashDensity
 % Other
 Parent = [];
 ShowStats = false;
-% Let 3rd argument be color instead of varargin
-if length(varargin) == 1 && all(size(varargin{1}) == [1,3]) && isnumeric(varargin{1})
-    Color = varargin{1};
-else
-    ParseVarargin();
+
+if ~isempty(varargin)
+    % Let 3rd argument be color
+    if all(size(varargin{1}) == [1,3]) && isnumeric(varargin{1})
+        Color = varargin{1};
+        if length(varargin) > 2
+            varargin = varargin(2:end);
+            ParseVarargin();
+        end
+    else
+        ParseVarargin();
+    end
 end
+
 if isempty(Parent)
     Parent = gca;
 end
@@ -99,18 +107,18 @@ if strcmpi(ErrorMethod, 'Percentile')
         y_error = prctile(y, ErrorPercentiles([2,3]));
         p = ErrorPercentiles([2,3]);
     end
-    stat_str = sprintf('Group "%s": Median (P(%d) - P(%d)) = %0.2f (%0.2f - %0.2f)',...
+    stat_str = sprintf('Group "%s": Median (P(%d), P(%d)) = %0.2f (%0.2f, %0.2f)',...
         GroupName, p(1), p(2), y_central, y_error(1), y_error(2));
 elseif strcmpi(ErrorMethod, 'STD')
     p = std(y);
     y_error = y_central + [p, -p];
     stat_str = sprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f',...
-        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p);
+        GroupName, GetUnicodeChar('PlusMinus'), ErrorMethod, y_central, GetUnicodeChar('PlusMinus'), p);
 elseif strcmpi(ErrorMethod, 'SEM')
     p = std(y)/sqrt(length(y));
     y_error = y_central + [p, -p];
     stat_str = sprintf('Group "%s": Mean %s %s = %0.2f %s %0.2f',...
-        GroupName, GetUnicodeChar('Plus-Minus'), ErrorMethod, y_central, GetUnicodeChar('Plus-Minus'), p);
+        GroupName, GetUnicodeChar('PlusMinus'), ErrorMethod, y_central, GetUnicodeChar('PlusMinus'), p);
 end
 
 if ShowStats
@@ -348,8 +356,14 @@ function ParseVarargin()
             if strcmpi(varargin{1,n},'Color')
                 if all(size(varargin{2,n}) == [1,3]) && isnumeric(varargin{2,n})
                     Color = varargin{2,n};
+                elseif ischar(varargin{2,n}) || isstring(varargin{2,n})
+                    try 
+                        Color = validatecolor(varargin{2,n});
+                    catch
+                        error('Color %s could not be validated', varargin{2,n})
+                    end
                 else
-                    error('"Color" must be a numeric vector of size [1,3].')
+                    error('"Color" must be a numeric vector of size [1,3], or a char/string.')
                 end
 
             elseif strcmpi(varargin{1,n}, 'GroupName') || strcmpi(varargin{1,n}, 'GN')

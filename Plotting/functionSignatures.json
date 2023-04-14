@@ -32,7 +32,7 @@
   {
      "inputs":
      [
-         {"name":"character", "kind":"required", "type":["char", "choices={'3MDash','Alpha','Beta','Chi','Degree','Delta', 'DownArrow','EmptyCircle','Epsilon','Eta','Gamma','HBar','Iota', 'Kappa','Lambda','LeftArrow','Mu','Nu','Omega','Omicron','Phi', 'Pi','Plus-Minus','Psi','Rho','RightArrow','Sigma','Tau','Theta', 'UpArrow','UpTriangle','Upsilon','Xi','Zeta','alpha','beta','chi', 'degree','delta','epsilon','eta','iota','kappa','lambda','mu','nu', 'omega','omicron','pamma','phi','pi','psi','rho','sigma','tau', 'theta','upsilon','xi','zeta'}"], "purpose":"Desired character"}]
+         {"name":"character", "kind":"required", "type":["char", "choices={'Alpha','Beta','Chi','Degree','Delta','DownArrow','EmptyCircle','Epsilon','Eta','Gamma','HBar','Iota','Kappa','Lambda','LeftArrow','Mu','Nu','Omega','Omicron','Phi','Pi','PlusMinus','Psi','Rho','RightArrow','Sigma','Tau','Theta','UpArrow','UpTriangle','Upsilon','Xi','Zeta','alpha','beta','chi','degree','delta','epsilon','eta','iota','kappa','lambda','mu','nu','omega','omicron','pamma','phi','pi','psi','rho','sigma','tau','theta','upsilon','xi','zeta','EMDash3'}"], "purpose":"Desired character"}]
   },
 
   "SymphonicBeeSwarm":
