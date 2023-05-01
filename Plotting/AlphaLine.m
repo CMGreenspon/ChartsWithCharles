@@ -1,6 +1,6 @@
 function AlphaLine(x, y, color, varargin)
     % Produces a line plot with the error boundary represented by a shaded area of the same color
-    % AlphaLine(x [double], y[double], color[double], varargin)
+    % AlphaLine(x [double], y[double, cell], color[double], varargin)
     % AlphaLine(x, y, color, 'EdgeAlpha', 0.2, 'ErrorAlpha', 0.2, 'ErrorType', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
     % X (independent variable) must be a vector while Y (dependent variable) must be an array [x, repeated observations]
@@ -28,6 +28,16 @@ function AlphaLine(x, y, color, varargin)
         elseif size(y,2) == length(x)
             y = y';
         end
+    end
+
+    % If given a cell array then convert to a padded matrix
+    if isa(y, "cell")
+        max_y = max(cellfun(@length, y));
+        y_new = NaN(length(x), max_y);
+        for i = 1:length(x)
+            y_new(i,1:length(y{i})) = y{i};
+        end
+        y = y_new;
     end
     
     % Nan checking

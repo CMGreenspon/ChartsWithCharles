@@ -147,8 +147,8 @@ if ~isempty(SwarmYLimits)
 end
 
 % Plot background
-switch DistributionStyle
-    case 'Box'
+switch lower(DistributionStyle) % Because switch has no case-invariant mode
+    case 'box'
         if length(ErrorPercentiles) ~= 4 || ~strcmpi(ErrorMethod, 'Percentile')
             error('When using "DistributionStyle: Box", you must pass 4 values to "ErrorPercentiles" and set "ErrorMethod: Percentile".')
         end
@@ -169,7 +169,7 @@ switch DistributionStyle
                 prctile(y, ErrorPercentiles([1,1])), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
         end
 
-    case 'Bar'
+    case 'bar'
         % Bar
         patch([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth],...
               [0, y_central, y_central, 0],...
@@ -186,7 +186,7 @@ switch DistributionStyle
                 y_error([1,1]), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
         end
 
-    case 'Violin'
+    case 'violin'
         [violin_x, violin_y] = ksdensity(SwarmY, 'NumPoints', 100);
         violin_x = violin_x(ErrorPercentiles(1):ErrorPercentiles(end));
         violin_x = rescale(violin_x, 0, DistributionWidth);
@@ -374,7 +374,7 @@ function ParseVarargin()
                 end
 
             elseif strcmpi(varargin{1,n}, 'CenterMethod') || strcmpi(varargin{1,n}, 'CM')
-                if ischar(varargin{2,n}) && any(strcmpi(varargin{2,n}, {'Mean', 'Median'}))
+                if ischar(varargin{2,n}) || any(strcmpi(varargin{2,n}, {'Mean', 'Median'}))
                     CenterMethod = varargin{2,n};
                 else
                     error('"CenterMethod" must be "Mean"/"Median".')
