@@ -15,7 +15,7 @@ elseif size(y,2) > 1 && size(y,1) == 1
 end
 
 % Remove NaN and Inf
-yidx = isnan(y) | y == Inf;
+yidx = isnan(y) | y == Inf | y == -Inf;
 if any(yidx)
     y = y(~yidx);
 end
@@ -279,6 +279,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
     end
 end
 
+% Swarm
 if SwarmPointLimit > 0
     % Make swarm distribution
     if contains(DistributionMethod, 'Hist')
@@ -329,15 +330,15 @@ if SwarmPointLimit > 0
 end
 
 % Overlay central tendency (in some cases)
-if strcmp(DistributionStyle, 'Box')
+if strcmpi(DistributionStyle, 'Box')
     if SwarmPointLimit == 0
         plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
     else
         plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
     end
-elseif any(strcmp(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
+elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
     plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
-elseif strcmp(DistributionStyle, 'Violin')
+elseif strcmpi(DistributionStyle, 'Violin')
     [~,med_idx] = min(abs(violin_y - y_central));
     plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
     if ErrorWhiskers
@@ -431,13 +432,12 @@ function ParseVarargin()
                     error('"DistribtutionStyle" must be "None"/"Box"/"Bar"/"Violin".')
                 end
                 % Also set some defaults
-
                 if any(strcmpi(varargin{2,n}, {'Box', 'Violin'})) &&...
                         ~any(strcmp('CenterMethod', varargin(1,:))) && ~any(strcmp('CM', varargin(1,:)))
                     CenterMethod = 'Median';
                 end
 
-                if any(strcmpi(varargin{2,n}, {'Box', 'Violin'})) &&...
+                if any(strcmpi(varargin{2,n}, {'Box', 'Violin'})) && ...
                         ~any(strcmp('ErrorMethod', varargin(1,:))) && ~any(strcmp('EM', varargin(1,:)))
                     ErrorMethod = 'Percentile';
                 end
