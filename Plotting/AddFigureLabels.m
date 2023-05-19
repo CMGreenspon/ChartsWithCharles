@@ -15,7 +15,13 @@ function AddFigureLabels(h, label_offset, caps)
     if isa(h, 'matlab.graphics.axis.Axes')
         num_labels = length(h);
     elseif isa(h, 'matlab.ui.Figure')
-        num_labels = length(h.Children);
+        tl = false;
+        if isa(h.Children(1), 'matlab.graphics.layout.TiledChartLayout')
+            tl = true;
+            num_labels = length(h.Children(1).Children);
+        else
+            num_labels = length(h.Children);
+        end
     end
     
     if size(label_offset,1) == 1 && num_labels > 1
@@ -31,8 +37,10 @@ function AddFigureLabels(h, label_offset, caps)
 
         if isa(h, 'matlab.graphics.axis.Axes')
             ax_pos = h(i).Position;
-        elseif isa(h, 'matlab.ui.Figure')
-            ax_pos = h.Children(length(h.Children)-i+1).Position;
+        elseif isa(h, 'matlab.ui.Figure') && ~tl
+            ax_pos = h.Children(num_labels-i+1).Position;
+        elseif isa(h, 'matlab.ui.Figure') && tl
+            ax_pos = h.Children(1).Children(num_labels-i+1).Position;
         end
         
         x1 = ax_pos(1) - label_offset(i,1);

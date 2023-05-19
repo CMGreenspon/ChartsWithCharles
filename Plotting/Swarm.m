@@ -331,7 +331,7 @@ end
 
 % Overlay central tendency (in some cases)
 if strcmpi(DistributionStyle, 'Box')
-    if SwarmPointLimit == 0
+    if SwarmPointLimit == 0 && CenterLineWidth == 2
         plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
     else
         plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
