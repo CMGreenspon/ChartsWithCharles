@@ -42,7 +42,6 @@ end
 
 % Default arguments - shorthand keys shown in {}
 Color = [.6 .6 .6]; % Master color - unset values will use this
-GroupName = num2str(x); % For outpur of center +/- error
 % How to display the central tendency
 CenterLineWidth = 2; % {CLW}
 CenterColor = []; % {CC}
@@ -54,7 +53,7 @@ DistributionWidth = .25; % {DW} half width of bar/box/violin etc
 DistributionColor = []; % {DC}
 DistributionFaceAlpha = .3; % {DFA} Transparency value of distribution
 DistributionLineWidth = 1; % {DLW} 
-DistributionLineAlpha = .5; % {DLA} 
+DistributionLineAlpha = .75; % {DLA} 
 DistributionWhiskerRatio = .3; % {DWR} 
 % Swarm options
 SwarmMarkerSize = 30; % {SMS} Scatter size
@@ -67,12 +66,13 @@ SwarmColor = []; % {SC}
 SwarmWidthRatio = 0.75; % {SWR} Width relative to DistributionWidth
 % Hashing - Box & bar only
 HashStyle = 'None'; % {HS} Valid = '\' ('/') or '#'
-HashAngle = 25; % {HA} Angle of the hash lines 
+HashAngle = 45; % {HA} Angle of the hash lines 
 HashDensity = 0.1; % {HD} Scales to the central value
 HashOffset = []; % {HO} Override HashDensity
 % Other
 Parent = [];
 ShowStats = false;
+GroupName = num2str(x); % For outpur of center +/- error
 
 if ~isempty(varargin)
     % Let 3rd argument be color
@@ -160,30 +160,33 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
         % Whiskers
         if ErrorWhiskers
             plot([x,x], [y_error(2), prctile(y, ErrorPercentiles(4))],...
-                'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x-DistributionWidth*DistributionWhiskerRatio,x+DistributionWidth*DistributionWhiskerRatio],...
-                prctile(y, ErrorPercentiles([4,4])), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                prctile(y, ErrorPercentiles([4,4])), 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x,x], [y_error(1), prctile(y, ErrorPercentiles(1))],...
-                'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x-DistributionWidth*DistributionWhiskerRatio,x+DistributionWidth*DistributionWhiskerRatio],...
-                prctile(y, ErrorPercentiles([1,1])), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                prctile(y, ErrorPercentiles([1,1])), 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
         end
 
     case 'bar'
         % Bar
-        patch([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth],...
+        patch([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth], ...
               [0, y_central, y_central, 0],...
               DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
-              'EdgeAlpha', DistributionLineAlpha, 'EdgeColor', DistributionColor, 'LineWidth', ...
+              'EdgeAlpha', 0, 'EdgeColor', DistributionColor, 'LineWidth', ...
+              DistributionLineWidth, 'Parent', Parent)
+        plot([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth], ...
+             [0, y_central, y_central, 0], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', ...
               DistributionLineWidth, 'Parent', Parent)
         % Whiskers
         if ErrorWhiskers
-            plot([x,x], [y_central,y_error(2)], 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+            plot([x,x], [y_central,y_error(2)], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x-DistributionWidth*DistributionWhiskerRatio,x+DistributionWidth*DistributionWhiskerRatio],...
-                y_error([2,2]), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
-            plot([x,x], [y_central,y_error(1)], 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                y_error([2,2]), 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+            plot([x,x], [y_central,y_error(1)], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x-DistributionWidth*DistributionWhiskerRatio,x+DistributionWidth*DistributionWhiskerRatio],...
-                y_error([1,1]), 'Color' , DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+                y_error([1,1]), 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
         end
 
     case 'violin'
@@ -207,6 +210,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
         hmin = min([0, y_central]);
         hmax = max([0, y_central]);
     end
+    y_ratio = range([hmin, hmax]) / DistributionWidth * 2;
     if any(strcmp(HashStyle, {'/', '\', '\/', '/\'}))
         if strcmp(HashStyle, '/\') || strcmp(HashStyle, '\/')
             HashAngle = [HashAngle, HashAngle-90];
@@ -219,32 +223,42 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
                 HA = abs(HA); %#ok<FXSET> 
             end
             % Determine number of hashes based on HashDensity and range
-            hash_height = tan(deg2rad(HA)) * DistributionWidth * 2;
+            hash_height = tan(deg2rad(HA)) * DistributionWidth * y_ratio / 2;
+            hash_slope = hash_height / (DistributionWidth * 2);
             if isempty(HashOffset)
                 HashOffset = range([hmin, hmax]) * HashDensity;
             end
             num_hashes = floor(range([hmin-hash_height, hmax]) / HashOffset); % Just a guess
             [hash_x, hash_y] = deal(cell(num_hashes,1));
             % Start at the bottom and assert that all hashes are in bounds
-            h_init = hmin - hash_height + HashOffset;
+%             h_init = hmin - hash_height + HashOffset;
+            yrt = HashOffset; % Target Yr
             for h = 1:num_hashes
-                yl = h_init;
-                xl = x - DistributionWidth;
-                if yl < hmin
-                    xl = x-DistributionWidth - ((yl - hmin) / tan(deg2rad(HA)));
-                    yl = hmin;
-                end
-        
-                yr = h_init + hash_height;
-                xr = x + DistributionWidth;
-                if yr > hmax
-                    xr = x+DistributionWidth + ((hmax - yr) / tan(deg2rad(HA)));
+                % Compute XR for YR
+                if yrt > hmax
+                    xr = (x + DistributionWidth) - (yrt - hmax) / hash_slope;
                     yr = hmax;
+                else
+                    yr = yrt;
+                    xr = x + DistributionWidth;
+                end
+
+                % Compute YL wrt YRT
+                yl = yrt - hash_slope * DistributionWidth * 2;
+                if yl < hmin
+                    yl = hmin;
+                    xl = xr - (yr - yl) / hash_slope;
+                elseif yl > hmax
+                    break
+                else
+                    xl = x - DistributionWidth;
                 end
                 % Assign
                 hash_x{h} = [xl,xr,NaN];
                 hash_y{h} = [yl,yr,NaN];
-                h_init = h_init + HashOffset;
+
+                % Update
+                yrt = yrt + HashOffset;
             end
             hash_x = cat(2, hash_x{:});
             hash_y = cat(2, hash_y{:});
