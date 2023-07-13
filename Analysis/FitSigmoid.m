@@ -1,4 +1,4 @@
-function [SigmoidFun, coeffs, rnorm, residuals] = FitSigmoid(x,y, varargin)
+function [SigmoidFun, coeffs, rnorm, residuals, jnd] = FitSigmoid(x, y, varargin)
     % Simple weighted sigmoid fitting function
     NumCoeffs = 2; % By default we assume there is a slope and x-offset term
     Constraints = zeros(4,2); % [NumCoeffs x 2] (low, high)
@@ -52,13 +52,16 @@ function [SigmoidFun, coeffs, rnorm, residuals] = FitSigmoid(x,y, varargin)
     Constraints(1,:) = [0 range(x) / 5];
 
     % Try to find the slope
-    if sum(y_mean >= 0.25 & y_mean <= 0.75) > 1
-        y25 = x(find(y_mean >= 0.25, 1, "first"));
-        y75 = x(find(y_mean <= 0.75, 1, "last"));
+    if any(y_mean <= 0.25) && any(y_mean >= 0.75)
+        y25 = x(find(y_mean <= 0.25, 1, "first"));
+        y75 = x(find(y_mean >= 0.75, 1, "last"));
     elseif sum(y_mean >= 0.25 & y_mean <= 0.75) == 1 % Estimate
         y2575 = x(y_mean >= 0.25 & y_mean <= 0.75);
         y25 = y2575 - diff(x(1:2)) / 2;
         y75 = y2575 + diff(x(1:2)) / 2;
+    else
+        y25 = x(2);
+        y75 = x(end-1);
     end
     CoeffInit(1) = 1.7 / ((1/norminv(.75)) * ((y75 - y25) / 2));
 
@@ -66,15 +69,27 @@ function [SigmoidFun, coeffs, rnorm, residuals] = FitSigmoid(x,y, varargin)
     ParseVarargin();
 
     % Create the weighted sigmoid
-    SigmoidFun = @(c) ((c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))))) + c(4));
+    SigmoidFun = @(c) (c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))))) + c(4);
     SigmoidCostFun = @(c) sqrt(num_obs) .* (SigmoidFun(c) - y_mean);
 
     [coeffs, rnorm, residuals] = lsqnonlin(SigmoidCostFun, CoeffInit, Constraints(:,1), Constraints(:,2), opts);
+
+    % Compute JND
+    jnd = ((log(1/.75 - 1)/-coeffs(1)) - (log(1/.25 - 1)/-coeffs(1))) / 2;
     
+    coeffs = coeffs(1:NumCoeffs);
+    switch NumCoeffs
+        case 2
+            SigmoidFun = @(c, x) 1./(1 + exp(-c(1) .* (x-c(2))));
+        case 3
+            SigmoidFun = @(c, x) c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))));
+        case 4
+            SigmoidFun = @(c, x) c(3) .* (1./(1 + exp(-c(1) .* (x-c(2))))) + c(4);
+    end
     if PlotFit
         figure; hold on
         scatter(x, y_mean)
-        plot(x, SigmoidFun(coeffs))
+        plot(linspace(min(x), max(x)), SigmoidFun(coeffs, linspace(min(x), max(x))))
     end
 
 function ParseVarargin()

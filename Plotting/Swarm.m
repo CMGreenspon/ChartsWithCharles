@@ -210,7 +210,6 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
         hmin = min([0, y_central]);
         hmax = max([0, y_central]);
     end
-    y_ratio = range([hmin, hmax]) / DistributionWidth * 2;
     if any(strcmp(HashStyle, {'/', '\', '\/', '/\'}))
         if strcmp(HashStyle, '/\') || strcmp(HashStyle, '\/')
             HashAngle = [HashAngle, HashAngle-90];
@@ -223,7 +222,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
                 HA = abs(HA); %#ok<FXSET> 
             end
             % Determine number of hashes based on HashDensity and range
-            hash_height = tan(deg2rad(HA)) * DistributionWidth * y_ratio / 2;
+            hash_height = tan(deg2rad(HA)) * DistributionWidth / 2;
             hash_slope = hash_height / (DistributionWidth * 2);
             if isempty(HashOffset)
                 HashOffset = range([hmin, hmax]) * HashDensity;
@@ -231,8 +230,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
             num_hashes = floor(range([hmin-hash_height, hmax]) / HashOffset); % Just a guess
             [hash_x, hash_y] = deal(cell(num_hashes,1));
             % Start at the bottom and assert that all hashes are in bounds
-%             h_init = hmin - hash_height + HashOffset;
-            yrt = HashOffset; % Target Yr
+            yrt = HashOffset + hmin; % Target Yr
             for h = 1:num_hashes
                 % Compute XR for YR
                 if yrt > hmax

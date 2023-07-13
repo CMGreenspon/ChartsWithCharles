@@ -18,5 +18,4 @@ function raster_ticks = Rasterfy(spike_times, y_margin)
         raster_ticks{t,1} = x_vec;
         raster_ticks{t,2} = y_vec + t;
     end
-    
 end  
