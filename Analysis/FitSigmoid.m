@@ -1,6 +1,7 @@
-function [SigmoidFun, coeffs, rnorm, residuals, jnd] = FitSigmoid(x, y, varargin)
+function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, varargin)
     % Simple weighted sigmoid fitting function
     NumCoeffs = 2; % By default we assume there is a slope and x-offset term
+    % Coefficients Growth term, x-offset, y-max, y-offset
     Constraints = zeros(4,2); % [NumCoeffs x 2] (low, high)
     CoeffInit = zeros(4,1);
     PlotFit = false;
@@ -49,7 +50,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd] = FitSigmoid(x, y, varargin
         CoeffInit(2) = mean(x);
         Constraints(2,:) = [min(x)-range(x)*0.5, max(x)+range(x)*0.5];
     end
-    Constraints(1,:) = [0 range(x) / 5];
+    Constraints(1,:) = [0 1];
 
     % Try to find the slope
     if any(y_mean <= 0.25) && any(y_mean >= 0.75)
@@ -68,24 +69,35 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd] = FitSigmoid(x, y, varargin
     % Check if vararg contains other constraints or initalizations
     ParseVarargin();
 
-    % Create the weighted sigmoid
+    % Create the weighted sigmoid - this is a slightly different form for
+    % optimization so does not use the GetSigmoid functio
     SigmoidFun = @(c) (c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))))) + c(4);
     SigmoidCostFun = @(c) sqrt(num_obs) .* (SigmoidFun(c) - y_mean);
 
     [coeffs, rnorm, residuals] = lsqnonlin(SigmoidCostFun, CoeffInit, Constraints(:,1), Constraints(:,2), opts);
+    % Check if hit constraint boundary
+    warn = false;
+    for c = 1:size(Constraints,1)
+        if Constraints(c,1) == Constraints(c,2)
+            continue
+        end
+        c_idx = abs(coeffs(c) - Constraints(c,:)) < 1e-3;
+        if any(c_idx)
+            if c_idx(1)
+                b = 'lower';
+            else
+                b = 'upper';
+            end
+            warning('Coefficient %d has hit %s constraint boundary.', c, b)
+            warn = true;
+        end
+    end
 
     % Compute JND
     jnd = ((log(1/.75 - 1)/-coeffs(1)) - (log(1/.25 - 1)/-coeffs(1))) / 2;
     
     coeffs = coeffs(1:NumCoeffs);
-    switch NumCoeffs
-        case 2
-            SigmoidFun = @(c, x) 1./(1 + exp(-c(1) .* (x-c(2))));
-        case 3
-            SigmoidFun = @(c, x) c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))));
-        case 4
-            SigmoidFun = @(c, x) c(3) .* (1./(1 + exp(-c(1) .* (x-c(2))))) + c(4);
-    end
+    SigmoidFun = GetSigmoid(NumCoeffs);
     if PlotFit
         figure; hold on
         scatter(x, y_mean)
