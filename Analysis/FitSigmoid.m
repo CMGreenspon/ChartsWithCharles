@@ -5,6 +5,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     Constraints = zeros(4,2); % [NumCoeffs x 2] (low, high)
     CoeffInit = zeros(4,1);
     PlotFit = false;
+    ShowWarnings = true;
     opts = optimset('Display','off'); % Disable reporting for lsqcurvefit
 
     % Assert that x is a row vector
@@ -88,7 +89,9 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
             else
                 b = 'upper';
             end
-            warning('Coefficient %d has hit %s constraint boundary.', c, b)
+            if ShowWarnings
+                warning('Coefficient %d has hit %s constraint boundary.', c, b)
+            end
             warn = true;
         end
     end
@@ -125,6 +128,8 @@ function ParseVarargin()
                 end
             elseif strcmpi(varargin{1,n},'NumCoeffs')
                 NumCoeffs = varargin{2,n}; 
+            elseif strcmpi(varargin{1,n},'ShowWarnings')
+                ShowWarnings = varargin{2,n};
             else
                 error('%s is an unrecognized input.', varargin{1,n})
             end
