@@ -6,7 +6,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     CoeffInit = zeros(4,1);
     PlotFit = false;
     ShowWarnings = true;
-    opts = optimset('Display','off'); % Disable reporting for lsqcurvefit
+    opts = optimset('Display', 'off', 'ScaleProblem', 'jacobian'); % Disable reporting for lsqcurvefit
 
     % Assert that x is a row vector
     if size(x,2) == 1 && size(x,1) > 1
@@ -51,6 +51,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
         CoeffInit(2) = mean(x);
         Constraints(2,:) = [min(x)-range(x)*0.5, max(x)+range(x)*0.5];
     end
+    % Scale
     Constraints(1,:) = [0 1];
 
     % Try to find the slope
@@ -71,11 +72,14 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     ParseVarargin();
 
     % Create the weighted sigmoid - this is a slightly different form for
-    % optimization so does not use the GetSigmoid functio
-    SigmoidFun = @(c) (c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))))) + c(4);
-    SigmoidCostFun = @(c) sqrt(num_obs) .* (SigmoidFun(c) - y_mean);
-
-    [coeffs, rnorm, residuals] = lsqnonlin(SigmoidCostFun, CoeffInit, Constraints(:,1), Constraints(:,2), opts);
+    % optimization so does not use the GetSigmoid function
+    if all(num_obs == num_obs(1)) % Regular optimization
+        [coeffs, rnorm, residuals] = lsqcurvefit(GetSigmoid(NumCoeffs), CoeffInit, x, y_mean, Constraints(:,1), Constraints(:,2), opts);
+    else % Weighted optimization
+        SigmoidFun = @(c) (c(3) .* (1./(1 + exp(-c(1) .* (x-c(2)))))) + c(4);
+        SigmoidCostFun = @(c) sqrt(num_obs) .* (SigmoidFun(c) - y_mean);
+        [coeffs, rnorm, residuals] = lsqnonlin(SigmoidCostFun, CoeffInit, Constraints(:,1), Constraints(:,2), opts);
+    end
     % Check if hit constraint boundary
     warn = false;
     for c = 1:size(Constraints,1)
@@ -94,6 +98,17 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
             end
             warn = true;
         end
+
+        if all(coeffs(1:NumCoeffs) == CoeffInit(1:NumCoeffs))
+            if ShowWarnings
+                warning('Fit did not diverge from initial point, potential local minimum.')
+            end
+            warn = true;
+        end
+    end
+    if warn
+        warning('Backup SearchSigmoid method in use.')
+        coeffs = SearchSigmoid(x, y_mean, CoeffInit(1:2));    
     end
 
     % Compute JND
@@ -121,10 +136,8 @@ function ParseVarargin()
                     end
                 end
             elseif strcmpi(varargin{1,n},'Constraints')
-                for i = 1:size(varargin{2,n},1) % Allow passing < 4 coeffs
-                    if ~all(isnan(varargin{2,n}(i,:))) % Allow skipping some too
+                for i = 1:size(varargin{2,n},1)
                         Constraints(i,:) = varargin{2,n}(i,:);
-                    end
                 end
             elseif strcmpi(varargin{1,n},'NumCoeffs')
                 NumCoeffs = varargin{2,n}; 
