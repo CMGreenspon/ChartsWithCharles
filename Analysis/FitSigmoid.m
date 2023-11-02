@@ -6,6 +6,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     CoeffInit = zeros(4,1);
     PlotFit = false;
     ShowWarnings = true;
+    EnableBackup = true;
     opts = optimset('Display', 'off', 'ScaleProblem', 'jacobian'); % Disable reporting for lsqcurvefit
 
     % Assert that x is a row vector
@@ -29,6 +30,9 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     elseif isa(y, "double")
         num_obs = sum(~isnan(y),1); % Weight points based on number of obs
     end
+
+    % Check if vararg contains other constraints or initalizations
+    ParseVarargin();
     % Add constraints to model + the start point
     if NumCoeffs < 4 % Y-offset
         Constraints(4,:) = [0,0];
@@ -52,7 +56,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
         Constraints(2,:) = [min(x)-range(x)*0.5, max(x)+range(x)*0.5];
     end
     % Scale
-    Constraints(1,:) = [0 1];
+    Constraints(1,:) = [NaN, NaN];
 
     % Try to find the slope
     if any(y_mean <= 0.25) && any(y_mean >= 0.75)
@@ -68,7 +72,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     end
     CoeffInit(1) = 1.7 / ((1/norminv(.75)) * ((y75 - y25) / 2));
 
-    % Check if vararg contains other constraints or initalizations
+    % Run a second time to get overwrites
     ParseVarargin();
 
     % Create the weighted sigmoid - this is a slightly different form for
@@ -106,7 +110,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
             warn = true;
         end
     end
-    if warn
+    if warn && EnableBackup
         warning('Backup SearchSigmoid method in use.')
         coeffs = SearchSigmoid(x, y_mean, CoeffInit(1:2));    
     end
@@ -125,26 +129,28 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
 function ParseVarargin()
     if ~isempty(varargin)
         nargin = ceil(length(varargin)/2);
-        varargin = reshape(varargin, [2, nargin]);
+        varargin_reshape = reshape(varargin, [2, nargin]);
         for n = 1:nargin
-            if strcmpi(varargin{1,n},'PlotFit')
-                PlotFit = varargin{2,n};  
-            elseif strcmpi(varargin{1,n},'CoeffInit')
-                for i = 1:length(varargin{2,n}) % Allow passing individual coeffs
-                    if ~isnan(varargin{2,n}(i))
-                        CoeffInit(i) = varargin{2,n}(i);
+            if strcmpi(varargin_reshape{1,n},'PlotFit')
+                PlotFit = varargin_reshape{2,n};  
+            elseif strcmpi(varargin_reshape{1,n},'CoeffInit')
+                for i = 1:length(varargin_reshape{2,n}) % Allow passing individual coeffs
+                    if ~isnan(varargin_reshape{2,n}(i))
+                        CoeffInit(i) = varargin_reshape{2,n}(i);
                     end
                 end
-            elseif strcmpi(varargin{1,n},'Constraints')
-                for i = 1:size(varargin{2,n},1)
-                        Constraints(i,:) = varargin{2,n}(i,:);
+            elseif strcmpi(varargin_reshape{1,n},'Constraints')
+                for i = 1:size(varargin_reshape{2,n},1)
+                        Constraints(i,:) = varargin_reshape{2,n}(i,:);
                 end
-            elseif strcmpi(varargin{1,n},'NumCoeffs')
-                NumCoeffs = varargin{2,n}; 
-            elseif strcmpi(varargin{1,n},'ShowWarnings')
-                ShowWarnings = varargin{2,n};
+            elseif strcmpi(varargin_reshape{1,n},'NumCoeffs')
+                NumCoeffs = varargin_reshape{2,n}; 
+            elseif strcmpi(varargin_reshape{1,n},'ShowWarnings')
+                ShowWarnings = varargin_reshape{2,n};
+            elseif strcmpi(varargin_reshape{1,n},'EnableBackup')
+                EnableBackup = varargin_reshape{2,n};
             else
-                error('%s is an unrecognized input.', varargin{1,n})
+                error('%s is an unrecognized input.', varargin_reshape{1,n})
             end
         end
     end
