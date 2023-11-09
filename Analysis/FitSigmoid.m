@@ -7,7 +7,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     PlotFit = false;
     ShowWarnings = true;
     EnableBackup = true;
-    opts = optimset('Display', 'off', 'ScaleProblem', 'jacobian'); % Disable reporting for lsqcurvefit
+    opts = optimset('Display', 'on', 'ScaleProblem', 'jacobian'); % Disable reporting for lsqcurvefit
 
     % Assert that x is a row vector
     if size(x,2) == 1 && size(x,1) > 1
@@ -37,13 +37,20 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     if NumCoeffs < 4 % Y-offset
         Constraints(4,:) = [0,0];
         CoeffInit(4) = 0;
+        % Check minimum y
+        if min(y, [], 'all') > 0.1
+            warning('The minimum y-value is greater than 0 but no offset is allowed')
+        end
     else
-        CoeffInit(4) = min(y, 'all') + range(y, 'all') / 2;
+        CoeffInit(4) = min(y, [], 'all') + range(y, 'all') / 2;
         Constraints(4,:) = CoeffInit(4) + [-range(y, 'all'), range(y, 'all')];
     end
     if NumCoeffs < 3 % Multiplier
         Constraints(3,:) = [1,1];
         CoeffInit(3) = 1;
+        if max(y, [], 'all') > 1.1
+            warning('The maximum y-value is greater than 1 but no gain is allowed')
+        end
     else
         CoeffInit(3) = range(y, 'all');
         Constraints(3,:) = [CoeffInit(3)/2, CoeffInit(3)*2];
@@ -102,13 +109,12 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
             end
             warn = true;
         end
-
-        if all(coeffs(1:NumCoeffs) == CoeffInit(1:NumCoeffs))
-            if ShowWarnings
-                warning('Fit did not diverge from initial point, potential local minimum.')
-            end
-            warn = true;
+    end
+    if all(coeffs(1:NumCoeffs) == CoeffInit(1:NumCoeffs))
+        if ShowWarnings
+            warning('Fit did not diverge from initial point, potential local minimum.')
         end
+        warn = true;
     end
     if warn && EnableBackup
         warning('Backup SearchSigmoid method in use.')

@@ -11,7 +11,7 @@ function c_fit = SearchSigmoid(x, y, c0, ShowPlot)
 
     if ShowPlot
         cr = abs(c_fit - c0) .* 2;
-    
+        num_points = 100;
         cmin = c0 + cr;
         cmax = c0 - cr;
         c1 = linspace(cmin(1), cmax(1), num_points);
