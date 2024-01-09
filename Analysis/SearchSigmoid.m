@@ -1,13 +1,24 @@
-function c_fit = SearchSigmoid(x, y, c0, ShowPlot)
+function c_fit = SearchSigmoid(x, y, c0, ShowPlot, offset)
+    if nargin < 5
+        constrain_offset = false;
+    else
+        constrain_offset = true;
+    end
     if nargin < 4
         ShowPlot = false;
     end
     SigFun = GetSigmoid(2);
 
     % Search optim
-    SigmoidFun = @(c) 1./(1 + exp(-c(1) .* (x-c(2))));
-    SigmoidCostFun = @(c) sum((SigmoidFun(c) - y).^2);
-    [c_fit,f] = fminsearch(SigmoidCostFun, c0);
+    if constrain_offset
+        SigmoidFun = @(c) 1./(1 + exp(-c(1) .* (x-offset)));
+        SigmoidCostFun = @(c) sum((SigmoidFun(c) - y).^2);
+        [c_fit,f] = fminsearch(SigmoidCostFun, c0(1));
+    else
+        SigmoidFun = @(c) 1./(1 + exp(-c(1) .* (x-c(2))));
+        SigmoidCostFun = @(c) sum((SigmoidFun(c) - y).^2);
+        [c_fit,f] = fminsearch(SigmoidCostFun, c0);
+    end
 
     if ShowPlot
         cr = abs(c_fit - c0) .* 2;
@@ -27,7 +38,11 @@ function c_fit = SearchSigmoid(x, y, c0, ShowPlot)
         figure; 
         imagesc(c2, c1, rnorm)
         hold on
-        scatter(c_fit(2), c_fit(1), 100, 'r', 'x', 'LineWidth', 2)
+        if constrain_offset
+            scatter(offset, c_fit(1), 100, 'r', 'x', 'LineWidth', 2)
+        else
+            scatter(c_fit(2), c_fit(1), 100, 'r', 'x', 'LineWidth', 2)
+        end
         ylabel('Scale')
         xlabel('Intercept')
         colorbar 

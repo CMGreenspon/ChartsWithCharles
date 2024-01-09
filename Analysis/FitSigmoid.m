@@ -7,7 +7,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     PlotFit = false;
     ShowWarnings = true;
     EnableBackup = true;
-    opts = optimset('Display', 'on', 'ScaleProblem', 'jacobian'); % Disable reporting for lsqcurvefit
+    opts = optimset('Display', 'off'); % Disable reporting for lsqcurvefit
 
     % Assert that x is a row vector
     if size(x,2) == 1 && size(x,1) > 1
@@ -37,10 +37,6 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     if NumCoeffs < 4 % Y-offset
         Constraints(4,:) = [0,0];
         CoeffInit(4) = 0;
-        % Check minimum y
-        if min(y, [], 'all') > 0.1
-            warning('The minimum y-value is greater than 0 but no offset is allowed')
-        end
     else
         CoeffInit(4) = min(y, [], 'all') + range(y, 'all') / 2;
         Constraints(4,:) = CoeffInit(4) + [-range(y, 'all'), range(y, 'all')];

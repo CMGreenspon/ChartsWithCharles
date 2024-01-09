@@ -5,6 +5,8 @@ function SigFun = GetSigmoid(num_coeffs)
     end
 
     switch num_coeffs
+        case 1
+            SigFun = @(c, x) 1./(1 + exp(-c(1) .* x));
         case 2 % Growth term, x-offset
             SigFun = @(c, x) 1./(1 + exp(-c(1) .* (x-c(2))));
         case 3 % Growth term, x-offset, y-max
