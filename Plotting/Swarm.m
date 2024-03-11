@@ -299,6 +299,7 @@ if SwarmPointLimit > 0
     %     bin_centers = swarm_y_edges(1:end-1) + (range(swarm_y_edges(1:2))/2); 
         swarm_x_range = (swarm_x_range ./ max(swarm_x_range)) * DistributionWidth * SwarmWidthRatio;
         swarm_x_range = smoothdata(swarm_x_range, 'Gaussian', 3);
+        swarm_x_range = swarm_x_range - min(swarm_x_range);
         
     elseif strcmpi(DistributionMethod, 'KernelDensity') || strcmpi(DistributionMethod, 'KD')
         % Low res for swarm
