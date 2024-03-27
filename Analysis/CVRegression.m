@@ -22,9 +22,7 @@ function fit_metric = CVRegression(X, Y, NumSubX, NumPerms, error_metric)
         end
 
         if strcmpi(error_metric, 'residual_variance')
-            res_error = sum((rough_pred - Y).^2);
-            tot_error = sum((Y - mean(Y)).^2);
-            fit_metric(p) = 1 - (res_error / tot_error);
+            fit_metric(p) = ResidualVariance2(y, rough_pred);
         elseif strcmpi(error_metric, 'corr')
             r = corrcoef(rough_pred, Y);
             fit_metric(p) = r(1,2)^2;

@@ -10,11 +10,7 @@ function FormattedText = ColorText(input_text, colors)
     
     % Check input text
     if isnumeric(input_text)
-        temp = {};
-        for i = 1:size(input_text,1)
-            temp{i,1} = num2str(input_text(i,1));
-        end
-        input_text = temp;
+        input_text = string(input_text);
     elseif ischar(input_text)
         input_text = convertCharsToStrings(input_text);
     end
