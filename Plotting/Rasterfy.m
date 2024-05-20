@@ -1,4 +1,7 @@
-function raster_ticks = Rasterfy(spike_times, y_margin)
+function raster_ticks = Rasterfy(spike_times, y_margin, concat)
+    if nargin < 3
+        concat = false;
+    end
     if nargin < 2
         y_margin = 0.4;
     end
@@ -17,5 +20,8 @@ function raster_ticks = Rasterfy(spike_times, y_margin)
         
         raster_ticks{t,1} = x_vec;
         raster_ticks{t,2} = y_vec + t;
+    end
+    if concat
+        raster_ticks = [cat(2, raster_ticks{:,1})', cat(2, raster_ticks{:,2})'];
     end
 end  
