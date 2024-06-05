@@ -25,7 +25,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     y_mean = mean(y, 1, 'omitnan');
 
     % Determine weighting
-    if isa(y, "logical") || all(y == 0 | y == 1)
+    if isa(y, "logical")
         num_obs = ones(size(x)); % Weight points equally
     elseif isa(y, "double")
         num_obs = sum(~isnan(y),1); % Weight points based on number of obs
@@ -77,6 +77,9 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
 
     % Run a second time to get overwrites
     ParseVarargin();
+    if NumCoeffs > 2
+        EnableBackup = false;
+    end
 
     % Create the weighted sigmoid - this is a slightly different form for
     % optimization so does not use the GetSigmoid function
