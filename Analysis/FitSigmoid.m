@@ -50,8 +50,8 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     else
         CoeffInit(3) = range(y, 'all');
         Constraints(3,:) = [CoeffInit(3)/2, CoeffInit(3)*2];
-    end % Offset
-    if NumCoeffs < 2
+    end
+    if NumCoeffs < 2 % Offset
         Constraints(2,:) = [0,0];
         CoeffInit(2) = 0;
     else
@@ -59,7 +59,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
         Constraints(2,:) = [min(x)-range(x)*0.5, max(x)+range(x)*0.5];
     end
     % Scale
-    Constraints(1,:) = [NaN, NaN];
+    Constraints(1,:) = [-1, 1];
 
     % Try to find the slope
     if any(y_mean <= 0.25) && any(y_mean >= 0.75)
