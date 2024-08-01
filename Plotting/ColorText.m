@@ -1,4 +1,4 @@
-function FormattedText = ColorText(input_text, colors)
+function FormattedText = ColorText(input_text, colors, append)
     % FormattedText = ColorText(input_text, colors)
     % input text = cell(n,1) with chars in each cell
     % colors = double(n,3) in RGB format with range 0-1
@@ -14,16 +14,28 @@ function FormattedText = ColorText(input_text, colors)
     elseif ischar(input_text)
         input_text = convertCharsToStrings(input_text);
     end
+
+    if exist('append', 'var')
+        if ischar(append) == 0
+            error('Input 3 must be a char.')
+        end
+        for i = 1:size(input_text,1)
+            input_text{i} = [input_text{i}, ' ', append];
+        end
+    end
     
     % Check color input
     if exist('colors', 'var') == 0
         colors = [.6 .6 .6];
-    elseif all(size(colors) ~= [1,3], 2)
-        if all(size(colors) == [1,3],2)
-            colors = colors';
-        elseif any(size(colors) > 3)
-            error('Only 3 values [RGB] may be given for the color.')
-        end
+    elseif isnumeric(colors)
+        elseif all(size(colors) ~= [1,3], 2)
+            if all(size(colors) == [1,3],2)
+                colors = colors';
+            elseif any(size(colors) > 3)
+                error('Only 3 values [RGB] may be given for the color.')
+            end
+    else
+        error('Color must be numeric.')
     end
     if any(colors > 1)
         colors = colors ./ 255;

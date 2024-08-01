@@ -1,5 +1,7 @@
 function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, varargin)
     % Simple weighted sigmoid fitting function
+    % [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, varargin)
+    % varargins = [NumCoeffs, Constraints, CoeffInit, PlotFit, ShowWarnings, EnableBackup]
     NumCoeffs = 2; % By default we assume there is a slope and x-offset term
     % Coefficients Growth term, x-offset, y-max, y-offset
     Constraints = zeros(4,2); % [NumCoeffs x 2] (low, high)
