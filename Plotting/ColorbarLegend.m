@@ -11,10 +11,10 @@ function cb = ColorbarLegend(fig, position, cmap, direction, ticks)
 
     if contains(lower(direction), 'vert')
         imagesc(ones(size(y)), y, y')
-        set(gca, 'YTick', [1,length(y)], 'YTickLabels', ticks, 'XTick', [], 'YDir', 'normal')
+        set(gca, 'YTick', [min(y),max(y)], 'YTickLabels', ticks, 'XTick', [], 'YDir', 'normal', 'Colormap', cmap)
     elseif contains(lower(direction), 'horz')
         imagesc(ones(size(y)), y, y)
-        set(gca, 'XTick', [1,length(y)], 'XTickLabels', ticks, 'YTick', [], 'YDir', 'normal')
+        set(gca, 'XTick', [min(y),max(y)], 'XTickLabels', ticks, 'YTick', [], 'YDir', 'normal', 'Colormap', cmap)
     end
     
 end

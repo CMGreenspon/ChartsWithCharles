@@ -123,7 +123,7 @@ function [SigmoidFun, coeffs, rnorm, residuals, jnd, warn] = FitSigmoid(x, y, va
     end
 
     % Compute JND
-    jnd = ((log(1/.75 - 1)/-coeffs(1)) - (log(1/.25 - 1)/-coeffs(1))) / 2;
+    jnd = (log(1/.75 - 1)/-coeffs(1));
     
     coeffs = coeffs(1:NumCoeffs);
     SigmoidFun = GetSigmoid(NumCoeffs);
