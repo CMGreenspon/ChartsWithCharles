@@ -198,6 +198,15 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
         fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
              DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
              'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+    case 'stacks'
+        [stack_x, stack_y, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
+        stack_x = (stack_x ./ max(stack_x)) * DistributionWidth * SwarmWidthRatio;
+        for i = 1:length(stack_x)
+            patch([-stack_x(i), -stack_x(i), stack_x(i), stack_x(i)] + x, [stack_y(i), stack_y(i+1), stack_y(i+1), stack_y(i)],...
+                DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
+                'EdgeAlpha', 0, 'EdgeColor', DistributionColor, 'LineWidth', ...
+                DistributionLineWidth, 'Parent', Parent)
+        end
 end
 
 % Hash overlay
@@ -270,7 +279,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
         if isempty(HashOffset)
             HashXOffset = DistributionWidth * 2 * HashDensity;
             HashYOffset = range([hmin, hmax]) * HashDensity;
-        elseif length(HashOffset) == 1
+        elseif isscalar(HashOffset)
             [HashXOffset, HashYOffset] = deal(HashOffset);
         elseif length(HashOffset) == 2
             HashXOffset = HashOffset(1);
@@ -439,10 +448,10 @@ function ParseVarargin()
 
             elseif strcmpi(varargin{1,n}, 'DistributionStyle') || strcmpi(varargin{1,n}, 'DS')
                 if (ischar(varargin{2,n}) || isstring(varargin{2,n})) &&...
-                        any(strcmpi(varargin{2,n}, {'None', 'Box', 'Bar', 'Violin'}))
+                        any(strcmpi(varargin{2,n}, {'None', 'Box', 'Bar', 'Violin', 'Stacks'}))
                     DistributionStyle = varargin{2,n};
                 else
-                    error('"DistribtutionStyle" must be "None"/"Box"/"Bar"/"Violin".')
+                    error('"DistribtutionStyle" must be "None"/"Box"/"Bar"/"Violin"/"Stacks".')
                 end
                 % Also set some defaults
                 if any(strcmpi(varargin{2,n}, {'Box', 'Violin'})) &&...
