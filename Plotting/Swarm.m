@@ -201,12 +201,11 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
     case 'stacks'
         [stack_x, stack_y, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
         stack_x = (stack_x ./ max(stack_x)) * DistributionWidth * SwarmWidthRatio;
-        for i = 1:length(stack_x)
-            patch([-stack_x(i), -stack_x(i), stack_x(i), stack_x(i)] + x, [stack_y(i), stack_y(i+1), stack_y(i+1), stack_y(i)],...
-                DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
-                'EdgeAlpha', 0, 'EdgeColor', DistributionColor, 'LineWidth', ...
-                DistributionLineWidth, 'Parent', Parent)
-        end
+        stack_xx = reshape(repmat(stack_x, 2,1), [], 1);
+        stack_yy = reshape(cat(1, stack_y(1:end-1), stack_y(2:end)), [], 1);
+        fill([stack_xx; flipud(-stack_xx)] + x, [stack_yy; flipud(stack_yy)],...
+             DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
+             'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
 end
 
 % Hash overlay
@@ -368,6 +367,17 @@ elseif strcmpi(DistributionStyle, 'Violin')
         plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
         [~,err_idx] = min(abs(violin_y - y_error(1)));
         plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([1,1]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+    end
+elseif strcmpi(DistributionStyle, 'Stacks')
+    med_idx = find(y_central < stack_yy, 1, 'first');
+    plot(x+[stack_xx(med_idx), -stack_xx(med_idx)], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+    if ErrorWhiskers
+        % [~,err_idx] = min(abs(stack_y - y_error(2)));
+        err_idx = find(y_error(2) < stack_yy, 1, 'first');
+        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([2,2]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        % [~,err_idx] = min(abs(stack_y - y_error(1)));
+        err_idx = find(y_error(1) < stack_yy, 1, 'first');
+        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([1,1]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
     end
 end
 
