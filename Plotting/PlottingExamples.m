@@ -3,8 +3,10 @@
 % This function allows for globally setting all typefaces and fontsizes in one call.
 % Note that the SetFont must be run at the beginning of the script (or in this case before
 % the axes are created)
-figure; 
-SetFont('Arial', 9)
+clf; 
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 3]);
+
+SetFont('Arial', 12)
 subplot(1,3,1); hold on
     plot([1:10], [1:10], 'LineWidth', 2)
     title('Arial is fine')
@@ -19,7 +21,7 @@ subplot(1,3,3); hold on
     plot([1:10], [1:10], 'LineWidth', 2)
     title('Serifs are bad')
 
-set(gcf, 'Units', 'pixels', 'Position', OSScreenSize([30, 10], 'cm', 1));
+
 
 %% 2. GetUnicodeChar
 % Many figures require Greek letters to be used as notation (eg. mu, sigma)
@@ -31,6 +33,8 @@ fprintf('The string "mu" produces %s, while "Mu" produces %s\n', GetUnicodeChar(
 % Quite simply the standard stalks for error bars are ugly, don't use them.
 SetFont('Arial', 12)
 clf; 
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 4]);
+
 
 x = [1:20];
 y = repmat([1:20], [100,1]) + randn([100,20])*2;
@@ -62,36 +66,57 @@ subplot(2,3,6);
     AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
     title('Or acknowledge them')
 
-%% 4. SymphonicBeeSwarm
+%% 4. Swarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
 SetFont('Arial', 12)
-clf; 
-colors = lines(7);
-x = 1;
+colors = lines(10);
 y = randn([100,1]) + 5;
 
-% The default look. Takes the x value, a vector of y values, the color, and the point size
-SymphonicBeeSwarm(x, y, colors(1,:), 50)
-% The function also allows for a variety of background plots
-SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
-SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
-SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterWidth', .1)
-% and many many other options
-SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
-    'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
-% Bar adds whiskers if maxpoints = 0
-SymphonicBeeSwarm(6, y, colors(6,:), 50, 'BackgroundType', 'bar', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
-% Box only for completions sake
-SymphonicBeeSwarm(7, y, colors(7,:), 50, 'BackgroundType', 'box', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [5,25,75,95], 'MaxPoints', 0)
-xticks([1:7]);
-xticklabels({'Default', '+Bar', '+Violin', '+Box', 'ViolinOnly', 'BarOnly', 'BoxOnly'})
+clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 8])
+subplot(3,1,1); hold on
+    title('Swarm + Backgrounds')
+    % The default look. Takes the x value, a vector of y values, and the color
+    Swarm(1, y, colors(1,:))
+    % The function also allows for a variety of background plots
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar')
+    Swarm(3, y, colors(3,:), 'DS', 'Violin') % There are shorthands for each argument
+    Swarm(4, y, colors(4,:), 'DS', 'Box')
+    Swarm(5, y, colors(5,:), 'DS', 'Stacks')
+    
+    set(gca, 'XTick', [1:5], 'XLim', [0.5 5.5],...
+             'XTickLabel', {'Default', '+Bar', '+Violin', '+Box', '+Stacks'}, ...
+             'YLim', [0 10])
+
+subplot(3,1,2); hold on
+    title('Background Only')
+    Swarm(1, y, colors(1,:), 'SwarmPointLimit', 0) % This won't work
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar', 'SPL', 0)
+    Swarm(3, y, colors(3,:), 'DistributionStyle', 'Violin', 'SPL', 0)
+    Swarm(4, y, colors(4,:), 'DistributionStyle', 'Box', 'SPL', 0)
+    Swarm(5, y, colors(5,:), 'DistributionStyle', 'Stacks', 'SPL', 0)
+    
+    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
+             'XTickLabel', {'Default', 'Bar', 'Violin', 'Box', 'Stacks'}, ...
+             'YLim', [0 10])
+
+subplot(3,1,3); hold on
+    title('Other Options')
+    Swarm(1, y, 'CenterColor', [1 .6 .6], 'DistributionColor', [.6 1 .6], 'SwarmColor', [.6 .6 1], 'DS', 'Violin') % If you hate your eyes
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar', 'DistributionWidth', 0.5, 'ErrorWhiskers', true, 'DistributionWhiskerRatio', 1)
+    Swarm(3, y, colors(3,:), 'SwarmColor', rand(length(y), 3))
+    Swarm(4, y, colors(4,:), 'DistributionStyle', 'Bar', 'HashStyle', '/', 'HashAngle', 80)
+    Swarm(5, y, colors(5,:), 'DistributionStyle', 'Bar', 'HashStyle', '#', 'HashAngle', 80)
+    
+    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
+             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch'}, ...
+             'YLim', [0 10])
 
 %% 5. ColorText
 % A convenient way of color coding text to replace legends
 clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 3]);
+
 subplot(1,3,1); hold on
     title('The Matlab default')
     for i = 1:3
@@ -122,29 +147,33 @@ subplot(1,3,3); hold on
         'HorizontalAlignment','right')
     yticks([0:4])
 
+%% 5. GetAxisPosition
+% Best way to ensure the ColorText legend is always in the same place
+data = randn(1000,1);
 
+clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 2.5])
+subplot(1,3,1); hold on
+    title('A plot 1 unit wide')
+    Swarm(.5, data, [1 .6 .6])
+    set(gca, 'XLim', [0 1], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+    [x,y] = GetAxisPosition(gca, 5, 95);
+    text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left')
 
+subplot(1,3,2); hold on
+    title('A plot 10 units wide')
+    for i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    end
+set(gca, 'XLim', [-2 12], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+[x,y] = GetAxisPosition(gca, 5, 95);
+text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+subplot(1,3,3); hold on
+    title('legend in the bottom right')
+    for i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    end
+set(gca, 'XLim', [-2 12], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+[x,y] = GetAxisPosition(gca, 95, 5);
+text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right')

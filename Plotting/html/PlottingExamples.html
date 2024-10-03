@@ -1,12 +1,17 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PlottingExamples</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-02-10"><meta name="DC.source" content="PlottingExamples.m"><style type="text/css">
+      -->
+<title>PlottingExamples</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-10-03">
+<meta name="DC.source" content="PlottingExamples.m">
+<style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -67,8 +72,46 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Example scripts for plotting functions</a></li><li><a href="#2">1. SetFont</a></li><li><a href="#3">2. GetUnicodeChar</a></li><li><a href="#4">3. AlphaLine</a></li><li><a href="#5">4. SymphonicBeeSwarm</a></li><li><a href="#6">5. ColorText</a></li></ul></div><h2 id="1">Example scripts for plotting functions</h2><h2 id="2">1. SetFont</h2><p>This function allows for globally setting all typefaces and fontsizes in one call. Note that the SetFont must be run at the beginning of the script (or in this case before the axes are created)</p><pre class="codeinput">figure;
-SetFont(<span class="string">'Arial'</span>, 9)
+  </style>
+</head>
+<body>
+<div class="content">
+<h1></h1>
+<!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Example scripts for plotting functions</a>
+</li>
+<li>
+<a href="#2">1. SetFont</a>
+</li>
+<li>
+<a href="#3">2. GetUnicodeChar</a>
+</li>
+<li>
+<a href="#4">3. AlphaLine</a>
+</li>
+<li>
+<a href="#5">4. Swarm</a>
+</li>
+<li>
+<a href="#6">5. ColorText</a>
+</li>
+<li>
+<a href="#7">5. GetAxisPosition</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Example scripts for plotting functions</h2>
+<h2 id="2">1. SetFont</h2>
+<p>This function allows for globally setting all typefaces and fontsizes in one call. Note that the SetFont must be run at the beginning of the script (or in this case before the axes are created)</p>
+<pre class="codeinput">clf;
+set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 3]);
+
+SetFont(<span class="string">'Arial'</span>, 12)
 subplot(1,3,1); hold <span class="string">on</span>
     plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
     title(<span class="string">'Arial is fine'</span>)
@@ -82,12 +125,19 @@ SetFont(<span class="string">'Monospaced'</span>, 9)
 subplot(1,3,3); hold <span class="string">on</span>
     plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
     title(<span class="string">'Serifs are bad'</span>)
-
-set(gcf, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="string">'Position'</span>, OSScreenSize([30, 10], <span class="string">'cm'</span>, 1));
-</pre><img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2><p>Many figures require Greek letters to be used as notation (eg. mu, sigma) This function allows for them to be easily made and in some cases will be supported by the typeface used</p><pre class="codeinput">fprintf(<span class="string">'The string "mu" produces %s, while "Mu" produces %s\n'</span>, GetUnicodeChar(<span class="string">'mu'</span>), GetUnicodeChar(<span class="string">'Mu'</span>))
-</pre><pre class="codeoutput">The string "mu" produces &#956;, while "Mu" produces &#924;
-</pre><h2 id="4">3. AlphaLine</h2><p>Quite simply the standard stalks for error bars are ugly, don't use them.</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
+</pre>
+<img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2>
+<p>Many figures require Greek letters to be used as notation (eg. mu, sigma) This function allows for them to be easily made and in some cases will be supported by the typeface used</p>
+<pre class="codeinput">fprintf(<span class="string">'The string "mu" produces %s, while "Mu" produces %s\n'</span>, GetUnicodeChar(<span class="string">'mu'</span>), GetUnicodeChar(<span class="string">'Mu'</span>))
+</pre>
+<pre class="codeoutput">The string "mu" produces μ, while "Mu" produces Μ
+</pre>
+<h2 id="4">3. AlphaLine</h2>
+<p>Quite simply the standard stalks for error bars are ugly, don't use them.</p>
+<pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 clf;
+set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 4]);
+
 
 x = [1:20];
 y = repmat([1:20], [100,1]) + randn([100,20])*2;
@@ -118,33 +168,61 @@ subplot(2,3,5);
 subplot(2,3,6);
     AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 2)
     title(<span class="string">'Or acknowledge them'</span>)
-</pre><pre class="codeoutput">Warning: NaNs in Y-array break the fill function. Explore the "IgnoreNan"
-option. 
-</pre><img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. SymphonicBeeSwarm</h2><p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p><pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
-clf;
-colors = lines(7);
-x = 1;
+</pre>
+<pre class="codeoutput">Warning: NaNs in Y-array break the fill function.
+Explore the "IgnoreNan" option. 
+</pre>
+<img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. Swarm</h2>
+<p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p>
+<pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
+colors = lines(10);
 y = randn([100,1]) + 5;
 
-<span class="comment">% The default look. Takes the x value, a vector of y values, the color, and the point size</span>
-SymphonicBeeSwarm(x, y, colors(1,:), 50)
-<span class="comment">% The function also allows for a variety of background plots</span>
-SymphonicBeeSwarm(2, y, colors(2,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Bar'</span>, <span class="string">'CenterColor'</span>, <span class="string">'none'</span>)
-SymphonicBeeSwarm(3, y, colors(3,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Violin'</span>, <span class="string">'CenterColor'</span>, [.6 .6 .6])
-SymphonicBeeSwarm(4, y, colors(4,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'Box'</span>, <span class="string">'CenterWidth'</span>, .1)
-<span class="comment">% and many many other options</span>
-SymphonicBeeSwarm(5, y, colors(5,:), 50, <span class="string">'CenterMethod'</span>, <span class="string">'median'</span>, <span class="string">'CenterColor'</span>, [.6 .6 .6], <span class="string">'CenterWidth'</span>, .1,<span class="keyword">...</span>
-    <span class="string">'DistributionMethod'</span>, <span class="string">'histogram'</span>, <span class="string">'BackgroundType'</span>, <span class="string">'violin'</span>, <span class="string">'BackgroundFaceAlpha'</span>, 0.1, <span class="string">'BackgroundEdgeAlpha'</span>, 1,<span class="keyword">...</span>
-    <span class="string">'MarkerFaceAlpha'</span>, 1, <span class="string">'MarkerEdgeAlpha'</span>, 1, <span class="string">'BoxPercentiles'</span>, [1,40,60,99], <span class="string">'MaxPoints'</span>, 0)
-<span class="comment">% Bar adds whiskers if maxpoints = 0</span>
-SymphonicBeeSwarm(6, y, colors(6,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'bar'</span>, <span class="string">'BackgroundFaceAlpha'</span>, 0.1, <span class="string">'BackgroundEdgeAlpha'</span>, 1,<span class="keyword">...</span>
-    <span class="string">'MarkerFaceAlpha'</span>, 1, <span class="string">'MarkerEdgeAlpha'</span>, 1, <span class="string">'BoxPercentiles'</span>, [1,40,60,99], <span class="string">'MaxPoints'</span>, 0)
-<span class="comment">% Box only for completions sake</span>
-SymphonicBeeSwarm(7, y, colors(7,:), 50, <span class="string">'BackgroundType'</span>, <span class="string">'box'</span>, <span class="string">'BackgroundFaceAlpha'</span>, 0.1, <span class="string">'BackgroundEdgeAlpha'</span>, 1,<span class="keyword">...</span>
-    <span class="string">'MarkerFaceAlpha'</span>, 1, <span class="string">'MarkerEdgeAlpha'</span>, 1, <span class="string">'BoxPercentiles'</span>, [5,25,75,95], <span class="string">'MaxPoints'</span>, 0)
-xticks([1:7]);
-xticklabels({<span class="string">'Default'</span>, <span class="string">'+Bar'</span>, <span class="string">'+Violin'</span>, <span class="string">'+Box'</span>, <span class="string">'ViolinOnly'</span>, <span class="string">'BarOnly'</span>, <span class="string">'BoxOnly'</span>})
-</pre><img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <h2 id="6">5. ColorText</h2><p>A convenient way of color coding text to replace legends</p><pre class="codeinput">clf;
+clf;
+set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 8])
+subplot(3,1,1); hold <span class="string">on</span>
+    title(<span class="string">'Swarm + Backgrounds'</span>)
+    <span class="comment">% The default look. Takes the x value, a vector of y values, and the color</span>
+    Swarm(1, y, colors(1,:))
+    <span class="comment">% The function also allows for a variety of background plots</span>
+    Swarm(2, y, colors(2,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>)
+    Swarm(3, y, colors(3,:), <span class="string">'DS'</span>, <span class="string">'Violin'</span>) <span class="comment">% There are shorthands for each argument</span>
+    Swarm(4, y, colors(4,:), <span class="string">'DS'</span>, <span class="string">'Box'</span>)
+    Swarm(5, y, colors(5,:), <span class="string">'DS'</span>, <span class="string">'Stacks'</span>)
+
+    set(gca, <span class="string">'XTick'</span>, [1:5], <span class="string">'XLim'</span>, [0.5 5.5],<span class="keyword">...</span>
+             <span class="string">'XTickLabel'</span>, {<span class="string">'Default'</span>, <span class="string">'+Bar'</span>, <span class="string">'+Violin'</span>, <span class="string">'+Box'</span>, <span class="string">'+Stacks'</span>}, <span class="keyword">...</span>
+             <span class="string">'YLim'</span>, [0 10])
+
+subplot(3,1,2); hold <span class="string">on</span>
+    title(<span class="string">'Background Only'</span>)
+    Swarm(1, y, colors(1,:), <span class="string">'SwarmPointLimit'</span>, 0) <span class="comment">% This won't work</span>
+    Swarm(2, y, colors(2,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'SPL'</span>, 0)
+    Swarm(3, y, colors(3,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Violin'</span>, <span class="string">'SPL'</span>, 0)
+    Swarm(4, y, colors(4,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Box'</span>, <span class="string">'SPL'</span>, 0)
+    Swarm(5, y, colors(5,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Stacks'</span>, <span class="string">'SPL'</span>, 0)
+
+    set(gca, <span class="string">'XTick'</span>, [1:5],  <span class="string">'XLim'</span>, [0.5 5.5], <span class="keyword">...</span>
+             <span class="string">'XTickLabel'</span>, {<span class="string">'Default'</span>, <span class="string">'Bar'</span>, <span class="string">'Violin'</span>, <span class="string">'Box'</span>, <span class="string">'Stacks'</span>}, <span class="keyword">...</span>
+             <span class="string">'YLim'</span>, [0 10])
+
+subplot(3,1,3); hold <span class="string">on</span>
+    title(<span class="string">'Other Options'</span>)
+    Swarm(1, y, <span class="string">'CenterColor'</span>, [1 .6 .6], <span class="string">'DistributionColor'</span>, [.6 1 .6], <span class="string">'SwarmColor'</span>, [.6 .6 1], <span class="string">'DS'</span>, <span class="string">'Violin'</span>) <span class="comment">% If you hate your eyes</span>
+    Swarm(2, y, colors(2,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'DistributionWidth'</span>, 0.5, <span class="string">'ErrorWhiskers'</span>, true, <span class="string">'DistributionWhiskerRatio'</span>, 1)
+    Swarm(3, y, colors(3,:), <span class="string">'SwarmColor'</span>, rand(length(y), 3))
+    Swarm(4, y, colors(4,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'HashStyle'</span>, <span class="string">'/'</span>, <span class="string">'HashAngle'</span>, 80)
+    Swarm(5, y, colors(5,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'HashStyle'</span>, <span class="string">'#'</span>, <span class="string">'HashAngle'</span>, 80)
+
+    set(gca, <span class="string">'XTick'</span>, [1:5],  <span class="string">'XLim'</span>, [0.5 5.5], <span class="keyword">...</span>
+             <span class="string">'XTickLabel'</span>, {<span class="string">'Colors'</span>, <span class="string">'Widths'</span>, <span class="string">'SwarmColors'</span>, <span class="string">'Hashing'</span>, <span class="string">'CrossHatch'</span>}, <span class="keyword">...</span>
+             <span class="string">'YLim'</span>, [0 10])
+</pre>
+<img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <h2 id="6">5. ColorText</h2>
+<p>A convenient way of color coding text to replace legends</p>
+<pre class="codeinput">clf;
+set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 3]);
+
 subplot(1,3,1); hold <span class="string">on</span>
     title(<span class="string">'The Matlab default'</span>)
     <span class="keyword">for</span> i = 1:3
@@ -174,15 +252,55 @@ subplot(1,3,3); hold <span class="string">on</span>
     text(5,4, leg_text, <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>,<span class="keyword">...</span>
         <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>)
     yticks([0:4])
-</pre><img vspace="5" hspace="5" src="PlottingExamples_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+</pre>
+<img vspace="5" hspace="5" src="PlottingExamples_04.png" alt=""> <h2 id="7">5. GetAxisPosition</h2>
+<p>Best way to ensure the ColorText legend is always in the same place</p>
+<pre class="codeinput">data = randn(1000,1);
+
+clf;
+set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 2.5])
+subplot(1,3,1); hold <span class="string">on</span>
+    title(<span class="string">'A plot 1 unit wide'</span>)
+    Swarm(.5, data, [1 .6 .6])
+    set(gca, <span class="string">'XLim'</span>, [0 1], <span class="string">'YLim'</span>, [-5 5]) <span class="comment">% Limits must be set before GetAxisPosition is called</span>
+    [x,y] = GetAxisPosition(gca, 5, 95);
+    text(x,y, ColorText(<span class="string">'Legend'</span>, [1 .6 .6]), <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>)
+
+subplot(1,3,2); hold <span class="string">on</span>
+    title(<span class="string">'A plot 10 units wide'</span>)
+    <span class="keyword">for</span> i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    <span class="keyword">end</span>
+set(gca, <span class="string">'XLim'</span>, [-2 12], <span class="string">'YLim'</span>, [-5 5]) <span class="comment">% Limits must be set before GetAxisPosition is called</span>
+[x,y] = GetAxisPosition(gca, 5, 95);
+text(x,y, ColorText(<span class="string">'Legend'</span>, [1 .6 .6]), <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>)
+
+subplot(1,3,3); hold <span class="string">on</span>
+    title(<span class="string">'legend in the bottom right'</span>)
+    <span class="keyword">for</span> i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    <span class="keyword">end</span>
+set(gca, <span class="string">'XLim'</span>, [-2 12], <span class="string">'YLim'</span>, [-5 5]) <span class="comment">% Limits must be set before GetAxisPosition is called</span>
+[x,y] = GetAxisPosition(gca, 95, 5);
+text(x,y, ColorText(<span class="string">'Legend'</span>, [1 .6 .6]), <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'right'</span>)
+</pre>
+<img vspace="5" hspace="5" src="PlottingExamples_05.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
 ##### SOURCE BEGIN #####
 %%% Example scripts for plotting functions
 %% 1. SetFont
 % This function allows for globally setting all typefaces and fontsizes in one call.
 % Note that the SetFont must be run at the beginning of the script (or in this case before
 % the axes are created)
-figure; 
-SetFont('Arial', 9)
+clf; 
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 3]);
+
+SetFont('Arial', 12)
 subplot(1,3,1); hold on
     plot([1:10], [1:10], 'LineWidth', 2)
     title('Arial is fine')
@@ -197,7 +315,7 @@ subplot(1,3,3); hold on
     plot([1:10], [1:10], 'LineWidth', 2)
     title('Serifs are bad')
 
-set(gcf, 'Units', 'pixels', 'Position', OSScreenSize([30, 10], 'cm', 1));
+
 
 %% 2. GetUnicodeChar
 % Many figures require Greek letters to be used as notation (eg. mu, sigma)
@@ -209,6 +327,8 @@ fprintf('The string "mu" produces %s, while "Mu" produces %s\n', GetUnicodeChar(
 % Quite simply the standard stalks for error bars are ugly, don't use them.
 SetFont('Arial', 12)
 clf; 
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 4]);
+
 
 x = [1:20];
 y = repmat([1:20], [100,1]) + randn([100,20])*2;
@@ -240,36 +360,57 @@ subplot(2,3,6);
     AlphaLine(x,y,lines(1), 'ErrorType', 'Percentile', 'Percentiles', [5 95], 'IgnoreNaN', 2)
     title('Or acknowledge them')
 
-%% 4. SymphonicBeeSwarm
+%% 4. Swarm
 % A nicer method of showing value distribution of categories when not using a histogram or CDF
 SetFont('Arial', 12)
-clf; 
-colors = lines(7);
-x = 1;
+colors = lines(10);
 y = randn([100,1]) + 5;
 
-% The default look. Takes the x value, a vector of y values, the color, and the point size
-SymphonicBeeSwarm(x, y, colors(1,:), 50)
-% The function also allows for a variety of background plots
-SymphonicBeeSwarm(2, y, colors(2,:), 50, 'BackgroundType', 'Bar', 'CenterColor', 'none')
-SymphonicBeeSwarm(3, y, colors(3,:), 50, 'BackgroundType', 'Violin', 'CenterColor', [.6 .6 .6])
-SymphonicBeeSwarm(4, y, colors(4,:), 50, 'BackgroundType', 'Box', 'CenterWidth', .1)
-% and many many other options
-SymphonicBeeSwarm(5, y, colors(5,:), 50, 'CenterMethod', 'median', 'CenterColor', [.6 .6 .6], 'CenterWidth', .1,...
-    'DistributionMethod', 'histogram', 'BackgroundType', 'violin', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
-% Bar adds whiskers if maxpoints = 0
-SymphonicBeeSwarm(6, y, colors(6,:), 50, 'BackgroundType', 'bar', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [1,40,60,99], 'MaxPoints', 0)
-% Box only for completions sake
-SymphonicBeeSwarm(7, y, colors(7,:), 50, 'BackgroundType', 'box', 'BackgroundFaceAlpha', 0.1, 'BackgroundEdgeAlpha', 1,...
-    'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'BoxPercentiles', [5,25,75,95], 'MaxPoints', 0)
-xticks([1:7]);
-xticklabels({'Default', '+Bar', '+Violin', '+Box', 'ViolinOnly', 'BarOnly', 'BoxOnly'})
+clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 8])
+subplot(3,1,1); hold on
+    title('Swarm + Backgrounds')
+    % The default look. Takes the x value, a vector of y values, and the color
+    Swarm(1, y, colors(1,:))
+    % The function also allows for a variety of background plots
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar')
+    Swarm(3, y, colors(3,:), 'DS', 'Violin') % There are shorthands for each argument
+    Swarm(4, y, colors(4,:), 'DS', 'Box')
+    Swarm(5, y, colors(5,:), 'DS', 'Stacks')
+    
+    set(gca, 'XTick', [1:5], 'XLim', [0.5 5.5],...
+             'XTickLabel', {'Default', '+Bar', '+Violin', '+Box', '+Stacks'}, ...
+             'YLim', [0 10])
+
+subplot(3,1,2); hold on
+    title('Background Only')
+    Swarm(1, y, colors(1,:), 'SwarmPointLimit', 0) % This won't work
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar', 'SPL', 0)
+    Swarm(3, y, colors(3,:), 'DistributionStyle', 'Violin', 'SPL', 0)
+    Swarm(4, y, colors(4,:), 'DistributionStyle', 'Box', 'SPL', 0)
+    Swarm(5, y, colors(5,:), 'DistributionStyle', 'Stacks', 'SPL', 0)
+    
+    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
+             'XTickLabel', {'Default', 'Bar', 'Violin', 'Box', 'Stacks'}, ...
+             'YLim', [0 10])
+
+subplot(3,1,3); hold on
+    title('Other Options')
+    Swarm(1, y, 'CenterColor', [1 .6 .6], 'DistributionColor', [.6 1 .6], 'SwarmColor', [.6 .6 1], 'DS', 'Violin') % If you hate your eyes
+    Swarm(2, y, colors(2,:), 'DistributionStyle', 'Bar', 'DistributionWidth', 0.5, 'ErrorWhiskers', true, 'DistributionWhiskerRatio', 1)
+    Swarm(3, y, colors(3,:), 'SwarmColor', rand(length(y), 3))
+    Swarm(4, y, colors(4,:), 'DistributionStyle', 'Bar', 'HashStyle', '/', 'HashAngle', 80)
+    Swarm(5, y, colors(5,:), 'DistributionStyle', 'Bar', 'HashStyle', '#', 'HashAngle', 80)
+    
+    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
+             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch'}, ...
+             'YLim', [0 10])
 
 %% 5. ColorText
 % A convenient way of color coding text to replace legends
 clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 3]);
+
 subplot(1,3,1); hold on
     title('The Matlab default')
     for i = 1:3
@@ -300,32 +441,38 @@ subplot(1,3,3); hold on
         'HorizontalAlignment','right')
     yticks([0:4])
 
+%% 5. GetAxisPosition
+% Best way to ensure the ColorText legend is always in the same place
+data = randn(1000,1);
 
+clf;
+set(gcf, 'Units', 'inches', 'Position', [3 3 8 2.5])
+subplot(1,3,1); hold on
+    title('A plot 1 unit wide')
+    Swarm(.5, data, [1 .6 .6])
+    set(gca, 'XLim', [0 1], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+    [x,y] = GetAxisPosition(gca, 5, 95);
+    text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left')
 
+subplot(1,3,2); hold on
+    title('A plot 10 units wide')
+    for i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    end
+set(gca, 'XLim', [-2 12], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+[x,y] = GetAxisPosition(gca, 5, 95);
+text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+subplot(1,3,3); hold on
+    title('legend in the bottom right')
+    for i = .5:1:9.5
+        Swarm(i, data, [1 .6 .6])
+    end
+set(gca, 'XLim', [-2 12], 'YLim', [-5 5]) % Limits must be set before GetAxisPosition is called
+[x,y] = GetAxisPosition(gca, 95, 5);
+text(x,y, ColorText('Legend', [1 .6 .6]), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right')
 
 ##### SOURCE END #####
---></body></html>
+-->
+</body>
+</html>

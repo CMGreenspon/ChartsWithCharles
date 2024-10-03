@@ -136,6 +136,8 @@ if isempty(SwarmColor)
     SwarmColor = repmat(Color, [length(y),1]);
 elseif size(SwarmColor,1) == length(yidx)
     SwarmColor = SwarmColor(~yidx, :);
+elseif size(SwarmColor, 1) == 1
+    SwarmColor = repmat(SwarmColor, [length(yidx),1]);
 end
 
 % Truncate y-values
