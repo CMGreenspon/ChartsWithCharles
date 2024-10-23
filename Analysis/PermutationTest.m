@@ -37,7 +37,7 @@ function [h,p] = PermutationTest(x1,x2,num_perms,alpha)
         n1 = numel(x1);
         for p = 1:num_perms
             perm_sample = datasample(x_cat, numel(x_cat),'Replace', false);
-            perm_delta(p) = abs(diff([mean(perm_sample(1:n1), 'omitnan'), mean(perm_sample(n1:1:end), 'omitnan')]));
+            perm_delta(p) = abs(diff([mean(perm_sample(1:n1), 'omitnan'), mean(perm_sample(n1+1:end), 'omitnan')]));
         end
     end
 
