@@ -5,6 +5,10 @@ function raster_ticks = Rasterfy(spike_times, y_margin, concat)
     if nargin < 2
         y_margin = 0.4;
     end
+
+    if isa(spike_times, 'double')
+        spike_times = {spike_times};
+    end
     num_trials = length(spike_times);
     
     raster_ticks = cell([num_trials,2]);

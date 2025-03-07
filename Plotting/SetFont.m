@@ -10,7 +10,7 @@ function SetFont(typeface, fontsize)
     % Default values
     if exist('typeface', 'var') == 0
         typeface = 'Arial';
-    elseif ischar(typeface) == 0
+    elseif ischar(typeface) == 0 && isstring(typeface) == 0
         error('Given "typeface" is not a string')
     else
         font_list = listfonts;

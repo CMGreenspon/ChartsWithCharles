@@ -182,7 +182,7 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
              [0, y_central, y_central, 0], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', ...
               DistributionLineWidth, 'Parent', Parent)
         % Whiskers
-        if ErrorWhiskers
+        if ErrorWhiskers && length(y) > 1
             plot([x,x], [y_central,y_error(2)], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
             plot([x-DistributionWidth*DistributionWhiskerRatio,x+DistributionWidth*DistributionWhiskerRatio],...
                 y_error([2,2]), 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', DistributionLineWidth, 'Parent', Parent)
@@ -297,7 +297,7 @@ if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})
         hy_v = [repmat(hy, [2, 1]); NaN(1, size(hy,2))];
         hx_v = repmat([x - DistributionWidth; x + DistributionWidth; NaN], [1, size(hy_v,2)]);
         
-        plot(hx_v(:), hy_v(:), 'Color', DistributionColor, 'LineWidth', DistributionLineWidth)
+        plot(hx_v(:), hy_v(:), 'Color', DistributionColor, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
     end
 end
 
@@ -306,7 +306,6 @@ if SwarmPointLimit > 0
     % Make swarm distribution
     if contains(DistributionMethod, 'Hist')
         [swarm_x_range, swarm_y_edges, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
-    %     bin_centers = swarm_y_edges(1:end-1) + (range(swarm_y_edges(1:2))/2); 
         swarm_x_range = (swarm_x_range ./ max(swarm_x_range)) * DistributionWidth * SwarmWidthRatio;
         swarm_x_range = smoothdata(swarm_x_range, 'Gaussian', 3);
         swarm_x_range = swarm_x_range - min(swarm_x_range);
@@ -355,31 +354,40 @@ end
 % Overlay central tendency (in some cases)
 if strcmpi(DistributionStyle, 'Box')
     if SwarmPointLimit == 0 && CenterLineWidth == 2
-        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
+            'LineWidth', DistributionLineWidth, 'Parent', Parent)
     else
-        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
+            'LineWidth', CenterLineWidth, 'Parent', Parent)
     end
 elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
-    plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+    plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
+        'LineWidth', CenterLineWidth, 'Parent', Parent)
 elseif strcmpi(DistributionStyle, 'Violin')
     [~,med_idx] = min(abs(violin_y - y_central));
-    plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+    plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+        'LineWidth', CenterLineWidth, 'Parent', Parent)
     if ErrorWhiskers
         [~,err_idx] = min(abs(violin_y - y_error(2)));
-        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
+            'LineWidth', DistributionLineWidth, 'Parent', Parent)
         [~,err_idx] = min(abs(violin_y - y_error(1)));
-        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([1,1]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
+            'LineWidth', DistributionLineWidth, 'Parent', Parent)
     end
 elseif strcmpi(DistributionStyle, 'Stacks')
     med_idx = find(y_central < stack_yy, 1, 'first');
-    plot(x+[stack_xx(med_idx), -stack_xx(med_idx)], [y_central, y_central], 'Color', CenterColor, 'LineWidth', CenterLineWidth)
+    plot(x+[stack_xx(med_idx), -stack_xx(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+        'LineWidth', CenterLineWidth, 'Parent', Parent)
     if ErrorWhiskers
         % [~,err_idx] = min(abs(stack_y - y_error(2)));
         err_idx = find(y_error(2) < stack_yy, 1, 'first');
-        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([2,2]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
+            'LineWidth', DistributionLineWidth, 'Parent', Parent)
         % [~,err_idx] = min(abs(stack_y - y_error(1)));
         err_idx = find(y_error(1) < stack_yy, 1, 'first');
-        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([1,1]) , 'Color', CenterColor, 'LineWidth', DistributionLineWidth)
+        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
+            'LineWidth', DistributionLineWidth, 'Parent', Parent)
     end
 end
 

@@ -47,9 +47,6 @@ function AlphaLine(x, y, color, varargin)
         return
     elseif ~isempty(nan_idx)
         % Check for trailing NaNs
-        if nan_idx(end) || nan_idx(1)
-            warning('Removing trailing NaNs') 
-        end
         if nan_idx(end)
             while nan_idx(end)
                 x = x(1:end-1);
@@ -94,7 +91,7 @@ function AlphaLine(x, y, color, varargin)
     EdgeAlpha = 0.1;
     ErrorType = 'STD';
     Percentiles = [25, 75];
-    IgnoreNaN = 0;
+    IgnoreNaN = 2;
     PlotBetweenNaN = 1;
     LineStyle = '-';
     EdgeStyle = '-';
@@ -106,14 +103,14 @@ function AlphaLine(x, y, color, varargin)
     
     % Compute mean
     if strcmpi(ErrorType, 'Percentile')
-        y_central = median(y,2,'omitnan');
+        y_central = median(y, 2, 'omitnan');
     else
-        y_central = mean(y,2,'omitnan');
+        y_central = mean(y, 2, 'omitnan');
     end
     
     % Compute error
     if strcmpi(ErrorType, 'STD')
-        y_error = std(y,1,2,'omitnan');
+        y_error = std(y,1,2, 'omitnan');
         y2 = [y_central+y_error; flipud(y_central-y_error)];
     elseif strcmpi(ErrorType, 'SEM')
         y_error = std(y,1,2, 'omitnan') ./ sqrt(size(y,2));
