@@ -1,4 +1,4 @@
-function export_figure4x(export_path, fname)
+function export_figure3x(export_path, fname)
     export_fname = fullfile(export_path, fname);
     print(gcf, export_fname, '-dpng', '-r300')
     set(gcf, 'Renderer', 'painters')

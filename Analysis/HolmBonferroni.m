@@ -21,5 +21,5 @@ function pAdjusted = HolmBonferroni(p, alpha)
     
     pAdjusted = pAdjusted(sort_idx);
     pAdjusted(isnan(p_vec)) = NaN;
-    pAdjusted = reshape(p_vec, size(p));
+    pAdjusted = reshape(pAdjusted, size(p));
 end

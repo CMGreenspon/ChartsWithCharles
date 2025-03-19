@@ -6,10 +6,14 @@ function AddFigureLabels(h, label_offset, caps)
         caps = true;
     end
 
-    if caps
-        char_offset = 64;
-    else
-        char_offset = 96;
+    if islogical(caps)
+        if caps
+            char_offset = 64;
+        else
+            char_offset = 96;
+        end
+    elseif isnumeric(caps)
+        char_offset = caps;
     end
 
     if isa(h, 'matlab.graphics.axis.Axes')
