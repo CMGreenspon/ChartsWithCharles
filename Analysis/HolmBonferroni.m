@@ -5,7 +5,8 @@ function pAdjusted = HolmBonferroni(p, alpha)
     
     % Sort and iterate
     p_vec = p(:);
-    [p_sorted,sort_idx] = sort(p_vec);
+    [p_sorted, sort_idx] = sort(p_vec);
+    [~, rsort_idx] = sort(sort_idx);
     current_multiplier = sum(~isnan(p_vec));
     pAdjusted = ones([length(p_vec), 1]);
     for i = 1:length(p_vec)
@@ -19,7 +20,7 @@ function pAdjusted = HolmBonferroni(p, alpha)
         end
     end
     
-    pAdjusted = pAdjusted(sort_idx);
+    pAdjusted = pAdjusted(rsort_idx);
     pAdjusted(isnan(p_vec)) = NaN;
     pAdjusted = reshape(pAdjusted, size(p));
 end
