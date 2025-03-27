@@ -55,6 +55,7 @@ DistributionFaceAlpha = .3; % {DFA} Transparency value of distribution
 DistributionLineWidth = 1; % {DLW} 
 DistributionLineAlpha = .75; % {DLA} 
 DistributionWhiskerRatio = .3; % {DWR} 
+NumStacks = 0; % {NS} 
 % Swarm options
 SwarmMarkerSize = 30; % {SMS} Scatter size
 SwarmYLimits = []; % {SYL} Truncation of y-values in swarm
@@ -201,8 +202,13 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
              DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
              'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
     case 'stacks'
-        [stack_x, stack_y, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
+        if NumStacks == 0
+            [stack_x, stack_y, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
+        else
+            [stack_x, stack_y, ~] = histcounts(SwarmY, NumStacks);
+        end
         stack_x = (stack_x ./ max(stack_x)) * DistributionWidth * SwarmWidthRatio;
+        stack_x(stack_x == 0) = DistributionWidth / 25;
         stack_xx = reshape(repmat(stack_x, 2,1), [], 1);
         stack_yy = reshape(cat(1, stack_y(1:end-1), stack_y(2:end)), [], 1);
         fill([stack_xx; flipud(-stack_xx)] + x, [stack_yy; flipud(stack_yy)],...
@@ -305,7 +311,13 @@ end
 if SwarmPointLimit > 0
     % Make swarm distribution
     if contains(DistributionMethod, 'Hist')
-        [swarm_x_range, swarm_y_edges, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
+        if NumStacks == 0
+            [swarm_x_range, swarm_y_edges, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
+        else
+            [swarm_x_range, swarm_y_edges, ~] = histcounts(SwarmY, NumStacks);
+        end
+        swarm_x_range = (swarm_x_range ./ max(swarm_x_range)) * DistributionWidth * SwarmWidthRatio;
+        swarm_x_range(swarm_x_range == 0) = DistributionWidth / 25;
         swarm_x_range = (swarm_x_range ./ max(swarm_x_range)) * DistributionWidth * SwarmWidthRatio;
         swarm_x_range = smoothdata(swarm_x_range, 'Gaussian', 3);
         swarm_x_range = swarm_x_range - min(swarm_x_range);
@@ -566,6 +578,9 @@ function ParseVarargin()
 
             elseif strcmpi(varargin{1,n}, 'HashOffset') || strcmpi(varargin{1,n}, 'HO')
                 HashOffset = varargin{2,n};
+
+            elseif strcmpi(varargin{1,n}, 'NumStacks') || strcmpi(varargin{1,n}, 'NS')
+                NumStacks = varargin{2,n};
 
             elseif strcmpi(varargin{1,n}, 'Parent')
                 if isa(varargin{2,n}, 'matlab.graphics.axis.Axes')
