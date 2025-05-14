@@ -107,9 +107,11 @@ subplot(3,1,3); hold on
     Swarm(3, y, colors(3,:), 'SwarmColor', rand(length(y), 3))
     Swarm(4, y, colors(4,:), 'DistributionStyle', 'Bar', 'HashStyle', '/', 'HashAngle', 80)
     Swarm(5, y, colors(5,:), 'DistributionStyle', 'Bar', 'HashStyle', '#', 'HashAngle', 80)
+    Swarm(5.975, y, colors(6,:), 'DistributionStyle', 'Violin', 'Sides', 'left')
+    Swarm(6.025, y, colors(7,:), 'DistributionStyle', 'Violin', 'Sides', 'right', 'SPL', 0)
     
-    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
-             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch'}, ...
+    set(gca, 'XTick', [1:6],  'XLim', [0.5 6.5], ...
+             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch', 'Sides'}, ...
              'YLim', [0 10])
 
 %% 5. ColorText

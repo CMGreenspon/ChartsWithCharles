@@ -74,6 +74,7 @@ HashOffset = []; % {HO} Override HashDensity
 Parent = [];
 ShowStats = false;
 GroupName = num2str(x); % For outpur of center +/- error
+Sides = 'Both';
 
 if ~isempty(varargin)
     % Let 3rd argument be color
@@ -149,6 +150,21 @@ if ~isempty(SwarmYLimits)
     SwarmY(SwarmY < min(SwarmYLimits)) = min(SwarmYLimits);
 end
 
+% Siding
+if strcmpi(Sides, 'Both')
+    DistributionWidthArr = [-DistributionWidth, -DistributionWidth, DistributionWidth, DistributionWidth];
+elseif strcmpi(Sides, 'Right')
+    DistributionWidthArr = [-DistributionWidth, -DistributionWidth, 0, 0];
+    DistributionWhiskerRatio = DistributionWhiskerRatio / 2;
+elseif strcmpi(Sides, 'Left')
+    DistributionWidthArr = [0, 0, DistributionWidth, DistributionWidth];
+    DistributionWhiskerRatio = DistributionWhiskerRatio / 2;
+end
+
+if ~strcmpi(Sides, 'Both') && ~strcmpi(DistributionStyle, 'violin')
+    error('Sided plots are only valid for Violin')
+end
+
 % Plot background
 switch lower(DistributionStyle) % Because switch has no case-invariant mode
     case 'box'
@@ -156,8 +172,8 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
             error('When using "DistributionStyle: Box", you must pass 4 values to "ErrorPercentiles" and set "ErrorMethod: Percentile".')
         end
         % Box
-        patch([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth],...
-              y_error([1,2,2,1]), DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
+        patch(x+DistributionWidthArr, y_error([1,2,2,1]), ...
+              DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
               'EdgeAlpha', DistributionLineAlpha, 'EdgeColor', DistributionColor, 'LineWidth', ...
               DistributionLineWidth, 'Parent', Parent)
         % Whiskers
@@ -174,12 +190,12 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
 
     case 'bar'
         % Bar
-        patch([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth], ...
+        patch(x+DistributionWidthArr, ...
               [0, y_central, y_central, 0],...
               DistributionColor, 'FaceAlpha', DistributionFaceAlpha, ...
               'EdgeAlpha', 0, 'EdgeColor', DistributionColor, 'LineWidth', ...
               DistributionLineWidth, 'Parent', Parent)
-        plot([x-DistributionWidth, x-DistributionWidth, x+DistributionWidth, x+DistributionWidth], ...
+        plot(x+DistributionWidthArr, ...
              [0, y_central, y_central, 0], 'Color' , [DistributionColor, DistributionLineAlpha], 'LineWidth', ...
               DistributionLineWidth, 'Parent', Parent)
         % Whiskers
@@ -197,10 +213,21 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
         violin_x = violin_x(ErrorPercentiles(1):ErrorPercentiles(end));
         violin_x = rescale(violin_x, 0, DistributionWidth);
         violin_y = violin_y(ErrorPercentiles(1):ErrorPercentiles(end));
-        % Get a nicer KS distribution with more points
-        fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
-             DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
-             'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        % Apply siding
+        if strcmpi(Sides, 'Both')
+            fill([violin_x, fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
+                 DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
+                 'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        elseif strcmpi(Sides, 'Right')
+            fill([violin_x, zeros(size(violin_x))] + x, [violin_y, fliplr(violin_y)],...
+                 DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
+                 'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        elseif strcmpi(Sides, 'Left')
+            fill([zeros(size(violin_x)), fliplr(-violin_x)] + x, [violin_y, fliplr(violin_y)],...
+                 DistributionColor, 'EdgeColor', DistributionColor, 'FaceAlpha', DistributionFaceAlpha,...
+                 'EdgeAlpha', DistributionLineAlpha, 'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        end
+        
     case 'stacks'
         if NumStacks == 0
             [stack_x, stack_y, ~] = histcounts(SwarmY, 'BinMethod', 'sturges');
@@ -217,7 +244,7 @@ switch lower(DistributionStyle) % Because switch has no case-invariant mode
 end
 
 % Hash overlay
-if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'}))
+if ~strcmpi(HashStyle, 'None') && any(strcmpi(DistributionStyle, {'Box', 'Bar'})) && strcmpi(Sides, 'both')
     % Determine hash range
     if strcmpi(DistributionStyle, 'Box')
         hmin = y_error(1);
@@ -358,6 +385,11 @@ if SwarmPointLimit > 0
     end
     
     % Plot swarm
+    if strcmpi(Sides, 'Right')
+        SwarmX = abs(SwarmX);
+    elseif strcmpi(Sides, 'Left')
+        SwarmX = -abs(SwarmX);
+    end
     scatter(SwarmX + x, SwarmY, SwarmMarkerSize, SwarmColor, SwarmMarkerType, "filled",'MarkerEdgeColor','flat',...
         'MarkerFaceAlpha', SwarmFaceAlpha, 'MarkerEdgeAlpha', SwarmEdgeAlpha, 'Parent', Parent);
 
@@ -366,10 +398,10 @@ end
 % Overlay central tendency (in some cases)
 if strcmpi(DistributionStyle, 'Box')
     if SwarmPointLimit == 0 && CenterLineWidth == 2
-        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
+        plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
             'LineWidth', DistributionLineWidth, 'Parent', Parent)
     else
-        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
+        plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
             'LineWidth', CenterLineWidth, 'Parent', Parent)
     end
 elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
@@ -377,8 +409,17 @@ elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
         'LineWidth', CenterLineWidth, 'Parent', Parent)
 elseif strcmpi(DistributionStyle, 'Violin')
     [~,med_idx] = min(abs(violin_y - y_central));
-    plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
-        'LineWidth', CenterLineWidth, 'Parent', Parent)
+    if strcmpi(Sides, 'Both')
+        plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+            'LineWidth', CenterLineWidth, 'Parent', Parent)
+    elseif strcmpi(Sides, 'Right')
+        plot(x+[0, violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+            'LineWidth', CenterLineWidth, 'Parent', Parent)
+    elseif strcmpi(Sides, 'Left')
+        plot(x+[-violin_x(med_idx), 0], [y_central, y_central], 'Color', CenterColor, ...
+            'LineWidth', CenterLineWidth, 'Parent', Parent)
+    end
+    
     if ErrorWhiskers
         [~,err_idx] = min(abs(violin_y - y_error(2)));
         plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
@@ -591,7 +632,12 @@ function ParseVarargin()
 
             elseif strcmpi(varargin{1,n}, 'ShowStats')
                 ShowStats = varargin{2,n};
-
+            elseif strcmpi(varargin{1,n}, 'Sides')
+                if any(strcmpi(varargin{2,n}, {'Both', 'Left', 'Right'}))
+                    Sides = varargin{2,n};
+                else
+                    error("Sides must be 'Both', 'Left', or 'Right'")
+                end
             else
                 error('%s is an unrecognized input.', varargin{1,n})
             end

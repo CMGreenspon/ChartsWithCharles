@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>PlottingExamples</title>
 <meta name="generator" content="MATLAB 24.1">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2024-10-03">
+<meta name="DC.date" content="2025-05-14">
 <meta name="DC.source" content="PlottingExamples.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -126,7 +126,7 @@ subplot(1,3,3); hold <span class="string">on</span>
     plot([1:10], [1:10], <span class="string">'LineWidth'</span>, 2)
     title(<span class="string">'Serifs are bad'</span>)
 </pre>
-<img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2>
+<img vspace="5" hspace="5" src="PlottingExamples_01.png" alt=""> <img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="3">2. GetUnicodeChar</h2>
 <p>Many figures require Greek letters to be used as notation (eg. mu, sigma) This function allows for them to be easily made and in some cases will be supported by the typeface used</p>
 <pre class="codeinput">fprintf(<span class="string">'The string "mu" produces %s, while "Mu" produces %s\n'</span>, GetUnicodeChar(<span class="string">'mu'</span>), GetUnicodeChar(<span class="string">'Mu'</span>))
 </pre>
@@ -169,10 +169,7 @@ subplot(2,3,6);
     AlphaLine(x,y,lines(1), <span class="string">'ErrorType'</span>, <span class="string">'Percentile'</span>, <span class="string">'Percentiles'</span>, [5 95], <span class="string">'IgnoreNaN'</span>, 2)
     title(<span class="string">'Or acknowledge them'</span>)
 </pre>
-<pre class="codeoutput">Warning: NaNs in Y-array break the fill function.
-Explore the "IgnoreNan" option. 
-</pre>
-<img vspace="5" hspace="5" src="PlottingExamples_02.png" alt=""> <h2 id="5">4. Swarm</h2>
+<img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <img vspace="5" hspace="5" src="PlottingExamples_04.png" alt=""> <h2 id="5">4. Swarm</h2>
 <p>A nicer method of showing value distribution of categories when not using a histogram or CDF</p>
 <pre class="codeinput">SetFont(<span class="string">'Arial'</span>, 12)
 colors = lines(10);
@@ -213,12 +210,14 @@ subplot(3,1,3); hold <span class="string">on</span>
     Swarm(3, y, colors(3,:), <span class="string">'SwarmColor'</span>, rand(length(y), 3))
     Swarm(4, y, colors(4,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'HashStyle'</span>, <span class="string">'/'</span>, <span class="string">'HashAngle'</span>, 80)
     Swarm(5, y, colors(5,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Bar'</span>, <span class="string">'HashStyle'</span>, <span class="string">'#'</span>, <span class="string">'HashAngle'</span>, 80)
+    Swarm(5.975, y, colors(6,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Violin'</span>, <span class="string">'Sides'</span>, <span class="string">'left'</span>)
+    Swarm(6.025, y, colors(7,:), <span class="string">'DistributionStyle'</span>, <span class="string">'Violin'</span>, <span class="string">'Sides'</span>, <span class="string">'right'</span>, <span class="string">'SPL'</span>, 0)
 
-    set(gca, <span class="string">'XTick'</span>, [1:5],  <span class="string">'XLim'</span>, [0.5 5.5], <span class="keyword">...</span>
-             <span class="string">'XTickLabel'</span>, {<span class="string">'Colors'</span>, <span class="string">'Widths'</span>, <span class="string">'SwarmColors'</span>, <span class="string">'Hashing'</span>, <span class="string">'CrossHatch'</span>}, <span class="keyword">...</span>
+    set(gca, <span class="string">'XTick'</span>, [1:6],  <span class="string">'XLim'</span>, [0.5 6.5], <span class="keyword">...</span>
+             <span class="string">'XTickLabel'</span>, {<span class="string">'Colors'</span>, <span class="string">'Widths'</span>, <span class="string">'SwarmColors'</span>, <span class="string">'Hashing'</span>, <span class="string">'CrossHatch'</span>, <span class="string">'Sides'</span>}, <span class="keyword">...</span>
              <span class="string">'YLim'</span>, [0 10])
 </pre>
-<img vspace="5" hspace="5" src="PlottingExamples_03.png" alt=""> <h2 id="6">5. ColorText</h2>
+<img vspace="5" hspace="5" src="PlottingExamples_05.png" alt=""> <h2 id="6">5. ColorText</h2>
 <p>A convenient way of color coding text to replace legends</p>
 <pre class="codeinput">clf;
 set(gcf, <span class="string">'Units'</span>, <span class="string">'inches'</span>, <span class="string">'Position'</span>, [3 3 8 3]);
@@ -253,7 +252,7 @@ subplot(1,3,3); hold <span class="string">on</span>
         <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>)
     yticks([0:4])
 </pre>
-<img vspace="5" hspace="5" src="PlottingExamples_04.png" alt=""> <h2 id="7">5. GetAxisPosition</h2>
+<img vspace="5" hspace="5" src="PlottingExamples_06.png" alt=""> <h2 id="7">5. GetAxisPosition</h2>
 <p>Best way to ensure the ColorText legend is always in the same place</p>
 <pre class="codeinput">data = randn(1000,1);
 
@@ -284,7 +283,7 @@ set(gca, <span class="string">'XLim'</span>, [-2 12], <span class="string">'YLim
 [x,y] = GetAxisPosition(gca, 95, 5);
 text(x,y, ColorText(<span class="string">'Legend'</span>, [1 .6 .6]), <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'right'</span>)
 </pre>
-<img vspace="5" hspace="5" src="PlottingExamples_05.png" alt=""> <p class="footer">
+<img vspace="5" hspace="5" src="PlottingExamples_07.png" alt=""> <p class="footer">
 <br>
 <a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
 <br>
@@ -401,9 +400,11 @@ subplot(3,1,3); hold on
     Swarm(3, y, colors(3,:), 'SwarmColor', rand(length(y), 3))
     Swarm(4, y, colors(4,:), 'DistributionStyle', 'Bar', 'HashStyle', '/', 'HashAngle', 80)
     Swarm(5, y, colors(5,:), 'DistributionStyle', 'Bar', 'HashStyle', '#', 'HashAngle', 80)
+    Swarm(5.975, y, colors(6,:), 'DistributionStyle', 'Violin', 'Sides', 'left')
+    Swarm(6.025, y, colors(7,:), 'DistributionStyle', 'Violin', 'Sides', 'right', 'SPL', 0)
     
-    set(gca, 'XTick', [1:5],  'XLim', [0.5 5.5], ...
-             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch'}, ...
+    set(gca, 'XTick', [1:6],  'XLim', [0.5 6.5], ...
+             'XTickLabel', {'Colors', 'Widths', 'SwarmColors', 'Hashing', 'CrossHatch', 'Sides'}, ...
              'YLim', [0 10])
 
 %% 5. ColorText
