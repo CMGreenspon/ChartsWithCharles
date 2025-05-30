@@ -12,7 +12,6 @@ function [wb, pfwb_update] = ParforWaitbar(string, max_val)
     %     pause(0.1)
     %     send(pfwb_update, 0);
     % end
-    % close(wb)
 
     wb = waitbar(0, string);
     wb.UserData = [0 max_val];
