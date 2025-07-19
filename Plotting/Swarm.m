@@ -168,8 +168,10 @@ end
 % Plot background
 switch lower(DistributionStyle) % Because switch has no case-invariant mode
     case 'box'
-        if length(ErrorPercentiles) ~= 4 || ~strcmpi(ErrorMethod, 'Percentile')
-            error('When using "DistributionStyle: Box", you must pass 4 values to "ErrorPercentiles" and set "ErrorMethod: Percentile".')
+        if strcmpi(ErrorMethod, 'Percentile')
+            if length(ErrorPercentiles) ~= 4
+                error('When using "DistributionStyle: Box", you must pass 4 values to "ErrorPercentiles" and set "ErrorMethod: Percentile".')
+            end
         end
         % Box
         patch(x+DistributionWidthArr, y_error([1,2,2,1]), ...
