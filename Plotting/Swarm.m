@@ -398,51 +398,53 @@ if SwarmPointLimit > 0
 end
 
 % Overlay central tendency (in some cases)
-if strcmpi(DistributionStyle, 'Box') & CenterLineWidth > 0
-    if SwarmPointLimit == 0 && CenterLineWidth == 2
-        plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
-            'LineWidth', DistributionLineWidth, 'Parent', Parent)
-    else
-        plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
+if CenterLineWidth > 0
+    if strcmpi(DistributionStyle, 'Box')
+        if SwarmPointLimit == 0 && CenterLineWidth == 2
+            plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
+                'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        else
+            plot(x+[DistributionWidthArr(1), DistributionWidthArr(end)], [y_central, y_central], 'Color', CenterColor, ...
+                'LineWidth', CenterLineWidth, 'Parent', Parent)
+        end
+    elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
+        plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
             'LineWidth', CenterLineWidth, 'Parent', Parent)
-    end
-elseif any(strcmpi(DistributionStyle, {'Bar', 'None'})) && SwarmPointLimit > 0
-    plot(x+[DistributionWidth, -DistributionWidth], [y_central, y_central], 'Color', CenterColor, ...
-        'LineWidth', CenterLineWidth, 'Parent', Parent)
-elseif strcmpi(DistributionStyle, 'Violin')
-    [~,med_idx] = min(abs(violin_y - y_central));
-    if strcmpi(Sides, 'Both')
-        plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+    elseif strcmpi(DistributionStyle, 'Violin')
+        [~,med_idx] = min(abs(violin_y - y_central));
+        if strcmpi(Sides, 'Both')
+            plot(x+[violin_x(med_idx), -violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+                'LineWidth', CenterLineWidth, 'Parent', Parent)
+        elseif strcmpi(Sides, 'Right')
+            plot(x+[0, violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
+                'LineWidth', CenterLineWidth, 'Parent', Parent)
+        elseif strcmpi(Sides, 'Left')
+            plot(x+[-violin_x(med_idx), 0], [y_central, y_central], 'Color', CenterColor, ...
+                'LineWidth', CenterLineWidth, 'Parent', Parent)
+        end
+        
+        if ErrorWhiskers
+            [~,err_idx] = min(abs(violin_y - y_error(2)));
+            plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
+                'LineWidth', DistributionLineWidth, 'Parent', Parent)
+            [~,err_idx] = min(abs(violin_y - y_error(1)));
+            plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
+                'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        end
+    elseif strcmpi(DistributionStyle, 'Stacks')
+        med_idx = find(y_central < stack_yy, 1, 'first');
+        plot(x+[stack_xx(med_idx), -stack_xx(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
             'LineWidth', CenterLineWidth, 'Parent', Parent)
-    elseif strcmpi(Sides, 'Right')
-        plot(x+[0, violin_x(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
-            'LineWidth', CenterLineWidth, 'Parent', Parent)
-    elseif strcmpi(Sides, 'Left')
-        plot(x+[-violin_x(med_idx), 0], [y_central, y_central], 'Color', CenterColor, ...
-            'LineWidth', CenterLineWidth, 'Parent', Parent)
-    end
-    
-    if ErrorWhiskers
-        [~,err_idx] = min(abs(violin_y - y_error(2)));
-        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
-            'LineWidth', DistributionLineWidth, 'Parent', Parent)
-        [~,err_idx] = min(abs(violin_y - y_error(1)));
-        plot(x+[violin_x(err_idx), -violin_x(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
-            'LineWidth', DistributionLineWidth, 'Parent', Parent)
-    end
-elseif strcmpi(DistributionStyle, 'Stacks')
-    med_idx = find(y_central < stack_yy, 1, 'first');
-    plot(x+[stack_xx(med_idx), -stack_xx(med_idx)], [y_central, y_central], 'Color', CenterColor, ...
-        'LineWidth', CenterLineWidth, 'Parent', Parent)
-    if ErrorWhiskers
-        % [~,err_idx] = min(abs(stack_y - y_error(2)));
-        err_idx = find(y_error(2) < stack_yy, 1, 'first');
-        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
-            'LineWidth', DistributionLineWidth, 'Parent', Parent)
-        % [~,err_idx] = min(abs(stack_y - y_error(1)));
-        err_idx = find(y_error(1) < stack_yy, 1, 'first');
-        plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
-            'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        if ErrorWhiskers
+            % [~,err_idx] = min(abs(stack_y - y_error(2)));
+            err_idx = find(y_error(2) < stack_yy, 1, 'first');
+            plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([2,2]) , 'Color', CenterColor, ...
+                'LineWidth', DistributionLineWidth, 'Parent', Parent)
+            % [~,err_idx] = min(abs(stack_y - y_error(1)));
+            err_idx = find(y_error(1) < stack_yy, 1, 'first');
+            plot(x+[stack_xx(err_idx), -stack_xx(err_idx)], y_error([1,1]) , 'Color', CenterColor, ...
+                'LineWidth', DistributionLineWidth, 'Parent', Parent)
+        end
     end
 end
 
