@@ -43,7 +43,7 @@ function FormattedText = ColorText(input_text, colors, append)
 
     FormattedText = cell([size(input_text,1),1]);
     for i = 1:size(input_text,1)
-        FormattedText(i) = {['\color[rgb]{', num2str(colors(i,:)), '}',  input_text{i,1}]};
+        FormattedText(i) = {sprintf('\\color[rgb]{%0.3f %0.3f %0.3f}%s',  colors(i,:),input_text{i,1})};
     end
 
 end
