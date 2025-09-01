@@ -13,8 +13,8 @@ function uc = GetUnicodeChar(character)
              'alpha', 'beta', 'pamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa','lambda',...
              'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',...
              'degree', 'Degree', 'LeftArrow', 'UpArrow', 'RightArrow', 'DownArrow', 'HBar', 'EMDash3', 'PlusMinus',...
-             'EmptyCircle', 'UpTriangle', 'Intersection', 'Union'};
-    unicode_values = [913:929, 931:937, 945:961, 963:969, 176, 176, 8592:8595, 8213, 11835, 177, 11096, 9651, 8745, 8746];
+             'EmptyCircle', 'FilledCircle', 'UpTriangle', 'Intersection', 'Union'};
+    unicode_values = [913:929, 931:937, 945:961, 963:969, 176, 176, 8592:8595, 8213, 11835, 177, 11096, 11044,  9651, 8745, 8746];
     
     if strcmpi(character, 'all') % Generate struct with all characters
         uc = struct();
