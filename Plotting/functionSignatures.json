@@ -86,25 +86,6 @@
         {"name":"Parent", "kind":"namevalue", "type":["matlab.graphics.axis.Axes"], "purpose":"Parent upon which to plot"},
         {"name":"ShowStats", "kind":"namevalue", "type":["logical", "numel=1"], "purpose":"Show summary statistic"}
      ]
-  },
-
-  "AlphaLine":
-  {
-     "inputs":
-     [
-        {"name":"x", "kind":"required", "type":["vector", "numeric"],"purpose":"x-values"},
-        {"name":"y", "kind":"required", "type":["vector", "numeric"], "purpose":"y-values"},
-        {"name":"color", "kind":"required", "type":["numeric", "ncols=3", "nrows=3"],"purpose":"[1x3] color vector"},
-        {"name":"LineWidth", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Width of central line"},
-        {"name":"LineStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle of central line"},
-        {"name":"ErrorType", "kind":"namevalue", "type":["char", "choices={'SEM', 'STD', 'Percentile'}"]},
-        {"name":"ErrorAlpha", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Alpha of the error region"},
-        {"name":"EdgeStyle", "kind":"namevalue", "type":["char", "choices={'-', '--', ':'}"], "purpose":"LineStyle of error boundary"},
-        {"name":"EdgeAlpha", "kind":"namevalue", "type":["scalar", "numel=1"], "purpose":"Alpha of the error boundary"},
-        {"name":"PlotBetweenNaN", "kind":"namevalue", "type":["numeric", "numel=1", "choices={0, 1, 2}"],
-         "purpose":"Method for interpolating between NaNs"},
-        {"name":"Parent", "kind":"namevalue", "type":["matlab.graphics.axis.Axes"], "purpose":"Parent upon which to plot"},
-        {"name":"Percentiles", "kind":"namevalue", "type":["numeric", "numel=2"],"purpose":"[1x2] Percentiles for lower and upper error boundary"}
-     ]
   }
+  
 }

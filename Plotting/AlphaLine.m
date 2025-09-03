@@ -1,24 +1,36 @@
-function AlphaLine(x, y, color, varargin)
+function AlphaLine(x, y, color, options)
     % Produces a line plot with the error boundary represented by a shaded area of the same color
     % AlphaLine(x [double], y[double, cell], color[double], varargin)
-    % AlphaLine(x, y, color, 'EdgeAlpha', 0.2, 'ErrorAlpha', 0.2, 'ErrorType', 'SEM')
+    % AlphaLine(x, y, color, 'options.edge_alpha', 0.2, 'options.error_alpha', 0.2, 'options.error_type', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
     % X (independent variable) must be a vector while Y (dependent variable) must be an array [x, repeated observations]
     % If both are the size of x and the ration is ambiguous then ensure format.
     % Color must be an RGB triplet (0-1 and 0-255 are both supported)
-    % Optional inputs include: 'EdgeAlpha' [default = 0.2], 'ErrorAlpha' [default = 0.2],
-    % 'ErrorType' [default = 'STD'. SEM and 'Percentile' is also available]. If
-    % 'Percentile' is passed then the argument 'Percentiles', [p1, p2] becomes available
+    % Optional inputs include: 'options.edge_alpha' [default = 0.2], 'options.error_alpha' [default = 0.2],
+    % 'options.error_type' [default = 'STD'. SEM and 'Percentile' is also available]. If
+    % 'Percentile' is passed then the argument 'options.percentiles', [p1, p2] becomes available
     % and the median will be plotted instead of the mean.
-    % 'IgnoreNan' [0: will break, 1: pretend NaNs aren't there, 2: plot on either side of
+    % 'options.ignore_nan' [0: will break, 1: pretend NaNs aren't there, 2: plot on either side of
     % NaN as individual plots] will produce a different plot each time (see plotting example)
-    % 'PlotBetweenNaN' [true] will place a dashed line between sections if IgnoreNan == 2
+    % 'options.interpolate_nan' [true] will place a dashed line between sections if options.ignore_nan == 2
     
-    % Check size inputs
-    if all(size(x) > 1)
-        error('X must be a vector.')
+    arguments
+        x {mustBeNumeric, mustBeVector}
+        y {mustBeMatrix}
+        color {mustBeNumeric} = [.6 .6 .6];
+        options.line_width (1,1) {mustBeInteger} = 1;
+        options.error_alpha (1,1) {mustBeFloat} = 0.1;
+        options.edge_alpha (1,1) {mustBeFloat} = 0.1;
+        options.error_type {mustBeMember(options.error_type, ["STD", "SEM", "Percentile"])} = 'STD';
+        options.percentiles {mustBeNumeric, mustBeVector} = [25, 75];
+        options.ignore_nan {mustBeMember(options.ignore_nan, [0, 1, 2])} = 2;
+        options.interpolate_nan {mustBeNumericOrLogical} = 1;
+        options.line_style {mustBeMember(options.line_style, ["--", "-", ":"])} = '-';
+        options.edge_style {mustBeMember(options.edge_style, ["--", "-", ":"])} = '-';
+        options.parent = gca;
     end
-    % Convert x to row vector
+    
+    % Convert x to row vector (necessary for fill function)
     if size(x,2) > size(x,1); x = x'; end
     
     % Ensure y is the correct orientation
@@ -46,22 +58,22 @@ function AlphaLine(x, y, color, varargin)
         warning('Y only contains NaNs.')
         return
     elseif ~isempty(nan_idx)
-        % Check for trailing NaNs
-        if nan_idx(end)
-            while nan_idx(end)
-                x = x(1:end-1);
-                y = y(1:end-1,:);
-                nan_idx = all(isnan(y),2);
-            end
-        end
-        if nan_idx(1)
-            while nan_idx(1)
-                x = x(2:end);
-                y = y(2:end,:);
-                nan_idx = all(isnan(y),2);
-            end
+        % Check at the beginning
+        nan_1_idx = find(~nan_idx, 1, 'first');
+        if ~isempty(nan_1_idx)
+            x = x(nan_1_idx:end, :);
+            y = y(nan_1_idx:end, :);
+            nan_idx = all(isnan(y),2);
         end
 
+        % Check at the end
+        nan_end_idx = find(~all(isnan(y),2), 1, 'last');
+        if ~isempty(nan_1_idx)
+            x = x(1:nan_end_idx, :);
+            y = y(1:nan_end_idx, :);
+            nan_idx = all(isnan(y),2);
+        end
+        
         % Check for sequential NaNs
         filt_idx = ones([length(x),1]);
         for i = 1:length(x)
@@ -74,9 +86,7 @@ function AlphaLine(x, y, color, varargin)
     end
     
     % Check color input
-    if exist('color', 'var') == 0
-        color = [.6 .6 .6];
-    elseif all(size(color) ~= [1,3], 2)
+    if all(size(color) ~= [1,3], 2)
         if all(size(color) == [1,3],2)
             color = color';
         elseif any(size(color) > 3)
@@ -85,55 +95,40 @@ function AlphaLine(x, y, color, varargin)
     end
     if any(color > 1); color = color ./ 255; end
     
-    % Set default values
-    LineWidth = 1;
-    ErrorAlpha = 0.1;
-    EdgeAlpha = 0.1;
-    ErrorType = 'STD';
-    Percentiles = [25, 75];
-    IgnoreNaN = 2;
-    PlotBetweenNaN = 1;
-    LineStyle = '-';
-    EdgeStyle = '-';
-    Parent = gca;
-        
-    % Check varargin
-    ParseVarargin() 
-    hold(Parent, 'on')
+    % Enture parent is held on
+    hold(options.parent, 'on')
     
     % Compute mean
-    if strcmpi(ErrorType, 'Percentile')
+    if strcmpi(options.error_type, 'Percentile')
         y_central = median(y, 2, 'omitnan');
     else
         y_central = mean(y, 2, 'omitnan');
     end
     
     % Compute error
-    if strcmpi(ErrorType, 'STD')
+    if strcmpi(options.error_type, 'STD')
         y_error = std(y,1,2, 'omitnan');
         y2 = [y_central+y_error; flipud(y_central-y_error)];
-    elseif strcmpi(ErrorType, 'SEM')
+    elseif strcmpi(options.error_type, 'SEM')
         y_error = std(y,1,2, 'omitnan') ./ sqrt(size(y,2));
         y2 = [y_central+y_error; flipud(y_central-y_error)];
-    elseif strcmpi(ErrorType, 'Percentile')
-        y_p1 = prctile(y, Percentiles(1),2);
-        y_p2 = prctile(y, Percentiles(2),2);
+    elseif strcmpi(options.error_type, 'Percentile')
+        y_p1 = prctile(y, options.percentiles(1),2);
+        y_p2 = prctile(y, options.percentiles(2),2);
         y2 = [y_p1; flipud(y_p2)];
-    else
-        error('%s is an unrecognized ErrorType.', ErrorType)
     end
     
     % Check for NaN breaks
     if any(isnan(y_central))
-       if IgnoreNaN == 0
-           warning('NaNs in Y-array break the fill function. Explore the "IgnoreNan" option.') 
+       if options.ignore_nan == 0
+           warning('NaNs in Y-array break the fill function. Explore the "options.ignore_nan" option.') 
            PlotAlphaLine(x, y_central, y2)
-       elseif IgnoreNaN == 1 % Ignore completely
+       elseif options.ignore_nan == 1 % Ignore completely
            x2 = x(~isnan(y_central));
            y2_central = y_central(~isnan(y_central));
            y2_error = y2(~isnan(y2));
            PlotAlphaLine(x2, y2_central, y2_error)
-       elseif IgnoreNaN == 2 % Make a separate line for each section
+       elseif options.ignore_nan == 2 % Make a separate line for each section
            nan_idx = find(isnan(y_central));
            num_plot_sections = length(nan_idx) + 1;
            % Error bounds
@@ -156,14 +151,14 @@ function AlphaLine(x, y, color, varargin)
                    y2_error = [y2_error(:,1); flipud(y2_error(:,2))];
                end
                PlotAlphaLine(x2, y2_central, y2_error)
-               if PlotBetweenNaN && n < num_plot_sections
-                   if strcmp(LineStyle, '--')
+               if options.interpolate_nan && n < num_plot_sections
+                   if strcmp(options.line_style, '--')
                        LineStyle2 = ':';
                    else
                        LineStyle2 = '--';
                    end
                   plot([x(nan_idx(n)-1), x(nan_idx(n)+1)], [y_central(nan_idx(n)-1), y_central(nan_idx(n)+1)],...
-                      'color', color, 'LineStyle', LineStyle2, 'Parent', Parent)
+                      'color', color, 'LineStyle', LineStyle2, 'Parent', options.parent)
                end
            end
        end
@@ -174,46 +169,10 @@ function AlphaLine(x, y, color, varargin)
     function PlotAlphaLine(x2, y2_central, y2_error)
         % Error
         fill([x2; flipud(x2)], y2_error, color, 'EdgeColor', color, 'FaceAlpha',...
-            ErrorAlpha, 'EdgeAlpha', EdgeAlpha, 'LineStyle', EdgeStyle, 'Parent', Parent)
+            options.error_alpha, 'EdgeAlpha', options.edge_alpha, 'LineStyle', ...
+            options.edge_style, 'Parent', options.parent)
         % Mean
-        plot(x2, y2_central, 'color', color, 'LineWidth', LineWidth, 'LineStyle',...
-            LineStyle, 'Parent', Parent)
-    end
-
-    % Function for parsing varagin (just at end for tidyness)
-    function ParseVarargin()
-        if isempty(varargin) == 0
-            nargin = ceil(length(varargin)/2);
-            varargin = reshape(varargin, [2, nargin]);
-            for na = 1:nargin
-                if strcmpi(varargin{1,na},'LineWidth')
-                    LineWidth = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'ErrorAlpha')
-                    ErrorAlpha = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'EdgeAlpha')
-                    EdgeAlpha = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'ErrorType')
-                    ErrorType = varargin{2,na};
-                    % Make this call a little more flexible
-                    if strcmpi(ErrorType, 'Percentiles')
-                       ErrorType = 'Percentile';
-                    end
-                elseif strcmpi(varargin{1,na},'Percentiles')
-                    Percentiles = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'IgnoreNaN')
-                    IgnoreNaN = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'PlotBetweenNaN')
-                    PlotBetweenNaN = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'LineStyle')
-                    LineStyle = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'EdgeStyle')
-                    EdgeStyle = varargin{2,na};
-                elseif strcmpi(varargin{1,na},'Parent')
-                    Parent = varargin{2,na};
-                else
-                    error('%s is an unrecognized input.', varargin{1,na})
-                end
-            end
-        end
+        plot(x2, y2_central, 'color', color, 'LineWidth', options.line_width, 'LineStyle',...
+            options.line_style, 'Parent', options.parent)
     end
 end
