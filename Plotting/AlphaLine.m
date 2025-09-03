@@ -7,7 +7,7 @@ function AlphaLine(x, y, color, varargin)
     % If both are the size of x and the ration is ambiguous then ensure format.
     % Color must be an RGB triplet (0-1 and 0-255 are both supported)
     % Optional inputs include: 'EdgeAlpha' [default = 0.2], 'ErrorAlpha' [default = 0.2],
-    % 'ErrorType' [default = 'SEM', 'STD', and 'Percentile' is also available]. If
+    % 'ErrorType' [default = 'STD'. SEM and 'Percentile' is also available]. If
     % 'Percentile' is passed then the argument 'Percentiles', [p1, p2] becomes available
     % and the median will be plotted instead of the mean.
     % 'IgnoreNan' [0: will break, 1: pretend NaNs aren't there, 2: plot on either side of
