@@ -1,26 +1,36 @@
 function AlphaLine(x, y, color, options)
     % Produces a line plot with the error boundary represented by a shaded area of the same color
-    % AlphaLine(x [double], y[double, cell], color[double], varargin)
+    % AlphaLine(x [double], y[double, cell], color[double], options)
     % AlphaLine(x, y, color, 'options.edge_alpha', 0.2, 'options.error_alpha', 0.2, 'options.error_type', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
-    % X (independent variable) must be a vector while Y (dependent variable) must be an array [x, repeated observations]
     % If both are the size of x and the ration is ambiguous then ensure format.
-    % Color must be an RGB triplet (0-1 and 0-255 are both supported)
-    % Optional inputs include: 'options.edge_alpha' [default = 0.2], 'options.error_alpha' [default = 0.2],
-    % 'options.error_type' [default = 'STD'. SEM and 'Percentile' is also available]. If
-    % 'Percentile' is passed then the argument 'options.percentiles', [p1, p2] becomes available
-    % and the median will be plotted instead of the mean.
-    % 'options.ignore_nan' [0: will break, 1: pretend NaNs aren't there, 2: plot on either side of
-    % NaN as individual plots] will produce a different plot each time (see plotting example)
-    % 'options.interpolate_nan' [true] will place a dashed line between sections if options.ignore_nan == 2
+    %
+    % Required inputs:
+    % x {mustBeNumeric, mustBeVector}
+    % y {mustBeMatrix}
+    % 
+    % Optional inputs:
+    % color {mustBeNumeric} = [.6 .6 .6];
+    %
+    % Varargin inputs:
+    % line_width (1,1) {mustBeInteger} = 1;
+    % error_alpha (1,1) {mustBeFloat} = 0.1;
+    % edge_alpha (1,1) {mustBeFloat} = 0.1;
+    % error_type {mustBeMember(options.error_type, ["STD", "SEM", "Percentile"])} = 'STD';
+    % percentiles {mustBeNumeric, mustBeVector} = [25, 75];
+    % ignore_nan {mustBeMember(options.ignore_nan, [0, 1, 2])} = 2;
+    % interpolate_nan {mustBeNumericOrLogical} = 1;
+    % line_style {mustBeMember(options.line_style, ["--", "-", ":"])} = '-';
+    % edge_style {mustBeMember(options.edge_style, ["--", "-", ":"])} = '-';
+    % parent = gca;
     
     arguments
         x {mustBeNumeric, mustBeVector}
         y {mustBeMatrix}
-        color {mustBeNumeric} = [.6 .6 .6];
-        options.line_width (1,1) {mustBeInteger} = 1;
-        options.error_alpha (1,1) {mustBeFloat} = 0.1;
-        options.edge_alpha (1,1) {mustBeFloat} = 0.1;
+        color (1,3) {mustBeNumeric, mustBeVector} = [.6 .6 .6];
+        options.line_width {mustBeInteger, mustBeScalarOrEmpty} = 1;
+        options.error_alpha {mustBeFloat, mustBeScalarOrEmpty} = 0.1;
+        options.edge_alpha {mustBeFloat, mustBeScalarOrEmpty} = 0.1;
         options.error_type {mustBeMember(options.error_type, ["STD", "SEM", "Percentile"])} = 'STD';
         options.percentiles {mustBeNumeric, mustBeVector} = [25, 75];
         options.ignore_nan {mustBeMember(options.ignore_nan, [0, 1, 2])} = 2;
