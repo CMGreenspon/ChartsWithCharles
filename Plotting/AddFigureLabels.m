@@ -1,11 +1,11 @@
 function AddFigureLabels(h, label_offset, caps)
-    if nargin == 1
-        label_offset = [.05 .05]; % annotation margin
-        caps = true;
-    elseif nargin == 2
-        caps = true;
+    arguments
+        h = gcf();
+        label_offset {mustBeNumeric} = [.05 -.025]; 
+        caps {mustBeNumericOrLogical} = true;
     end
-
+    
+    % Workout which letter to start from and if caps or not
     if islogical(caps)
         if caps
             char_offset = 64;
@@ -16,6 +16,7 @@ function AddFigureLabels(h, label_offset, caps)
         char_offset = caps;
     end
 
+    % Get children posiitions
     if isa(h, 'matlab.graphics.axis.Axes')
         num_labels = length(h);
     elseif isa(h, 'matlab.ui.Figure')
@@ -28,6 +29,7 @@ function AddFigureLabels(h, label_offset, caps)
         end
     end
     
+    % Check that size of offsets matched the number of children
     if size(label_offset,1) == 1 && num_labels > 1
         label_offset = repmat(label_offset, num_labels,1);
     elseif size(label_offset,1) ~= num_labels

@@ -6,31 +6,20 @@ function SetFont(typeface, fontsize)
     % generation script to ensure that all font elements are consistent. Especially useful
     % when changing elements for a poster or paper.
     % Also sets the figure background color to white
+    arguments
+        typeface {mustBeText} = 'Arial'
+        fontsize {mustBeInteger} = 12
+    end
     
     % Default values
-    if exist('typeface', 'var') == 0
-        typeface = 'Arial';
-    elseif ischar(typeface) == 0 && isstring(typeface) == 0
-        error('Given "typeface" is not a string')
-    else
-        font_list = listfonts;
-        if ~any(strcmp(font_list, typeface))
-           warning(['Desired typeface is not found in system list. ',...
-                    'Check if installed correctly (for all users) but note that it may load anyway. ', ...
-                    'Use "listfonts" to view typefaces available to Matlab'])
-        end
+    font_list = listfonts;
+    if ~any(strcmp(font_list, typeface))
+       warning(['Desired typeface is not found in system list. ',...
+                'Check if installed correctly (for all users) but note that it may load anyway. ', ...
+                'Use "listfonts" to view typefaces available to Matlab'])
     end
-
-    if exist('fontsize', 'var') == 0
-        fontsize = 12;
-    elseif isnumeric(fontsize)
-        if round(fontsize) ~= fontsize
-            error('Fontsize must be an integer')
-        end
-    else
-        error('Given "fontsize" is not numerical')
-    end
-
+    
+    % Scale linewidth by fontsize
     if fontsize < 15
         line_size = 1;
     else
