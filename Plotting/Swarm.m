@@ -7,16 +7,16 @@ function Swarm(x, y, options)
         y {mustBeNumeric}
         options.color {mustBeNumeric, mustBeVector} = [.6 .6 .6];
         options.center_method {mustBeText, mustBeMember(options.center_method, ...
-            ["mean", "median"])} = 'mean';
+            ["mean", "median", "auto"])} = 'auto';
         options.error_method {mustBeText, mustBeMember(options.error_method, ...
-            ["percentiles", "STD", "SEM"])} = 'STD';
+            ["percentiles", "STD", "SEM", "auto"])} = 'auto';
         options.center_line_width {mustBeNumeric, mustBeScalarOrEmpty} = 2;
         options.center_color = [];
         options.error_percentiles {mustBeNumeric, mustBeVector} = [5,25,75,95];
         options.error_whiskers {mustBeNumericOrLogical, mustBeScalarOrEmpty} = true;
         % Distribution options
         options.distribution_method {mustBeText, mustBeMember(options.distribution_method, ...
-            ["Histogram", "KernelDensity", "None"])} = 'None';
+            ["Histogram", "KernelDensity", "None"])} = 'Histogram';
         options.distribution_style {mustBeText, mustBeMember(options.distribution_style, ...
             ["None", "Box", "Bar", "Violin", "Stacks"])} = 'None';
         options.distribution_width {mustBeFloat, mustBeScalarOrEmpty} = .25;
@@ -70,7 +70,7 @@ function Swarm(x, y, options)
         return
     end
 
-    % Set default center and error methods - varargin can override
+    % Set default center and error methods
     if length(y) < 4
         h = true;
         warning('Fewer than 4 points means a distribution cannot be computed')
@@ -78,8 +78,27 @@ function Swarm(x, y, options)
     else
         h = lillietest(y, 'alpha', .01);
     end
-    if h && (~strcmpi(options.center_method, 'median') || ~strcmpi(options.error_method, 'percentiles'))
-        warning('Data is not normally distributed but median center method and percentile error method are not selected')
+    
+    % Center method
+    if strcmpi(options.center_method, 'auto')
+        if h
+            options.center_method = 'median';
+        else
+            options.center_method = 'mean';
+        end
+    end
+
+    % Error method
+    if strcmpi(options.error_method, 'auto')
+        if h
+            options.error_method = 'percentile';
+        else
+            options.error_method = 'STD';
+        end
+    end
+
+    if h && strcmpi(options.center_method, 'mean')
+        warning('Data is not normally distributed but mean center method is selected')
     end
     
     % Get the parent axis and ensure held on
