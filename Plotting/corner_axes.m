@@ -27,9 +27,9 @@ function corner_axes(axis_handle, location, proportion, options)
 
     % Plot them
     plot3([xv(1), xv(1), xv(end)], [yv(2), yv(1), yv(1)], [zv(1), zv(1), zv(1)], ...
-        'Color', options.line_color, 'LineWidth', options.line_width)
+        'Color', options.line_color, 'LineWidth', options.line_width, 'Parent', axis_handle)
     plot3([xv(1), xv(1)], [yv(1), yv(1)], [zv(1), zv(2)], ...
-        'Color', options.line_color, 'LineWidth', options.line_width)
+        'Color', options.line_color, 'LineWidth', options.line_width, 'Parent', axis_handle)
 
     function value = get_value(limits, side)
         if side

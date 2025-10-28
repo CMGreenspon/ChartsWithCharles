@@ -34,9 +34,32 @@ meas_offset = meas - meas_mean;
 [coeffs, scores] = pca(meas_offset); % Simple PCA
 inverse_coeffs = inv(coeffs);  % Invert coefficients
 
-nd = 4; % Tweak this to change how many dimensions are used for the reconstruction
+nd = 2; % Tweak this to change how many dimensions are used for the reconstruction
 meas_projected = meas_offset * coeffs(:,1:nd); % Project onto desired dimensions
 meas_reconstructed = (meas_projected * inverse_coeffs(1:nd,:)) + meas_mean; % Reconstruct and add means back in
+
+figure; 
+nexttile; hold on; title('Original')
+    gscatter(meas(:,1), meas(:,2), species, 'rgb', 'osd');
+nexttile; hold on; title('PCA Projection')
+    gscatter(meas_projected(:,1), meas_projected(:,2), species, 'rgb', 'osd');
+nexttile; hold on; title(sprintf('Reconstructed, %d/%d Dims', nd, 4))
+    gscatter(meas_reconstructed(:,1), meas_reconstructed(:,2), species, 'rgb', 'osd');
+
+%% PCA2
+clear
+load fisheriris
+
+meas_mean = mean(meas,1); % Take the mean of each column/predictor
+meas_offset = meas - meas_mean;
+                
+% Perform PCA on the mean subtracted array
+[coeffs, scores] = pca(meas_offset); % Simple PCA
+% inverse_coeffs = inv(coeffs);  % Invert coefficients
+
+nd = 2; % Tweak this to change how many dimensions are used for the reconstruction
+meas_projected = meas_offset * coeffs(:,1:nd); % Project onto desired dimensions
+meas_reconstructed = (meas_projected * coeffs(:,1:nd)') + meas_mean; % Reconstruct and add means back in
 
 clf; 
 nexttile; hold on; title('Original')
