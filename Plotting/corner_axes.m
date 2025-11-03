@@ -1,9 +1,9 @@
-function corner_axes(axis_handle, location, proportion, options)
+function [xv, yv, zv] = corner_axes(axis_handle, location, options)
     arguments
         axis_handle
-        location = [1 1 1] % Which side of the axis the plot should be
-        proportion {mustBeFloat} = 0.1
-        options.line_width = 1
+        location {mustBeNumericOrLogical} = [1 1 1] % Which side of the axis the plot should be
+        options.proportion {mustBeFloat} = 0.1
+        options.line_width {mustBeNumeric} = 1
         options.line_color = 'k'
     end
 
@@ -30,12 +30,13 @@ function corner_axes(axis_handle, location, proportion, options)
         'Color', options.line_color, 'LineWidth', options.line_width, 'Parent', axis_handle)
     plot3([xv(1), xv(1)], [yv(1), yv(1)], [zv(1), zv(2)], ...
         'Color', options.line_color, 'LineWidth', options.line_width, 'Parent', axis_handle)
+    
 
     function value = get_value(limits, side)
         if side
-            value = [limits(end), limits(end) - (diff(limits) * proportion)];
+            value = [limits(end), limits(end) - (diff(limits) * options.proportion)];
         else
-            value = [limits(1), limits(1) + (diff(limits) * proportion)];
+            value = [limits(1), limits(1) + (diff(limits) * options.proportion)];
         end
     end
 end
