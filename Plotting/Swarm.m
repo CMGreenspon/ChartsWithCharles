@@ -90,7 +90,7 @@ function Swarm(x, y, options)
 
     % Error method
     if strcmpi(options.error_method, 'auto')
-        if h
+        if h | strcmpi(options.distribution_style, 'box')
             options.error_method = 'percentile';
         else
             options.error_method = 'STD';
