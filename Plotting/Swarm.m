@@ -73,8 +73,10 @@ function Swarm(x, y, options)
     % Set default center and error methods
     if length(y) < 4
         h = true;
-        warning('Fewer than 4 points means a distribution cannot be computed')
-        options.distribution_style = 'None';
+        if ~strcmpi(options.distribution_method, 'None')
+            warning('Fewer than 4 points means a distribution cannot be computed')
+            options.distribution_method = 'None';
+        end
     else
         h = lillietest(y, 'alpha', .01);
     end
