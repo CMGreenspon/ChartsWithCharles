@@ -1,5 +1,5 @@
 function [x,y] = GetAxisPosition(ax, xp, yp)
-    warning("Use TEXT(X,Y,str,'sc')")
+    error("Use TEXT(X,Y,str,'sc')")
     return
     % Compute x-position
     if strcmp(ax().XScale, 'linear')
