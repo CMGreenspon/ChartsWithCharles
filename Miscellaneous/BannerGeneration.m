@@ -79,6 +79,46 @@ set(gca, 'XColor', 'none',...
          'Position', [0 0 1 1])
 shg
 
+
+%% Circle Pattern Generator
+clf; hold on
+set(gcf, 'Units', 'Pixels', 'Position', [2600, 100, 3000, 300])
+
+num_rows = 5;
+num_cols = 80;
+offset = false;
+
+cmap = cool();
+c_idx = zeros(num_cols * num_rows, 1);
+
+width = 600;
+j = 1;
+for c = 1:num_cols
+    % Pick a color
+    for r = 1:num_rows
+        i = round(rescale(c, 1, 255, 'InputMin', 1, 'InputMax', num_cols) + (randn() * 50));
+        if i < 1
+            i = 1;
+        elseif i > 256
+            i = 256;
+        end
+        c_idx(j) = i;
+        j = j + 1;
+    end
+end
+[X,Y] = meshgrid(1:num_cols, 1:num_rows);
+
+scatter(X(:), Y(:), width, cmap(c_idx,:), "filled")
+
+
+set(gca, 'XColor', 'none',...
+         'YColor', 'none',...
+         'DataAspectRatio', [1,1,1],...
+         'XLim', [0, num_cols+1],...
+         'YLim', [0 num_rows], ...
+         'Position', [0 0 1 1])
+shg
+
 %% ICMS Pattern Generator
 clf; hold on
 set(gcf, 'Units', 'Pixels', 'Position', [2600, 100, 3000, 300])

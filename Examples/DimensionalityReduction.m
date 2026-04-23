@@ -96,3 +96,8 @@ nexttile; hold on; title('Factor Loading')
 
 nexttile; hold on; title('Reconstruction')
     gscatter(xp(:,1), xp(:,2), cellstr(Origin), 'rgb', 'osd');
+
+% Example for how to project new data into Factor space
+% Z = (X - X_mean) ./ std(X);
+% inv_psi = diag(1 ./ psi);
+% W = inv_psi * lambda * inv(lambda' * inv_psi * lambda);

@@ -37,6 +37,7 @@ function AlphaLine(x, y, color, options)
         options.interpolate_nan {mustBeNumericOrLogical} = 1;
         options.line_style {mustBeMember(options.line_style, ["--", "-", ":"])} = '-';
         options.edge_style {mustBeMember(options.edge_style, ["--", "-", ":"])} = '-';
+        options.lower_bound {mustBeFloat, mustBeScalarOrEmpty} = NaN;
         options.parent = gca;
     end
     
@@ -126,6 +127,11 @@ function AlphaLine(x, y, color, options)
         y_p1 = prctile(y, options.percentiles(1),2);
         y_p2 = prctile(y, options.percentiles(2),2);
         y2 = [y_p1; flipud(y_p2)];
+    end
+
+    % Check for lower bound
+    if ~isnan(options.lower_bound)
+        y2(y2<options.lower_bound) = options.lower_bound;
     end
     
     % Check for NaN breaks
