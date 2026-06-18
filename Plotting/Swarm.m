@@ -6,18 +6,18 @@ function Swarm(x, y, options)
         x {mustBeNumeric}
         y {mustBeNumeric}
         options.color {mustBeNumeric, mustBeVector} = [.6 .6 .6];
-        options.center_method {mustBeText, mustBeMember(options.center_method, ...
+        options.center_method {mustBeText, matlab.system.mustBeMember(options.center_method, ...
             ["mean", "median", "auto"])} = 'auto';
-        options.error_method {mustBeText, mustBeMember(options.error_method, ...
+        options.error_method {mustBeText, matlab.system.mustBeMember(options.error_method, ...
             ["percentiles", "STD", "SEM", "auto"])} = 'auto';
         options.center_line_width {mustBeNumeric, mustBeScalarOrEmpty} = 2;
         options.center_color = [];
         options.error_percentiles {mustBeNumeric, mustBeVector} = [5,25,75,95];
         options.error_whiskers {mustBeNumericOrLogical, mustBeScalarOrEmpty} = true;
         % Distribution options
-        options.distribution_method {mustBeText, mustBeMember(options.distribution_method, ...
+        options.distribution_method {mustBeText, matlab.system.mustBeMember(options.distribution_method, ...
             ["Histogram", "KernelDensity", "None"])} = 'Histogram';
-        options.distribution_style {mustBeText, mustBeMember(options.distribution_style, ...
+        options.distribution_style {mustBeText, matlab.system.mustBeMember(options.distribution_style, ...
             ["None", "Box", "Bar", "Violin", "Stacks"])} = 'None';
         options.distribution_width {mustBeFloat, mustBeScalarOrEmpty} = .25;
         options.distribution_color = [];
@@ -36,7 +36,7 @@ function Swarm(x, y, options)
         options.swarm_marker_colors = [];
         options.swarm_width_ratio {mustBeNumeric, mustBeScalarOrEmpty} = 0.75;
         % Hashing options (box & bar only)
-        options.hash_style {mustBeText, mustBeMember(options.hash_style, ...
+        options.hash_style {mustBeText, matlab.system.mustBeMember(options.hash_style, ...
             ["None", "\", "/", "#"])} = 'None';
         options.hash_angle {mustBeNumeric, mustBeScalarOrEmpty} = 45; 
         options.hash_density {mustBeNumeric, mustBeScalarOrEmpty} = 0.1;
@@ -45,7 +45,7 @@ function Swarm(x, y, options)
         options.parent = [];
         options.show_stats {mustBeNumericOrLogical} = false;
         options.group_name = num2str(x); % For outpur of center +/- error
-        options.violin_sides {mustBeText, mustBeMember(options.violin_sides, ...
+        options.violin_sides {mustBeText, matlab.system.mustBeMember(options.violin_sides, ...
             ["Right", "Left", "Both"])} = 'Both';
     end
     

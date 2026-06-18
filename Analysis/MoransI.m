@@ -1,11 +1,11 @@
 function [MI, p, mi_perm] = MoransI(input_mat, method, options)
     arguments
         input_mat {mustBeMatrix}
-        method {mustBeMember(method, ["rook", "queen", "distance"])} = 'rook';
+        method {matlab.system.mustBeMember(method, ["rook", "queen", "distance"])} = 'rook';
         options.size {mustBeInteger} = 3;
         options.num_perms {mustBeInteger} = 1e3;
         % More dispersed, more clustered, either
-        options.test_side {mustBeMember(options.test_side, ["left", "right", "both"])} = 'both';
+        options.test_side {matlab.system.mustBeMember(options.test_side, ["left", "right", "both"])} = 'both';
     end
     
     % Evaluate matrix size convolution value

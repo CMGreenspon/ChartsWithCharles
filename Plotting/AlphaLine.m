@@ -31,7 +31,7 @@ function AlphaLine(x, y, color, options)
         options.line_width {mustBeInteger, mustBeScalarOrEmpty} = 1;
         options.error_alpha {mustBeFloat, mustBeScalarOrEmpty} = 0.1;
         options.edge_alpha {mustBeFloat, mustBeScalarOrEmpty} = 0.1;
-        options.error_type {mustBeMember(options.error_type, ["STD", "SEM", "Percentile"])} = 'STD';
+        options.error_type {matlab.system.mustBeMember(options.error_type, ["STD", "SEM", "Percentile"])} = 'STD';
         options.percentiles {mustBeNumeric, mustBeVector} = [25, 75];
         options.ignore_nan {mustBeMember(options.ignore_nan, [0, 1, 2])} = 2;
         options.interpolate_nan {mustBeNumericOrLogical} = 1;

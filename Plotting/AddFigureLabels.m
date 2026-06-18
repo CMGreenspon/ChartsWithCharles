@@ -65,7 +65,7 @@ function AddFigureLabels(h, label_offset, caps)
             y1 = 1;
         end 
         annotation("textbox", [x1 y1 .05 .05], 'String', char(char_offset+i), ...
-            'VerticalAlignment','top', 'HorizontalAlignment','left', 'EdgeColor', 'none', 'FontWeight','bold')
+            'VerticalAlignment','top', 'HorizontalAlignment','left', 'EdgeColor', 'none', 'FontWeight','bold', 'Color', 'k')
     end
     shg;
 end
