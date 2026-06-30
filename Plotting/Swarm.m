@@ -2,6 +2,51 @@ function Swarm(x, y, options)
     % Produces a distribution of points akin to a beeswarm, violin, or box and whisker
     % Swarm(x, y, options)
     % Only supports a single group at a time as this reduces ambiguity in matrix dimensions.
+    %
+    % Options
+    % options.color {mustBeNumeric, mustBeVector} = [.6 .6 .6];
+    % options.center_method {mustBeText, matlab.system.mustBeMember(options.center_method, ...
+    %     ["mean", "median", "auto"])} = 'auto';
+    % options.error_method {mustBeText, matlab.system.mustBeMember(options.error_method, ...
+    %     ["percentiles", "STD", "SEM", "auto"])} = 'auto';
+    % options.center_line_width {mustBeNumeric, mustBeScalarOrEmpty} = 2;
+    % options.center_color = [];
+    % options.error_percentiles {mustBeNumeric, mustBeVector} = [5,25,75,95];
+    % options.error_whiskers {mustBeNumericOrLogical, mustBeScalarOrEmpty} = true;
+    % % Distribution options
+    % options.distribution_method {mustBeText, matlab.system.mustBeMember(options.distribution_method, ...
+    %     ["Histogram", "KernelDensity", "None"])} = 'Histogram';
+    % options.distribution_style {mustBeText, matlab.system.mustBeMember(options.distribution_style, ...
+    %     ["None", "Box", "Bar", "Violin", "Stacks"])} = 'None';
+    % options.distribution_width {mustBeFloat, mustBeScalarOrEmpty} = .25;
+    % options.distribution_color = [];
+    % options.distribution_face_alpha {mustBeNumeric, mustBeScalarOrEmpty} = .3;
+    % options.distribution_line_width {mustBeNumeric, mustBeScalarOrEmpty} = 1;
+    % options.distribution_line_alpha {mustBeNumeric, mustBeScalarOrEmpty} = .75;
+    % options.distribution_whisker_ratio {mustBeNumeric, mustBeScalarOrEmpty} = .3;
+    % options.num_stacks {mustBeInteger, mustBeScalarOrEmpty} = 0; 
+    % % Swarm options
+    % options.swarm_marker_size {mustBeInteger, mustBeScalarOrEmpty} = 30;
+    % options.swarm_y_limits {mustBeNumeric, mustBeVector} = [-inf, inf];
+    % options.swarm_point_limit {mustBeInteger, mustBeScalarOrEmpty} = 100;
+    % options.swarm_face_alpha {mustBeNumeric, mustBeScalarOrEmpty} = .5; 
+    % options.swarm_edge_alpha {mustBeNumeric, mustBeScalarOrEmpty} = 1;
+    % options.swarm_marker_type {mustBeTextScalar} = 'o';
+    % options.swarm_marker_colors = [];
+    % options.swarm_width_ratio {mustBeNumeric, mustBeScalarOrEmpty} = 0.75;
+    % % Hashing options (box & bar only)
+    % options.hash_style {mustBeText, matlab.system.mustBeMember(options.hash_style, ...
+    %     ["None", "\", "/", "#"])} = 'None';
+    % options.hash_angle {mustBeNumeric, mustBeScalarOrEmpty} = 45; 
+    % options.hash_density {mustBeNumeric, mustBeScalarOrEmpty} = 0.1;
+    % options.hash_offset {mustBeNumeric, mustBeScalarOrEmpty} = [];
+    % % Other
+    % options.parent = [];
+    % options.show_stats {mustBeNumericOrLogical} = false;
+    % options.group_name = num2str(x); % For output of center +/- error
+    % options.violin_sides {mustBeText, matlab.system.mustBeMember(options.violin_sides, ...
+    %     ["Right", "Left", "Both"])} = 'Both';
+
     arguments
         x {mustBeNumeric}
         y {mustBeNumeric}
@@ -44,7 +89,7 @@ function Swarm(x, y, options)
         % Other
         options.parent = [];
         options.show_stats {mustBeNumericOrLogical} = false;
-        options.group_name = num2str(x); % For outpur of center +/- error
+        options.group_name = num2str(x); % For output of center +/- error
         options.violin_sides {mustBeText, matlab.system.mustBeMember(options.violin_sides, ...
             ["Right", "Left", "Both"])} = 'Both';
     end

@@ -1,7 +1,7 @@
 function AlphaLine(x, y, color, options)
     % Produces a line plot with the error boundary represented by a shaded area of the same color
     % AlphaLine(x [double], y[double, cell], color[double], options)
-    % AlphaLine(x, y, color, 'options.edge_alpha', 0.2, 'options.error_alpha', 0.2, 'options.error_type', 'SEM')
+    % AlphaLine(x, y, color, 'edge_alpha', 0.2, 'error_alpha', 0.2, 'error_type', 'SEM')
     % Only supports a single line at a time; this reduces ambiguity in matrix dimensions.
     % If both are the size of x and the ration is ambiguous then ensure format.
     %
