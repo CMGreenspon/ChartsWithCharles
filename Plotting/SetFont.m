@@ -1,4 +1,4 @@
-function SetFont(typeface, fontsize)
+function SetFont(typeface, fontsize, figure_color)
     % Set typeface and font size for all defaults. 
     % SetFont(typeface [char], fontsize [int])
     % SetFont('Arial', 16)
@@ -9,6 +9,7 @@ function SetFont(typeface, fontsize)
     arguments
         typeface {mustBeText} = 'Arial'
         fontsize {mustBeInteger} = 12
+        figure_color = 'w'
     end
     
     % Default values
@@ -53,5 +54,6 @@ function SetFont(typeface, fontsize)
           'DefaultColorbarFontSize', fontsize, ...
           'DefaultTextFontSize', fontsize,...
           'DefaultScatterMarkerFaceAlpha', .5,...
-          'DefaultPatchFaceAlpha', .5);
+          'DefaultPatchFaceAlpha', .5, ...
+          'DefaultFigureColor', figure_color);
 end
