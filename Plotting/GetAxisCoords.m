@@ -1,9 +1,10 @@
-function [ax_size, ax_val] = GetAxisCoords(num_plots, margin, border, flip)
+function [ax_size, ax_val] = GetAxisCoords(num_plots, margin, border, flip, offset)
     arguments
         num_plots {mustBeInteger}
         margin {mustBeFloat} = 0.1;
         border {mustBeFloat} = 0.1;
         flip {mustBeNumericOrLogical} = false;
+        offset {mustBeFloat} = 0.025;
     end
     
     % Compute total space less border and margins
@@ -27,4 +28,7 @@ function [ax_size, ax_val] = GetAxisCoords(num_plots, margin, border, flip)
     if flip
         ax_val = flipud(ax_val);
     end
+    
+    % Apply offset
+    ax_val = ax_val + offset;
 end
