@@ -15,20 +15,18 @@ function [ax_size, ax_val] = GetAxisCoords(num_plots, margin, border, flip, offs
     % First plot starts at the border value
     ax_val(1) = border;
 
-    if num_plots == 1
-        return
-    end
+    if num_plots > 1
+        % Increment subsequent plots by size plus margin
+        for i = 2:num_plots
+            ax_val(i) = ax_val(i-1) + ax_size + margin;
+        end
     
-    % Increment subsequent plots by size plus margin
-    for i = 2:num_plots
-        ax_val(i) = ax_val(i-1) + ax_size + margin;
+        % For y-values
+        if flip
+            ax_val = flipud(ax_val);
+        end
     end
-
-    % For y-values
-    if flip
-        ax_val = flipud(ax_val);
-    end
-    
+        
     % Apply offset
     ax_val = ax_val + offset;
 end
